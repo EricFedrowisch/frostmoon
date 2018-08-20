@@ -1,39 +1,38 @@
-
-
-local components = require("load_components")
-
-------------------------------------------
 local exports = {} --Temp storage for exported functionality
-
 --Table of Contents for the module
 local function export()
    return {new = exports.new,
-           use = exports.use
+           components = exports.components,
+           d = exports.d
           }
 end
 
---Use arguements, creating components as needed
-local function use(obj, key, value)
-   --nil, boolean, number, string, userdata, function, thread, and table
-   if (value.isComponent) then
-      value = new(value) --Do special component init here
-   end
-   obj[key] = value
-end
-exports.use = use
+------------------------------------------
+
+local components = require("load_components")
+local d = require("frost_debug")
+exports.components = components
+exports.d = d
+
 
 --Takes a table of arguements and returns a table of components using those args
-local function new(args)
+local function new(self, args)
    obj = {}
-   obj.args, obj.unused = args, args --Store the original args and unused args
+   obj.args, obj.unused = args, args --Store original args as unused args too
    for k,v in pairs(args) do --For each arg, try to use it
-      if (use(obj,k,v)) then obj.unused.k = nil end
+      if (v.isComponent) and components[v.componentType] then
+            obj[k], obj.unused.k = components[v.componentType]:new(v)
+      else
+         for n,p in pairs(v) do --If not component...
+            if obj[n] then obj.unused[n] = p else obj[n] = p end
+         end
+      end
    end
   return obj
 end
 exports.new = new
 --------------------------------------------------------
-local d = require("debug")
+return export()
 --[[
 testObj = {}
 

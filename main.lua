@@ -1,4 +1,5 @@
-local love = require("love")
+
+os.execute("clear")
 --[[
 FrostMoon, cross platform Composition Based Object Factory and GUI library
 targeting iOS, OSX and Windows 10
@@ -14,7 +15,14 @@ Copyright Aug. 9th, 2018 Eric Fedrowisch All rights reserved.
 --]]
 
 local f = require"frostmoon"
---for k,v in pairs(f) do print(k,v) end
+for k,v in pairs(f) do
+   print(k,v)
+   if (type(v) == "table") then
+      for n,p in pairs(v) do
+         print(k .. ":",n,p)
+      end
+   end
+end
 
 function love.load()
   math.randomseed(os.time())
