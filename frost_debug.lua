@@ -29,16 +29,24 @@ end
 exports.line = line
 
 local function tprint (t, shift)
- shift = shift or 0
- for k, v in pairs(t) do
-   local str = string.rep("   ", shift) .. k .. " = "
-   if type(v) == "table" then
-     print(str)
-     tprint(v, shift+1)
+   if t ~= nil and type(t) == 'table' then
+      shift = shift or 0
+      for k, v in pairs(t) do
+         local str = string.rep("   ", shift) .. k .. " = "
+         if type(v) == "table" then
+            print(str)
+            tprint(v, shift+1)
+         else
+            print(str .. tostring(v))
+         end
+      end
    else
-     print(str .. tostring(v))
+      if t == nil then
+         print("nil")
+      elseif type(t) ~= 'table' then
+         error(tostring(t) .. " of type " .. type(t) .. " is not a table.")
+      end
    end
- end
 end
 exports.tprint = tprint
 ------------------------------------------
