@@ -18,10 +18,11 @@ exports.d = d
 --Takes a table of arguements and returns a table of components using those args
 local function new(args)
    obj = {}
-   d.tprint(args)
+   --d.tprint(args)
    obj.args, obj.unused = args, args --Store original args as unused args too
    for k,v in pairs(args) do --For each arg, try to use it
       if type(v) == "table" then
+         d.tprint(components)
          if (v.is_component) and components[v.component_type] then
             obj[k], obj.unused.k = components[v.component_type].new(v)
          end

@@ -1,12 +1,23 @@
 --os.execute('clear')
 local lfs = require("lfs")
 local os_sep = package.config:sub(1,1) --Get the OS file path seperator
+local d = require("frost_debug")
 --[[
 #TODO: Give local environment?
 #TODO: Add a before/after comparison of the global Environment to raise warnings
-if components add to global namespace accidently
+if components pollute global namespace accidently
 #TODO: Add CPath searcher stuff too
 ]]
+
+local function component_lookup(str_path)
+   local t, load_str={}, 'return components'
+   for str in string.gmatch(str_path, "([^"..'.'.."]+)") do t[#t+1] = str end
+   for i,str in ipairs(t) do str = str:gsub('%W','') end --Scrub non-alphanumeric
+   for i,v in pairs(t) do load_str = load_str .. '["' .. v ..  '"]' end
+   local results, errors = loadstring(load_str)
+   if errors then print("Error:", errors, "load_str:", load_str) end
+   return results()
+end
 
 local function split(str, sep)
    local t={}
@@ -35,8 +46,11 @@ local function load_components(dir, recurse, components)
    end
    for i,file in ipairs(files) do
       local f = split(file,os_sep) --#TODO: UGLY. Ineffcient. Replace!
+      local up = tostring(f[#f - 1])
       local f = split(f[#f],".")
       local f = f[1]
+      --if not components[up] then components[up] = {} end
+      --components[up][f]=require(f)
       components[f]=require(f)
    end
    for i,dir in ipairs(dirs) do
@@ -52,4 +66,5 @@ local target_dir = lfs.currentdir() .. os_sep .. "components" .. os_sep
 lfs.chdir(target_dir)
 local components = load_components(lfs.currentdir(), true)
 lfs.chdir(original_cwd)
+d.tprint(components)
 return components
