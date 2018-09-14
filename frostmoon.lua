@@ -1,11 +1,22 @@
 --[[
+FrostMoon, cross platform Composition Based Object Factory and GUI library
+targeting iOS, OSX and Windows 10
+Copyright Aug. 9th, 2018 Eric Fedrowisch All rights reserved.
+
 #TODO:Add warnings for:component already exists, global namespace polluted by loaded
       component
 #TODO: Add CPath searcher & loading capabilities
 ]]
+------------------------------------------
 local component_dir = "components" --Directory from which to recursively load components
 local lfs = require("lfs")
 local os_sep = package.config:sub(1,1) --Get the OS file path seperator
+--#TODO: Make recursive tree lib package.path function
+local lib_string = ";" .. lfs.currentdir() .. os_sep .. "lib" .. os_sep .. "?.lua"
+package.path = package.path .. lib_string
+------------------------------------------
+
+local tablex = require("tablex")
 local d = require("frost_debug")
 local exports = {} --Temp storage for exported functionality
 
@@ -72,31 +83,36 @@ end
 --Takes a table of arguements and returns a table of components using those args
 local function new(args)
    obj = {}
-   --d.tprint(args)
-   obj.args, obj.unused = args, args --Store original args as unused args too
+   obj.args, obj.unused = tablex.deepcopy(args), tablex.deepcopy(args) --Store original args as unused args too
    for k,v in pairs(args) do --For each arg, try to use it
       if type(v) == "table" then
-         d.tprint(components)
-         if (v.is_component) and components[v.component_type] then
-            obj[k], obj.unused.k = components[v.component_type].new(v)
+         if (v.is_component) and exports.components[v.component_type] then
+            obj[k] = exports.components[v.component_type].new(v)
+            obj.unused[k] = nil
          end
-      else
-         if obj[k] then obj.unused[k] = v else obj[k] = v end --Think more about parameter conlicts
+      else --If not table, then not component
+         if obj[k] then --If k already exists in obj then..
+            obj.unused[k] = v --put in unused so as to not lose data
+         else
+            obj[k] = v
+            obj.unused[k] = nil
+         end
       end
    end
   return obj
 end
 exports.new = new
+
 ------------------------------------------
 --os.execute('clear')
 
 --[[Exercising the code here]]--
-orig_packagepath = package.path --Store package.path before
 local original_cwd = lfs.currentdir()
+orig_packagepath = package.path --Store package.path before
 local target_dir = lfs.currentdir() .. os_sep .. component_dir .. os_sep
 lfs.chdir(target_dir)
 exports.components = load_components(lfs.currentdir(), true)
 lfs.chdir(original_cwd)
-d.tprint(exports.components)
+--d.tprint(exports.components)
 package.path = orig_packagepath --Restore package.path
 return export()

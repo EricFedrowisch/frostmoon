@@ -5,12 +5,10 @@ FrostMoon, cross platform Composition Based Object Factory and GUI library
 targeting iOS, OSX and Windows 10
 Copyright Aug. 9th, 2018 Eric Fedrowisch All rights reserved.
 
---#TODO:Set lua Environment to avoid namespace collisons
---#TODO:Create a prototype template that allows for components
+--#TODO:Event Listeners and their registration code
 --#TODO:Cross platform user input code
---#TODO:Cross platform file operatiosn for data persistence and asset loading
---#TODO:Code repo?
---#TODO:View Container
+--#TODO:Cross platform data persistence and asset loading
+--#TODO:Containers layouts; grid, anchor, etc
 --#TODO:Build some Basic Widgets; button, label, etc
 --]]
 
