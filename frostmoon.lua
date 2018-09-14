@@ -8,6 +8,7 @@ Copyright Aug. 9th, 2018 Eric Fedrowisch All rights reserved.
 #TODO: Add CPath searcher & loading capabilities
 ]]
 ------------------------------------------
+local debug_on = true
 local component_dir = "components" --Directory from which to recursively load components
 local lfs = require("lfs")
 local os_sep = package.config:sub(1,1) --Get the OS file path seperator
@@ -80,23 +81,26 @@ end
 
 ------------------------------------------
 
---Takes a table of arguements and returns a table of components using those args
+--[[
+Takes:
+   -a table of arguements and returns a table of components using those args
+#TODO:Make new() recursive by calling new again for components.
+]]
 local function new(args)
-   obj = {}
-   obj.args, obj.unused = tablex.deepcopy(args), tablex.deepcopy(args) --Store original args as unused args too
+   local obj = obj or {}
+   if debug_on then obj.args, obj.unused = tablex.deepcopy(args), {}  end --Store original args as unused args too
    for k,v in pairs(args) do --For each arg, try to use it
       if type(v) == "table" then
-         if (v.is_component) and exports.components[v.component_type] then
-            obj[k] = exports.components[v.component_type].new(v)
-            obj.unused[k] = nil
+         if debug_on and v.component_type ~= nil and exports.components[v.component_type] == nil  then
+            obj.unused[k] = tablex.deepcopy(v)
+         end
+         if exports.components[v.component_type] then --If existing component
+            obj[k] = exports.components[v.component_type].new(v) --then make it
+         elseif  v.component_type == nil then --If table, but not component
+            obj[k] = new(v) --then call new
          end
       else --If not table, then not component
-         if obj[k] then --If k already exists in obj then..
-            obj.unused[k] = v --put in unused so as to not lose data
-         else
-            obj[k] = v
-            obj.unused[k] = nil
-         end
+         obj[k] = v
       end
    end
   return obj
@@ -113,6 +117,7 @@ local target_dir = lfs.currentdir() .. os_sep .. component_dir .. os_sep
 lfs.chdir(target_dir)
 exports.components = load_components(lfs.currentdir(), true)
 lfs.chdir(original_cwd)
+print("FROSTMOON DEBUG ON:", debug_on)
 --d.tprint(exports.components)
 package.path = orig_packagepath --Restore package.path
 return export()

@@ -11,11 +11,19 @@ test_args.c = 123
 test_args.f = function (x) return x+1 end
 test_args.g = "Need thread type here" --#TODO:Test thread needed here
 ------------------------------------------
-test_component = {["is_component"] = true, ["component_type"] = "data.object"}
+test_component = {}
+test_component.component_type = "data.object"
 test_component.b = true
 test_component.c = 123
 test_component.d = "test"
+------------------------------------------
+bad_component = {}
+bad_component.component_type = "does.not.exist"
+bad_component.val1 = false
+------------------------------------------
 test_args.test_component = test_component
+test_args.test_table = {"tab1","tab2","tab3"}
+test_args.bad_component = bad_component
 ------------------------------------------
 
 test_obj= {}
