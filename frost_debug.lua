@@ -8,7 +8,7 @@ local function export()
            kprint = exports.kprint, --Print all a table's keys, value pairs
            line = exports.line,     --Print a line to divide up output visually
            tprint = exports.tprint, --Print a table's values recursively indented
-           ttest = exports.ttest,   --Return boolean of table-ness and error message if need 
+           ttest = exports.ttest,   --Return boolean of table-ness and error message if need
           }
 end
 
@@ -55,14 +55,15 @@ local function line()
 end
 exports.line = line
 
-local function tprint (t, shift)
+local function tprint (t, shift, container)
+   local container = container or nil
    if t ~= nil and type(t) == 'table' then
       shift = shift or 0
       for k, v in pairs(t) do
          local str = string.rep("   ", shift) .. k .. " = "
-         if type(v) == "table" then
+         if type(v) == "table"  and t ~= container and k ~= "_container" then
             print(str)
-            tprint(v, shift+1)
+            tprint(v, shift+1, t)
          else
             print(str .. tostring(v))
          end
