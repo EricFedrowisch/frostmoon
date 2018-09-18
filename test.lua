@@ -27,13 +27,18 @@ test_args.bad_component = bad_component
 ------------------------------------------
 
 test_obj= {}
+print(test_obj, "TestObj")
+d.line()
+------------------------------------------
 test_obj = f.new(test_args, test_obj)
 print("TEST OBJECT:")
 d.line()
+------------------------------------------
 d.tprint(test_obj)
+d.line()
+------------------------------------------
 print(test_obj, "TestObj Memory Location")
-print(test_obj.test_component._container, "Test Component Memory Location")
---print(test_obj.test_component)
---d.tprint(test_obj.test_component)
-
+print(test_obj.test_component._container, "Test Component Container Memory Location")
+print(test_obj.test_component, "Test Component Memory Location")
+d.line()
 ------------------------------------------

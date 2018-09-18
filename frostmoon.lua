@@ -18,7 +18,7 @@ local lib_string = ";" .. lfs.currentdir() .. os_sep .. "lib" .. os_sep .. "?.lu
 package.path = package.path .. lib_string
 ------------------------------------------
 
-local tablex = require("tablex")
+if debug_on then local tablex = require("tablex") end
 local d = require("frost_debug")
 local exports = {} --Temp storage for exported functionality
 
@@ -85,16 +85,15 @@ end
 --[[
 Takes:
    -a table of arguements and returns a table of components using those args
+   -Optional container argument to let components pass messages upwards
 #TODO:Make new() recursive by calling new again for components.
 ]]
 local function new(args, container)
-   local obj = {}
+   local obj = container or {}
    if debug_on then obj.args, obj.unused = tablex.deepcopy(args), {}  end --Store original args and track unused args too
    for k,v in pairs(args) do --For each arg, try to use it
       if type(v) == "table" then
-         if v == obj then --DO nothing
-         elseif
-            debug_on and
+         if debug_on and
                v.component_type ~= nil and --If arg has component_type..
                   exports.components[v.component_type] == nil then -- BUT its nil..
                      obj.unused[k] = tablex.deepcopy(v)             --Track unused arg
