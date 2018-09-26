@@ -89,7 +89,8 @@ Takes:
 #TODO:Make new() recursive by calling new again for components.
 ]]
 local function new(args, container)
-   local obj = container or {}
+   local obj = {}
+   obj._container = container
    if debug_on then obj.args, obj.unused = tablex.deepcopy(args), {}  end --Store original args and track unused args too
    for k,v in pairs(args) do --For each arg, try to use it
       if type(v) == "table" then
@@ -98,8 +99,8 @@ local function new(args, container)
                   exports.components[v.component_type] == nil then -- BUT its nil..
                      obj.unused[k] = tablex.deepcopy(v)             --Track unused arg
          elseif exports.components[v.component_type] then --If existing component
-            obj[k] = exports.components[v.component_type].new(v, container) --then make it
-            obj[k]._container = container
+            obj[k] = exports.components[v.component_type].new(v, obj) --then make it
+            obj[k]._container = obj
             obj[k].self = obj[k]
          elseif  v.component_type == nil then --If table, but not component
             obj[k] = new(v) --then call new

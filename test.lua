@@ -1,7 +1,9 @@
---os.execute("clear")
-local f = require("frostmoon")
+os.execute("clear")
+
+frostmoon = require("frostmoon")
+local f = frostmoon
 local d = require("frost_debug")
-test_args = {}
+local test_args = {}
 
 --test_args.a = nil
 test_args.b = true
@@ -11,22 +13,27 @@ test_args.c = 123
 test_args.f = function (x) return x+1 end
 test_args.g = "Need thread type here" --#TODO:Test thread needed here
 ------------------------------------------
-test_component = {}
-test_component.component_type = "data.object"
-test_component.b = true
-test_component.c = 123
-test_component.d = "test"
+local component = {}
+component.component_type = "data.object"
+component.b = true
+component.c = 123
+component.d = "test"
+component.def1 = "Override default 1"
 ------------------------------------------
-bad_component = {}
+local bad_component = {}
 bad_component.component_type = "does.not.exist"
 bad_component.val1 = false
 ------------------------------------------
-test_args.test_component = test_component
+local subcomponent = {}
+subcomponent.component_type = "gui.button"
+subcomponent.d = "this is a subcomponent"
+------------------------------------------
+test_args.component = component
 test_args.test_table = {"tab1","tab2","tab3"}
 test_args.bad_component = bad_component
+test_args.component.subcomponent = subcomponent
 ------------------------------------------
-
-test_obj= {}
+local test_obj= {}
 print(test_obj, "TestObj")
 d.line()
 ------------------------------------------
@@ -38,7 +45,11 @@ d.tprint(test_obj)
 d.line()
 ------------------------------------------
 print(test_obj, "TestObj Memory Location")
-print(test_obj.test_component._container, "Test Component Container Memory Location")
-print(test_obj.test_component, "Test Component Memory Location")
+print(test_obj.component, "Test Component Memory Location")
+print(test_obj.component.subcomponent, "Test Subcomponent Memory Location")
+d.line()
+------------------------------------------
+print(test_obj.component._container, "Component Container", test_obj == test_obj.component._container)
+print(test_obj.component.subcomponent._container, "Subcomponent Container", test_obj.component == test_obj.component.subcomponent._container)
 d.line()
 ------------------------------------------
