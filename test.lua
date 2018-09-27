@@ -49,7 +49,11 @@ print(test_obj.component, "Test Component Memory Location")
 print(test_obj.component.subcomponent, "Test Subcomponent Memory Location")
 d.line()
 ------------------------------------------
-print(test_obj.component._container, "Component Container", test_obj == test_obj.component._container)
-print(test_obj.component.subcomponent._container, "Subcomponent Container", test_obj.component == test_obj.component.subcomponent._container)
+print(test_obj.component._container, "Component Container")
+print(test_obj.component.subcomponent._container, "Subcomponent Container")
+d.line()
+------------------------------------------
+print("test_obj == test_obj.component._container", test_obj == test_obj.component._container)
+print("test_obj.component == test_obj.component.subcomponent._container", test_obj.component == test_obj.component.subcomponent._container)
 d.line()
 ------------------------------------------
