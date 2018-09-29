@@ -4,16 +4,15 @@ targeting iOS, OSX and Windows 10
 Copyright Aug. 9th, 2018 Eric Fedrowisch All rights reserved.
 
 #TODO:Add warnings for:component already exists, global namespace polluted by loaded
-      component
+      component (possibly penlight Strict could provide when frostmoon in debug mode)
 #TODO: Add CPath searcher & loading capabilities
-]]
+--]]
 ------------------------------------------
 --local debug_on = true
 local debug_on = false
 local component_dir = "components" --Directory from which to recursively load components
 local lfs = require("lfs")
 local os_sep = package.config:sub(1,1) --Get the OS file path seperator
---#TODO: Make recursive tree lib package.path function
 local lib_string = ";" .. lfs.currentdir() .. os_sep .. "lib" .. os_sep .. "?.lua"
 package.path = package.path .. lib_string
 ------------------------------------------
@@ -30,7 +29,14 @@ local function export()
           }
 end
 ------------------------------------------
-local function split(str, sep)
+--[[
+Takes:
+   - str = string to split
+   - sep = seperator to use to split string (default is whitespace)
+Returns:
+   - an indexed table of strings
+--]]
+local function _split(str, sep)
    local t={}
    if sep == nil then sep = "%s" end --Default to whitespace
    for str in string.gmatch(str, "([^"..sep.."]+)") do
@@ -39,8 +45,16 @@ local function split(str, sep)
    return t
 end
 
-local function load_components(dir, recurse, components)
-   local components = components or {}
+--[[
+Takes:
+   - dir = target directory to load components from
+   - recurse = boolean for whether to recursively load subdirectories or not
+   - _components = internal variable for returning recursive results
+Returns:
+   - a table of components loaded from target dir
+--]]
+local function _load_components(dir, recurse, _components)
+   local components = _components or {}
    local files, dirs = {}, {}
    package.path = package.path .. ";" .. dir .. os_sep .. "?.lua" --Add to path for require
    for i in lfs.dir(dir) do
@@ -56,25 +70,27 @@ local function load_components(dir, recurse, components)
       end
    end
    for i,file in ipairs(files) do
-      local f = split(file,os_sep)
-      local split_index = nil
-      local name = split(f[#f],".");name = name[1];f[#f]=name --Get file name minus '.lua'
+      local f = _split(file,os_sep)
+      local _split_index = nil
+      local name = _split(f[#f],".");name = name[1];f[#f]=name --Get file name minus '.lua'
       for i,v in ipairs(f) do  --Find componet dir index
-         if f[i] == component_dir then split_index = i; break end
+         if f[i] == component_dir then _split_index = i; break end
       end
       for i,v in ipairs(f) do --Delete preceding path before
-         if i < split_index then f[i] = nil end
+         if i < _split_index then f[i] = nil end
       end
       local t = {}
-      for i = split_index + 1,#f do t[#t+1] = f[i] end
+      for i = _split_index + 1,#f do t[#t+1] = f[i] end
       local path = table.concat(t,'.');
       components[path]=require(name)
       --Do component private variables here
       components[path]._type = path
       components[path]._load_path = file
    end
-   for i,dir in ipairs(dirs) do
-      components = load_components(dir, true, components)
+   if recurse then
+      for i, dir in ipairs(dirs) do
+         components = _load_components(dir, recurse, components)
+      end
    end
    return components
 end
@@ -84,10 +100,11 @@ end
 
 --[[
 Takes:
-   -a table of arguements and returns a table of components using those args
-   -Optional container argument to let components pass messages upwards
-#TODO:Make new() recursive by calling new again for components.
-]]
+   - args = table of arguements
+   - optional container = container for components to pass messages upwards
+Returns:
+   - a table of components made using args
+--]]
 local function new(args, container)
    local obj = {}
    obj._container = container
@@ -121,9 +138,9 @@ local original_cwd = lfs.currentdir()
 orig_packagepath = package.path --Store package.path before
 local target_dir = lfs.currentdir() .. os_sep .. component_dir .. os_sep
 lfs.chdir(target_dir)
-exports.components = load_components(lfs.currentdir(), true)
+exports.components = _load_components(lfs.currentdir(), true)
 lfs.chdir(original_cwd)
 print("FROSTMOON DEBUG ON:", debug_on)
---d.tprint(exports.components)
+if debug_on then d.tprint(exports.components) end
 package.path = orig_packagepath --Restore package.path
 return export()
