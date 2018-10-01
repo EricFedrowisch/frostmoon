@@ -1,11 +1,11 @@
 --[[Simple test object here for testing package loader]]
 local function new(args)
+local _defaults = {}
+--Generic object instantiation
+-----------------------------------
    local obj = {}
-   obj.is_component = true
-   obj.component_type = "data.db"
-   obj.var1 = "data.db code here"
-   obj.var2 = 3
-   obj.var3 = 2
+   obj = _G.frostmoon.new(args, obj)
+-----------------------------------
    return obj
 end
 

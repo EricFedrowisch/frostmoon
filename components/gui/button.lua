@@ -1,11 +1,10 @@
 --[[Simple test object here for testing package loader]]
 local function new(args)
+--Generic object instantiation
+-----------------------------------
    local obj = {}
-   obj.is_component = true
-   obj.component_type = "gui.button"
-   obj.var1 = "gui.button code here"
-   obj.var2 = 3
-   obj.var3 = 2
+   obj = _G.frostmoon.new(args, obj)
+-----------------------------------
    return obj
 end
 

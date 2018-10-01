@@ -8,8 +8,7 @@ Copyright Aug. 9th, 2018 Eric Fedrowisch All rights reserved.
 #TODO: Add CPath searcher & loading capabilities
 --]]
 ------------------------------------------
---local debug_on = true
-local debug_on = false
+
 local component_dir = "components" --Directory from which to recursively load components
 local lfs = require("lfs")
 local os_sep = package.config:sub(1,1) --Get the OS file path seperator
@@ -113,12 +112,18 @@ local function new(args, container)
       if type(v) == "table" then
          if debug_on and
                v.component_type ~= nil and --If arg has component_type..
-                  exports.components[v.component_type] == nil then -- BUT its nil..
+                  exports.components[v.component_type] == nil then -- BUT its not loaded..
                      obj.unused[k] = tablex.deepcopy(v)             --Track unused arg
          elseif exports.components[v.component_type] then --If existing component
             obj[k] = exports.components[v.component_type].new(v, obj) --then make it
             obj[k]._container = obj
             obj[k].self = obj[k]
+            local defaults = exports.components[v.component_type]._defaults
+            if defaults then --If there are defaults for the class
+               for k,v in pairs(defaults) do --Iterate thru the defaults
+                  if obj[k] == nil then obj[k] = v end --Using defaults if no value
+               end
+            end
          elseif  v.component_type == nil then --If table, but not component
             obj[k] = new(v) --then call new
       end
@@ -134,6 +139,8 @@ exports.new = new
 --os.execute('clear')
 
 --[[Exercising the code here]]--
+--local debug_on = true
+local debug_on = false
 local original_cwd = lfs.currentdir()
 orig_packagepath = package.path --Store package.path before
 local target_dir = lfs.currentdir() .. os_sep .. component_dir .. os_sep
