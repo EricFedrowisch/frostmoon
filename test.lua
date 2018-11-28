@@ -1,9 +1,10 @@
-os.execute("clear")
+if package.config:sub(1,1) == "/" then os.execute("clear") end
 
 frostmoon = require("frostmoon")
 local f = frostmoon
 local d = require("frost_debug")
 local test_args = {}
+local s = require("socket")
 
 --test_args.a = nil
 test_args.b = true
@@ -57,3 +58,15 @@ print("test_obj == test_obj.component._container", test_obj == test_obj.componen
 print("test_obj.component == test_obj.component.subcomponent._container", test_obj.component == test_obj.component.subcomponent._container)
 d.line()
 ------------------------------------------
+print("Object Instances By Type:")
+d.kprint(f.instances); print("")
+for k,v in pairs(f.instances) do d.kprint(v) end
+print(d.kcount(f.instances["data.object"]))
+d.line()
+------------------------------------------
+print("Object Destruction Test:")
+test_obj.component._nil_self(test_obj.component.self)
+for k,v in pairs(f.instances) do d.kprint(v) end
+print(d.kcount(f.instances["data.object"]))
+--d.tprint(f.instances)
+d.line()

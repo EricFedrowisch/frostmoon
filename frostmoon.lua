@@ -3,9 +3,12 @@ FrostMoon, cross platform Composition Based Object Factory and GUI library
 targeting iOS, OSX and Windows 10
 Copyright Aug. 9th, 2018 Eric Fedrowisch All rights reserved.
 
-#TODO:Add warnings for:component already exists, global namespace polluted by loaded
+#TODO:Add warnings for: component already exists, global namespace polluted by loaded
       component (possibly penlight Strict could provide when frostmoon in debug mode)
 #TODO: Add CPath searcher & loading capabilities
+#TODO: Add component referencing so you can message all of one component type and find their count
+#TODO: Write destroy object code
+#TODO: Findy the one hard coded '/' in the package pathing. Oopsie
 --]]
 ------------------------------------------
 
@@ -13,7 +16,16 @@ local component_dir = "components" --Directory from which to recursively load co
 local lfs = require("lfs")
 local os_sep = package.config:sub(1,1) --Get the OS file path seperator
 local lib_string = ";" .. lfs.currentdir() .. os_sep .. "lib" .. os_sep .. "?.lua"
-package.path = package.path .. lib_string
+local socket_lib = ";" .. lfs.currentdir() .. os_sep .. "lib" .. os_sep .. "socket" .. os_sep .. "?.lua"
+local socket_lib_cpath = ";" .. lfs.currentdir() .. os_sep .. "lib" .. os_sep .. "?.so"
+package.path = package.path .. lib_string .. socket_lib
+package.cpath = package.cpath .. socket_lib_cpath
+------------------------------------------
+--UUID Requires here
+local socket = require("socket")
+local uuid = require("uuid")
+uuid.randomseed(socket.gettime()*10000)
+--uuid() 
 ------------------------------------------
 
 if debug_on then local tablex = require("tablex") end
@@ -25,6 +37,7 @@ local function export()
    return {
       new = exports.new,
       components = exports.components,
+      instances = exports.instances
           }
 end
 ------------------------------------------
@@ -96,7 +109,49 @@ end
 
 
 ------------------------------------------
+local instances = {}
+exports.instances = instances
 
+--[[
+   Message types supported:
+      -Direct
+      -Top down/Bottom Up (Direct to _container/Direct to contents)
+      -Broadcast (Direct to All)
+      -All Instances of Type (Direct to all of Type)
+      -Lateral (Direct to all of _container's contents)
+
+      #TODO: Consider if coroutines are needed/would be beneficial for
+             main execution versus msgs
+--]]
+local function _direct_message(target, msg)
+   local response = {}
+end
+
+local function _query_state(target, var)
+   local response = {}
+end
+
+--[[
+   Takes:
+   -self parameter of object to nullify. Also recursively sets all the
+    object's contents to nil. Only meant to be called by self, but could be
+    (ab)used with targets other than self.
+   Returns:
+   -None
+--]]
+local function _destroy_self(self)
+   if type(self) == "table" then
+      if self.component_type then
+         print(_G.frostmoon.instances[self.component_type][tostring(self)])
+         _G.frostmoon.instances[self.component_type][tostring(self)]=nil --Will this work...?
+      end
+      for k,v in pairs(self) do
+         if k ~= "_container" and k ~= "self" then v = nil end
+      end
+   end
+   self = nil
+end
+------------------------------------------
 --[[
 Takes:
    - args = table of arguements
@@ -118,12 +173,15 @@ local function new(args, container)
             obj[k] = exports.components[v.component_type].new(v, obj) --then make it
             obj[k]._container = obj
             obj[k].self = obj[k]
+            obj[k]._nil_self = _nil_self
             local defaults = exports.components[v.component_type]._defaults
             if defaults then --If there are defaults for the class
                for k,v in pairs(defaults) do --Iterate thru the defaults
                   if obj[k] == nil then obj[k] = v end --Using defaults if no value
                end
             end
+            if instances[v.component_type] == nil then instances[v.component_type] = {} end --Create entry for instance type if needed
+            instances[v.component_type][tostring(obj)] = obj --Keep track of instances for Broadcasts
          elseif  v.component_type == nil then --If table, but not component
             obj[k] = new(v) --then call new
       end
@@ -146,6 +204,7 @@ orig_packagepath = package.path --Store package.path before
 local target_dir = lfs.currentdir() .. os_sep .. component_dir .. os_sep
 lfs.chdir(target_dir)
 exports.components = _load_components(lfs.currentdir(), true)
+
 lfs.chdir(original_cwd)
 print("FROSTMOON DEBUG ON:", debug_on)
 if debug_on then d.tprint(exports.components) end

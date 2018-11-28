@@ -9,6 +9,7 @@ local function export()
            line = exports.line,     --Print a line to divide up output visually
            tprint = exports.tprint, --Print a table's values recursively indented
            ttest = exports.ttest,   --Return boolean of table-ness and error message if need
+           kcount = exports.kcount, --Return an int count of table's keys or nil if not table
           }
 end
 
@@ -77,5 +78,16 @@ local function tprint (t, shift, container)
    end
 end
 exports.tprint = tprint
+
+local function kcount(t)
+   local c = nil
+   if type(t) == "table" then
+      c = 0
+      for k,v in pairs(t) do c = c + 1 end
+   end
+   return c
+end
+exports.kcount = kcount
+
 ------------------------------------------
 return export()
