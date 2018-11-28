@@ -65,7 +65,8 @@ print(d.kcount(f.instances["data.object"]))
 d.line()
 ------------------------------------------
 print("Object Destruction Test:")
-test_obj.component._nil_self(test_obj.component.self)
+test_obj.component._destroy_self(test_obj.component.self)
+test_obj.component = nil
 for k,v in pairs(f.instances) do d.kprint(v) end
 print(d.kcount(f.instances["data.object"]))
 --d.tprint(f.instances)

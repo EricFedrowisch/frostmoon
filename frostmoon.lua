@@ -25,7 +25,6 @@ package.cpath = package.cpath .. socket_lib_cpath
 local socket = require("socket")
 local uuid = require("uuid")
 uuid.randomseed(socket.gettime()*10000)
---uuid() 
 ------------------------------------------
 
 if debug_on then local tablex = require("tablex") end
@@ -142,11 +141,19 @@ end
 local function _destroy_self(self)
    if type(self) == "table" then
       if self.component_type then
-         print(_G.frostmoon.instances[self.component_type][tostring(self)])
-         _G.frostmoon.instances[self.component_type][tostring(self)]=nil --Will this work...?
+         --print(_G.frostmoon.instances[self.component_type][self._uuid])
+         _G.frostmoon.instances[self.component_type][self._uuid]=nil --Will this work...?
       end
       for k,v in pairs(self) do
-         if k ~= "_container" and k ~= "self" then v = nil end
+         if k ~= "_container" and k ~= "self" then
+            _destroy_self(v)
+            v = nil
+         end
+         if k == "_container" then --Delete container's reference to self
+            for k,v in pairs(v) do
+               if v == self then v = nil end
+            end
+         end
       end
    end
    self = nil
@@ -161,6 +168,7 @@ Returns:
 --]]
 local function new(args, container)
    local obj = {}
+   obj._uuid = uuid()
    obj._container = container
    if debug_on then obj.args, obj.unused = tablex.deepcopy(args), {}  end --Store original args and track unused args too
    for k,v in pairs(args) do --For each arg, try to use it
@@ -172,8 +180,9 @@ local function new(args, container)
          elseif exports.components[v.component_type] then --If existing component
             obj[k] = exports.components[v.component_type].new(v, obj) --then make it
             obj[k]._container = obj
+            obj[k]._uuid = uuid()
             obj[k].self = obj[k]
-            obj[k]._nil_self = _nil_self
+            obj[k]._destroy_self = _destroy_self
             local defaults = exports.components[v.component_type]._defaults
             if defaults then --If there are defaults for the class
                for k,v in pairs(defaults) do --Iterate thru the defaults
@@ -181,12 +190,12 @@ local function new(args, container)
                end
             end
             if instances[v.component_type] == nil then instances[v.component_type] = {} end --Create entry for instance type if needed
-            instances[v.component_type][tostring(obj)] = obj --Keep track of instances for Broadcasts
+            instances[v.component_type][obj[k]._uuid] = obj --Keep track of instances for Broadcasts
          elseif  v.component_type == nil then --If table, but not component
             obj[k] = new(v) --then call new
-      end
-   else --If not table, then not component
-         obj[k] = v
+         end
+         else --If not table, then not component
+            obj[k] = v
       end
    end
   return obj
