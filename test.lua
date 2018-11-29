@@ -64,10 +64,14 @@ for k,v in pairs(f.instances) do d.kprint(v) end
 print(d.kcount(f.instances["data.object"]))
 d.line()
 ------------------------------------------
+collectgarbage()
+print("Mem Usage Before Destruction:", d.mem_use())
 print("Object Destruction Test:")
 test_obj.component._destroy_self(test_obj.component.self)
 test_obj.component = nil
 for k,v in pairs(f.instances) do d.kprint(v) end
 print(d.kcount(f.instances["data.object"]))
 --d.tprint(f.instances)
+collectgarbage()
+print("Mem Usage After Destruction:", d.mem_use())
 d.line()

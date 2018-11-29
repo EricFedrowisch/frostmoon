@@ -8,10 +8,10 @@ Copyright Aug. 9th, 2018 Eric Fedrowisch All rights reserved.
 #TODO: Add CPath searcher & loading capabilities
 #TODO: Add component referencing so you can message all of one component type and find their count
 #TODO: Write destroy object code
-#TODO: Findy the one hard coded '/' in the package pathing. Oopsie
 --]]
 ------------------------------------------
-
+local d = require("frost_debug")
+print("Frostmoon Begin Loading", "Mem Usage in Bytes:" .. d.mem_use())
 local component_dir = "components" --Directory from which to recursively load components
 local lfs = require("lfs")
 local os_sep = package.config:sub(1,1) --Get the OS file path seperator
@@ -28,7 +28,7 @@ uuid.randomseed(socket.gettime()*10000)
 ------------------------------------------
 
 if debug_on then local tablex = require("tablex") end
-local d = require("frost_debug")
+
 local exports = {} --Temp storage for exported functionality
 
 --"Table of Contents" for exports of the module
@@ -213,7 +213,7 @@ orig_packagepath = package.path --Store package.path before
 local target_dir = lfs.currentdir() .. os_sep .. component_dir .. os_sep
 lfs.chdir(target_dir)
 exports.components = _load_components(lfs.currentdir(), true)
-
+print("Frostmoon Components Loaded", "Mem Usage in Bytes:" .. d.mem_use())
 lfs.chdir(original_cwd)
 print("FROSTMOON DEBUG ON:", debug_on)
 if debug_on then d.tprint(exports.components) end

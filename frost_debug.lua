@@ -10,6 +10,7 @@ local function export()
            tprint = exports.tprint, --Print a table's values recursively indented
            ttest = exports.ttest,   --Return boolean of table-ness and error message if need
            kcount = exports.kcount, --Return an int count of table's keys or nil if not table
+           mem_use = exports.mem_use, --Return int number of bytes currently used by Lua's memory footprint
           }
 end
 
@@ -88,6 +89,11 @@ local function kcount(t)
    return c
 end
 exports.kcount = kcount
+
+local function mem_use()
+   return (collectgarbage("count") * 1024) --Mem Usage in Bytes
+end
+exports.mem_use = mem_use
 
 ------------------------------------------
 return export()
