@@ -6,8 +6,6 @@ Copyright Aug. 9th, 2018 Eric Fedrowisch All rights reserved.
 #TODO:Add warnings for: component already exists, global namespace polluted by loaded
       component (possibly penlight Strict could provide when frostmoon in debug mode)
 #TODO: Add CPath searcher & loading capabilities
-#TODO: Add component referencing so you can message all of one component type and find their count
-#TODO: Write destroy object code
 --]]
 ------------------------------------------
 local d = require("frost_debug")
@@ -109,7 +107,9 @@ end
 
 ------------------------------------------
 local instances = {}
+instances._uuid = {}
 exports.instances = instances
+
 
 --[[
    Message types supported:
@@ -122,8 +122,48 @@ exports.instances = instances
       #TODO: Consider if coroutines are needed/would be beneficial for
              main execution versus msgs
 --]]
+
+--[[
+
+--]]
+local function _receive_message(self, msg)
+   local response = nil
+   if self._component_type then response = self.receive_message(msg) end --Classes should
+   return response
+end
+
 local function _direct_message(target, msg)
-   local response = {}
+   return target._receive_message(target, msg)
+end
+
+local function _message_container(self, msg)
+   return _direct_message(self._container, msg)
+end
+
+local function _broadcast(msg)
+   local responses = {}
+   for k,v in pairs(_G.frostmoon.instances._uuid) do
+      responses[k]=_direct_message(v, msg)
+   end
+   return responses
+end
+
+local function _broadcast_up(self, msg)
+   local response = nil
+   local current_container = self._container
+   while (response == nil and current_container ~= nil) do
+      response = _direct_message(current_container, msg)
+      current_container = current_container._container
+   end
+end
+
+local function _broadcast_down(self, msg)
+   local response = nil
+   --for each component in contents, call broadcast down
+end
+
+local function _broadcast_lateral(self, msg)
+   local response = nil
 end
 
 local function _query_state(target, var)
@@ -132,7 +172,7 @@ end
 
 --[[
    Takes:
-   -self parameter of object to nullify. Also recursively sets all the
+   -self parameter of object to destroy. Also recursively sets all the
     object's contents to nil. Only meant to be called by self, but could be
     (ab)used with targets other than self.
    Returns:
@@ -141,8 +181,8 @@ end
 local function _destroy_self(self)
    if type(self) == "table" then
       if self.component_type then
-         --print(_G.frostmoon.instances[self.component_type][self._uuid])
-         _G.frostmoon.instances[self.component_type][self._uuid]=nil --Will this work...?
+         _G.frostmoon.instances[self.component_type][self._uuid]=nil
+         _G.frostmoon.instances._uuid[self._uuid]=nil
       end
       for k,v in pairs(self) do
          if k ~= "_container" and k ~= "self" then
@@ -181,6 +221,7 @@ local function new(args, container)
             obj[k] = exports.components[v.component_type].new(v, obj) --then make it
             obj[k]._container = obj
             obj[k]._uuid = uuid()
+            _G.frostmoon.instances._uuid[obj[k]._uuid]=obj[k] --Register UUID
             obj[k].self = obj[k]
             obj[k]._destroy_self = _destroy_self
             local defaults = exports.components[v.component_type]._defaults

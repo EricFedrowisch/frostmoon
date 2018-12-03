@@ -63,7 +63,7 @@ local function tprint (t, shift, container)
       shift = shift or 0
       for k, v in pairs(t) do
          local str = string.rep("   ", shift) .. k .. " = "
-         if type(v) == "table"  and t ~= container and k ~= "_container" then
+         if type(v) == "table"  and t ~= container and k ~= "_container" and k ~= "self" then
             print(str)
             tprint(v, shift+1, t)
          else
