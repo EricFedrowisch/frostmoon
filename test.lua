@@ -34,10 +34,10 @@ test_args.test_table = {"tab1","tab2","tab3"}
 test_args.bad_component = bad_component
 test_args.component.subcomponent = subcomponent
 ------------------------------------------
-local test_obj= {}
-print(test_obj, "TestObj")
+
 d.line()
 ------------------------------------------
+local test_obj= {}
 test_obj = f.new(test_args, test_obj)
 print("TEST OBJECT:")
 d.line()
@@ -77,3 +77,5 @@ print(d.kcount(f.instances["data.object"]))
 collectgarbage ( "collect")
 print("Mem Usage After Destruction:", d.mem_use())
 d.line()
+print("test_obj._uuid", test_obj._uuid)
+print("test_obj._container",test_obj._container)
