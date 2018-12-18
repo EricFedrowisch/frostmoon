@@ -1,19 +1,20 @@
 --[[Simple test object here for testing package loader]]
+local Object = {}
+Object._defaults = {["def1"] = 1, ["def2"] = "default #2"}
 
-local _defaults = {["def1"] = 1, ["def2"] = "default #2"}
-
-local function new(args, container)
+function Object:new(args)
 
 --Generic object instantiation
 -----------------------------------
-   local obj = {}
-   obj = _G.frostmoon.new(args, obj)
+   for k,v in pairs(self._defaults) do
+      if args[k] ~= nil then
+         self[k] = args[k]
+      else
+         self[k] = self._defaults[k]
+      end
+   end
 -----------------------------------
-   return obj
+   return self
 end
 
-local t = {}
-t.new = new
-t._defaults = _defaults
-
-return t
+return Object

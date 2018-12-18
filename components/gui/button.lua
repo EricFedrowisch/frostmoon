@@ -1,14 +1,20 @@
---[[Simple test object here for testing package loader]]
-local function new(args)
---Generic object instantiation
+--[[Simple Button class here.]]
+local Button = {}
+Button._defaults = {["x"] = 0, ["y"] = 0}
+
+function Button:new(args)
+
+--Generic Button instantiation
 -----------------------------------
-   local obj = {}
-   obj = _G.frostmoon.new(args, obj)
+   for k,v in pairs(self._defaults) do
+      if args[k] ~= nil then
+         self[k] = args[k]
+      else
+         self[k] = self._defaults[k]
+      end
+   end
 -----------------------------------
-   return obj
+   return self
 end
 
-local t ={}
-t.new = new
-
-return t
+return Button

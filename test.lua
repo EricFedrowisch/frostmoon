@@ -38,7 +38,7 @@ test_args.component.subcomponent = subcomponent
 d.line()
 ------------------------------------------
 local test_obj= {}
-test_obj = f.new(test_args, test_obj)
+test_obj = f.Component:new(test_args, test_obj)
 print("TEST OBJECT:")
 d.line()
 ------------------------------------------
@@ -50,6 +50,8 @@ print(test_obj.component, "Test Component Memory Location")
 print(test_obj.component.subcomponent, "Test Subcomponent Memory Location")
 d.line()
 ------------------------------------------
+print(test_obj.component.new==f.Component.new)
+--[[
 print(test_obj.component._container, "Component Container")
 print(test_obj.component.subcomponent._container, "Subcomponent Container")
 d.line()
@@ -79,3 +81,4 @@ print("Mem Usage After Destruction:", d.mem_use())
 d.line()
 print("test_obj._uuid", test_obj._uuid)
 print("test_obj._container",test_obj._container)
+]]
