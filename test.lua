@@ -45,40 +45,50 @@ d.line()
 d.tprint(test_obj)
 d.line()
 ------------------------------------------
+print("CONTAINER TESTS:")
 print(test_obj, "TestObj Memory Location")
 print(test_obj.component, "Test Component Memory Location")
 print(test_obj.component.subcomponent, "Test Subcomponent Memory Location")
-d.line()
 ------------------------------------------
-print(test_obj.component.new==f.Component.new)
---[[
 print(test_obj.component._container, "Component Container")
 print(test_obj.component.subcomponent._container, "Subcomponent Container")
-d.line()
 ------------------------------------------
 print("test_obj == test_obj.component._container", test_obj == test_obj.component._container)
 print("test_obj.component == test_obj.component.subcomponent._container", test_obj.component == test_obj.component.subcomponent._container)
 d.line()
 ------------------------------------------
+print("UUID TESTS:")
 print("Object Instances By Type:")
 d.kprint(f.instances); print("")
-for k,v in pairs(f.instances) do d.kprint(v) end
-print(d.kcount(f.instances["data.object"]))
+for k,v in pairs(f.instances) do
+   d.kprint(v)
+end
 d.line()
 ------------------------------------------
+print("OBJECT DESTRUCTION TESTS:")
 collectgarbage ( "collect")--Do a full garbage collection.
 collectgarbage ( "collect")--No, but seriously...FULL gc.
 --collectgarbage ( "collect")
-print("Mem Usage Before Destruction:", d.mem_use())
+local before, after = d.mem_use(), d.mem_use()
+print("Mem Usage Before Destruction:", before)
+print("Instances BEFORE destruction code invoked:")
+print("data.object Type count:",d.kcount(f.instances["data.object"]))
+d.tprint(f.instances)
+d.line()
+
 print("Object Destruction Test:")
-test_obj.component._destroy_self(test_obj.component.self)
+print("Destroying: test_obj.component", test_obj.component.component_type)
+test_obj.component:_destroy_self()
 test_obj.component = nil
-for k,v in pairs(f.instances) do d.kprint(v) end
-print(d.kcount(f.instances["data.object"]))
---d.tprint(f.instances)
+print("data.object Type count:",d.kcount(f.instances["data.object"]))
+print("Instances AFTER destruction code invoked:")
+d.tprint(f.instances)
+--for k,v in pairs(f.instances) do d.kprint(v) end
+d.tprint(f.instances)
 collectgarbage ( "collect")
-print("Mem Usage After Destruction:", d.mem_use())
+after = d.mem_use()
+print("Mem Usage After Destruction:", after)
+print("Before:", before, "After:", after)
 d.line()
 print("test_obj._uuid", test_obj._uuid)
 print("test_obj._container",test_obj._container)
-]]

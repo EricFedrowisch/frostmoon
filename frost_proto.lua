@@ -73,7 +73,7 @@ function Component:_destroy_self()
          _G.frostmoon.instances._uuid[self._uuid]=nil
       end
       for k,v in pairs(self) do
-         if k ~= "_container" and k ~= "self" then
+         if k ~= "_container" and k ~= "self" and k ~= "__index" then
             if type(v) == "table" then
                if v.component_type then
                   v:_destroy_self()
@@ -90,6 +90,11 @@ function Component:_destroy_self()
    end
    self = nil
 end
+
+function Component:valid_ctype(component_type)
+   return _G.frostmoon.components[component_type]
+end
+
 ------------------------------------------
 --[[
 Takes:
@@ -100,29 +105,23 @@ Returns:
 --]]
 function Component:new(args, container)
    local obj = {}
-   if _G.frostmoon.components[args.component_type] then
-      obj._container = container
+   if Component:valid_ctype(args.component_type) then
       setmetatable(obj, {__index=Component})
+      obj._uuid = uuid()
+      _G.frostmoon.instances._uuid[obj._uuid]=obj --Register UUID
+      _G.frostmoon.instances[args.component_type][obj._uuid] = obj --Keep track of instances for Broadcasts
+      obj._container = container
    end
-   for k,v in pairs(args) do --For each arg, try to use it
+   for k,v in pairs(args) do
       if type(v) == "table" then
-         if _G.frostmoon.components[v.component_type] then --If existing component
-            obj[k] = _G.frostmoon.Component:new(v)
-            obj[k] = _G.frostmoon.components[v.component_type]:new(v) --then make it
-            obj[k]._container = obj
-            obj[k]._uuid = uuid()
-            _G.frostmoon.instances._uuid[obj[k]._uuid]=obj[k] --Register UUID
-            obj[k].self = obj[k]
-            _G.frostmoon.instances[v.component_type][obj[k]._uuid] = obj --Keep track of instances for Broadcasts
-         elseif  v.component_type == nil then --If table, but not component
-            obj[k] = Component:new(v) --then call new
-         end
-      else --If not table, then not component
-         obj[k] = v
+         obj[k]=Component:new(v, obj)
+      else
+         obj[k]=v
       end
    end
-  return obj
+   return obj
 end
+
 
 exports.component_prototype = Component
 
@@ -133,6 +132,6 @@ exports.Message = Message
 return export()
 --[[
 FrostMoon, cross platform Composition Based Object Factory and GUI library
-targeting iOS, OSX and Windows 10
+targeting iOS, OS X and Windows 10
 Copyright Aug. 9th, 2018 Eric Fedrowisch All rights reserved.
 --]]
