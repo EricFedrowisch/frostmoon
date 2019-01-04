@@ -72,15 +72,15 @@ collectgarbage ( "collect")--No, but seriously...FULL gc.
 local before, after = d.mem_use(), d.mem_use()
 print("Mem Usage Before Destruction:", before)
 print("Instances BEFORE destruction code invoked:")
-print("data.object Type count:",d.kcount(f.instances["data.object"]))
+print("data.object Type count:",d.kcount(f.instances["gui.button"]))
 d.tprint(f.instances)
 d.line()
 
 print("Object Destruction Test:")
 print("Destroying: test_obj.component", test_obj.component.component_type)
-test_obj.component:_destroy_self()
-test_obj.component = nil
-print("data.object Type count:",d.kcount(f.instances["data.object"]))
+test_obj.component.subcomponent:_destroy_self()
+test_obj.component.subcomponent = nil
+print("data.object Type count:",d.kcount(f.instances["gui.button"]))
 print("Instances AFTER destruction code invoked:")
 d.tprint(f.instances)
 --for k,v in pairs(f.instances) do d.kprint(v) end
