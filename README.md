@@ -22,7 +22,7 @@ local Component = {}
 
 Component.defaults = {
    ["default1"] = "A default",
-   ["default2"] = "Another default",
+   ["default2"] = "Another default"
 }
 
 return Component
