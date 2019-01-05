@@ -25,7 +25,7 @@ Component.defaults = {
    ["default2"] = "Another default",
 }
 
-return Object
+return Component
 ```
 You should probably make sure that your defaults cover at least the minimum to safely instantiate a component of that type.
 - If you want your class to have class methods, you can add them like so:
