@@ -3,9 +3,9 @@ FrostMoon, cross platform Composition Based Object Factory and GUI library
 targeting iOS, OSX and Windows 10
 Copyright Aug. 9th, 2018 Eric Fedrowisch All rights reserved.
 ## Frostmoon Terminology
--Object versus Component vesus Table:
+- Object versus Component vesus Table:
 Frostmoon is written in Lua, where the only data structure is the table. So both what I call Objects and Components are tables. The difference between the two in Frostmoon is that Objects usually are simple tables that are made to be the top level containers of Components. Components don't HAVE to be contained in Objects though and Components can contain other Components. When tables are mentioned, they are usually meant in the strict sense of an actual Lua table.
--Class versus Module versus Component:
+- Class versus Module versus Component:
 All Components must have a Class. That class is in the form of a .lua file with the Class name. All the classes are loaded as modules during after frostmoon.lua is required.
 ## Loading components
 To load a component, put it in the "components" directory in top level directory where Frostmoon.lua resides. The default location can be overriden by changing the "component_dir" variable in Frostmoon.lua. Frostmoon will go through all the folders and subfolders in the component directory, loading all .lua files it finds as components.
