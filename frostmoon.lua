@@ -18,6 +18,7 @@ end
 
 
 ------------------------------------------
+local Component = {}
 local frost_load = require("frost_load")
 local instances = {["_uuid"] = {}}
 
@@ -25,8 +26,7 @@ exports.instances = instances
 exports.components = frost_load.components
 
 local frost_proto = require("frost_proto")
-local Component = frost_proto.component_prototype
-exports.Component = Component
+exports.Component = frost_proto.component_prototype
 local Message = frost_proto.Message
 exports.Message = Message
 
@@ -34,4 +34,5 @@ for k,v in pairs(exports.components) do --For each component type...
    exports.instances[k] = {} --Create tables to store component instance uuids by component type
    setmetatable(v, {__index = exports.Component})
 end
+_G.frostmoon = export()
 return export()

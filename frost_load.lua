@@ -12,7 +12,6 @@ local lfs = require("lfs")
 local component_dir = "components" --Directory from which to recursively load components
 
 ------------------------------------------
-local component_dir = "components" --Directory from which to recursively load components
 local os_sep = package.config:sub(1,1) --Get the OS file path seperator
 local lib_string = ";" .. lfs.currentdir() .. os_sep .. "lib" .. os_sep .. "?.lua"
 local socket_lib = ";" .. lfs.currentdir() .. os_sep .. "lib" .. os_sep .. "socket" .. os_sep .. "?.lua"

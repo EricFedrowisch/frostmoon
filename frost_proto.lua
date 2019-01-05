@@ -106,11 +106,15 @@ Returns:
 function Component:new(args, container)
    local obj = {}
    if Component:valid_ctype(args.component_type) then
-      setmetatable(obj, {__index=Component})
+      setmetatable(obj, {__index=_G.frostmoon.components[args.component_type]})
       obj._uuid = uuid()
       _G.frostmoon.instances._uuid[obj._uuid]=obj --Register UUID
       _G.frostmoon.instances[args.component_type][obj._uuid] = obj --Keep track of instances for Broadcasts
       obj._container = container
+      local defaults = _G.frostmoon.components[args.component_type].defaults
+      if defaults then
+         for k,v in pairs(defaults) do obj[k]=v end
+      end
    end
    for k,v in pairs(args) do
       if type(v) == "table" then
@@ -121,10 +125,7 @@ function Component:new(args, container)
    end
    return obj
 end
-
-
 exports.component_prototype = Component
-
 
 local Message = {}
 exports.Message = Message

@@ -1,10 +1,8 @@
 if package.config:sub(1,1) == "/" then os.execute("clear") end
 
-frostmoon = require("frostmoon")
-local f = frostmoon
+local f = require("frostmoon")
 local d = require("frost_debug")
 local test_args = {}
-local s = require("socket")
 
 --test_args.a = nil
 test_args.b = true
@@ -75,7 +73,8 @@ print("Instances BEFORE destruction code invoked:")
 print("data.object Type count:",d.kcount(f.instances["gui.button"]))
 d.tprint(f.instances)
 d.line()
-
+test_obj.component.subcomponent:push()
+d.line()
 print("Object Destruction Test:")
 print("Destroying: test_obj.component", test_obj.component.component_type)
 test_obj.component.subcomponent:_destroy_self()
@@ -83,7 +82,7 @@ test_obj.component.subcomponent = nil
 print("data.object Type count:",d.kcount(f.instances["gui.button"]))
 print("Instances AFTER destruction code invoked:")
 d.tprint(f.instances)
---for k,v in pairs(f.instances) do d.kprint(v) end
+for k,v in pairs(f.instances) do d.kprint(v) end
 d.tprint(f.instances)
 collectgarbage ( "collect")
 after = d.mem_use()
