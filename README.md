@@ -1,7 +1,9 @@
 # Frostmoon
-FrostMoon, cross platform Composition Based Object Factory and GUI library
-targeting iOS, OSX and Windows 10
+Frostmoon, cross platform Composition Based Object Factory and GUI library
+targeting iOS, OS X and Windows 10
 Copyright Aug. 9th, 2018 Eric Fedrowisch All rights reserved.
+## Introduction
+Frostmoon is meant to be a data driven object oriented library for Lua that runs on iOS, OS X and Windows 10. The goal is to make complex programs more easily possible. With Frostmoon it should be able to create a program by specifying object classes and the arguments to create instances of them.
 ## Frostmoon Terminology
 - Object versus Component vesus Table:
 Frostmoon is written in Lua, where the only data structure is the table. So both what I call Objects and Components are tables. The difference between the two in Frostmoon is that Objects usually are simple tables that are made to be the top level containers of Components. Components don't HAVE to be contained in Objects though and Components can contain other Components. When tables are mentioned, they are usually meant in the strict sense of an actual Lua table.
