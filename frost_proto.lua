@@ -15,47 +15,96 @@ uuid.randomseed(socket.gettime()*10000)
 
 local Component = {}
 
-function Component:_receive_msg(msg)
+function Component:handle_event(msg)
    return nil
 end
 
-function Component:_direct_message(target, msg)
-   return target:_receive_message(msg)
+function Component:receive_msg(msg)
+   local response = nil
+   if self.event_types ~= nil then
+      if self.event_types[msg.type] then
+         response = self:handle_event(msg)
+      end
+   end
+   return response
 end
 
-function Component:_broadcast(msg)
+function Component:direct_msg(target, msg, uuid_mode)
+   local response = nil
+   if uuid_mode ~= nil then
+      if _G.frostmoon.instances._uuid[target] ~= nil then
+         response = _G.frostmoon.instances._uuid[target]:receive_msg(msg)
+      end
+   else
+      if target ~= nil then
+         response = target:receive_msg(msg)
+      end
+   end
+   return response
+end
+
+function Component:broadcast(msg)
    local responses = {}
    for k,v in pairs(_G.frostmoon.instances._uuid) do
-      responses[k]=self:_direct_message(v, msg) --Not sure oop syntax here works
+      responses[k]=v:receive_msg(msg)
    end
    return responses
 end
 
-function Component:_broadcast_up(msg)
+function Component:broadcast_type(type, msg)
+   local responses = {}
+   if _G.frostmoon.instances[type] ~= nil then
+      for k,v in pairs(_G.frostmoon.instances[type]) do
+         responses[k]=v:receive_msg(msg)
+      end
+   end
+   return responses
+end
+
+function Component:broadcast_up(msg)
    local response = nil
    local current_container = self._container
    while (response == nil and current_container ~= nil) do
-      if current_container.component_type then
-         response = current_container:_direct_message(msg)
+      if current_container.component_type ~= nil then
+         response = current_container:receive_msg(msg)
       end
       current_container = current_container._container
    end
+   return response
 end
 
-function Component:_broadcast_down(self, msg)
-   return nil
+function Component:broadcast_down(msg)
+   local responses = {}
+   for k,v in pairs(self) do
+      if type(v) == "table" then
+         if v.component_type ~= nil then
+            responses[v._uuid]=v:receive_msg(msg)
+         end
+      end
+   end
+   return responses
 end
 
-function Component:_broadcast_lateral(self, msg)
-   return nil
+function Component:broadcast_lateral(msg)
+   local responses = {}
+   if self._container ~= nil then
+      for k,v in pairs(self._container) do
+         if v ~= self then
+            if type(v) == "table" then
+               if v.component_type ~= nil then
+                  if _G.frostmoon.instances[v.component_type] ~= nil then
+                     responses[v._uuid]=v:receive_msg(msg)
+                  end
+               end
+            end
+         end
+      end
+   end
+   return responses
 end
 
-function Component:_query_state(target, var)
-   return nil
-end
-
-function Component:_query_var(target, var)
-   return nil
+function Component:query_state(var)
+   return self[var]
 end
 
 --[[
