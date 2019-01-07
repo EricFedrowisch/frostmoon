@@ -15,15 +15,11 @@ uuid.randomseed(socket.gettime()*10000)
 
 local Component = {}
 
-function Component:handle_event(msg)
-   return nil
-end
-
 function Component:receive_msg(msg)
    local response = nil
    if self.event_types ~= nil then
       if self.event_types[msg.type] then
-         response = self:handle_event(msg)
+         response = self.event_types[msg.type](self,msg)
       end
    end
    return response

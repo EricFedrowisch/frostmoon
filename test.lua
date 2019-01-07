@@ -100,7 +100,6 @@ local function msg_test(verbose)
    }
    print("Receive Tests:")
    test_obj.component.subcomponent:receive_msg(msg)
-   test_obj.component.subcomponent:receive_msg(msg)
    d.line()
    print("Direct Message Tests:")
    test_obj.component:direct_msg(test_obj.component.subcomponent,msg)
