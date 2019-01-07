@@ -15,6 +15,18 @@ uuid.randomseed(socket.gettime()*10000)
 
 local Component = {}
 
+--Check if target is a valid and properly initialized Component
+function Component:check_component(target)
+   if target ~= nil then
+      if type(target) == "table" then
+         if _G.frostmoon.components[target.component_type] then
+            return true
+         end
+      end
+   end
+   return false
+end
+
 function Component:receive_msg(msg)
    local response = nil
    if self.event_types ~= nil then
@@ -25,16 +37,18 @@ function Component:receive_msg(msg)
    return response
 end
 
-function Component:direct_msg(target, msg, uuid_mode)
+function Component:direct_msg(target, msg)
    local response = nil
-   if uuid_mode ~= nil then
-      if _G.frostmoon.instances._uuid[target] ~= nil then
-         response = _G.frostmoon.instances._uuid[target]:receive_msg(msg)
-      end
-   else
-      if target ~= nil then
+   if Component:check_component(target) then
          response = target:receive_msg(msg)
-      end
+   end
+   return response
+end
+
+function Component:uuid_msg(uuid, msg)
+   local response = nil
+   if Component:check_component(_G.frostmoon.instances._uuid[uuid]) then
+      response = _G.frostmoon.instances._uuid[target]:receive_msg(msg)
    end
    return response
 end
@@ -72,10 +86,8 @@ end
 function Component:broadcast_down(msg)
    local responses = {}
    for k,v in pairs(self) do
-      if type(v) == "table" then
-         if v.component_type ~= nil then
-            responses[v._uuid]=v:receive_msg(msg)
-         end
+      if Component:check_component(v) then
+         responses[v._uuid]=v:receive_msg(msg)
       end
    end
    return responses
@@ -86,12 +98,8 @@ function Component:broadcast_lateral(msg)
    if self._container ~= nil then
       for k,v in pairs(self._container) do
          if v ~= self then
-            if type(v) == "table" then
-               if v.component_type ~= nil then
-                  if _G.frostmoon.instances[v.component_type] ~= nil then
-                     responses[v._uuid]=v:receive_msg(msg)
-                  end
-               end
+            if Component:check_component(v) then
+               responses[v._uuid]=v:receive_msg(msg)
             end
          end
       end
