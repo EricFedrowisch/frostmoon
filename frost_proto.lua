@@ -1,9 +1,15 @@
+--[[
+FrostMoon, cross platform Composition Based Object Factory and GUI library
+targeting iOS, OSX and Windows 10
+Copyright Aug. 9th, 2018 Eric Fedrowisch All rights reserved.
+--]]
+------------------------------------------
+
 --"Table of Contents" for exports of the module
 local exports = {} --Temp storage for exported functionality
 local function export()
    return {
       component_prototype = exports.component_prototype,
-      Message = exports.Message,
           }
 end
 
@@ -16,7 +22,7 @@ uuid.randomseed(socket.gettime()*10000)
 local Component = {}
 
 --Check if target is a valid and properly initialized Component
-function Component:check_component(target)
+function Component:valid_component(target)
    if target ~= nil then
       if type(target) == "table" then
          if _G.frostmoon.components[target.component_type] then
@@ -39,7 +45,7 @@ end
 
 function Component:direct_msg(target, msg)
    local response = nil
-   if Component:check_component(target) then
+   if Component:valid_component(target) then
          response = target:receive_msg(msg)
    end
    return response
@@ -47,7 +53,7 @@ end
 
 function Component:uuid_msg(uuid, msg)
    local response = nil
-   if Component:check_component(_G.frostmoon.instances._uuid[uuid]) then
+   if Component:valid_component(_G.frostmoon.instances._uuid[uuid]) then
       response = _G.frostmoon.instances._uuid[target]:receive_msg(msg)
    end
    return response
@@ -86,7 +92,7 @@ end
 function Component:broadcast_down(msg)
    local responses = {}
    for k,v in pairs(self) do
-      if Component:check_component(v) then
+      if Component:valid_component(v) then
          responses[v._uuid]=v:receive_msg(msg)
       end
    end
@@ -98,7 +104,7 @@ function Component:broadcast_lateral(msg)
    if self._container ~= nil then
       for k,v in pairs(self._container) do
          if v ~= self then
-            if Component:check_component(v) then
+            if Component:valid_component(v) then
                responses[v._uuid]=v:receive_msg(msg)
             end
          end
@@ -179,9 +185,6 @@ function Component:new(args, container)
    return obj
 end
 exports.component_prototype = Component
-
-local Message = {}
-exports.Message = Message
 
 return export()
 --[[

@@ -1,3 +1,10 @@
+--[[
+FrostMoon, cross platform Composition Based Object Factory and GUI library
+targeting iOS, OSX and Windows 10
+Copyright Aug. 9th, 2018 Eric Fedrowisch All rights reserved.
+--]]
+------------------------------------------
+
 --"Table of Contents" for exports of the module
 local exports = {} --Temp storage for exported functionality
 local function export()

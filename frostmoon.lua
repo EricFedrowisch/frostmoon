@@ -3,6 +3,7 @@ FrostMoon, cross platform Composition Based Object Factory and GUI library
 targeting iOS, OSX and Windows 10
 Copyright Aug. 9th, 2018 Eric Fedrowisch All rights reserved.
 --]]
+------------------------------------------
 
 --"Table of Contents" for exports of the module
 local exports = {} --Temp storage for exported functionality
@@ -11,7 +12,6 @@ local function export()
       components = exports.components,    --Table of component types
       instances  = exports.instances,     --Table of component instances
       Component  = exports.Component,     --Base Component prototype
-      Message    = exports.Message,       --Base Inter-Component Message prototype
       new        = exports.Component.new  --Convenience binding of Component.new()
           }
 end
@@ -27,12 +27,12 @@ exports.components = frost_load.components
 
 local frost_proto = require("frost_proto")
 exports.Component = frost_proto.component_prototype
-local Message = frost_proto.Message
-exports.Message = Message
 
 for k,v in pairs(exports.components) do --For each component type...
    exports.instances[k] = {} --Create tables to store component instance uuids by component type
-   setmetatable(v, {__index = exports.Component})
+   setmetatable(v, {__index = exports.Component})--Makes dynamically loaded components inherit from Component
 end
-_G.frostmoon = export()
-return export()
+
+--This is here for a reason, even tho I don't like putting things in gloabl namespace.
+_G.frostmoon = export()--Basically needed to avoid null pointers in the Component code.
+return _G.frostmoon
