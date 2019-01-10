@@ -261,7 +261,32 @@ local function queue_test(verbose)
       d.tprint(test_q)
       d.line()
    end
+end
 
+local function q_peek_test(verbose)
+   local q = require("frost_queue")
+   local test_q = q_add_setup(verbose)
+   print("Next + 0:",test_q:peek())
+   d.line()
+   print("Next + 1:",test_q:peek(1))
+   d.line()
+   print("Next + 2:",test_q:peek(2))
+   d.line()
+   print("Next + 3:",test_q:peek(3))
+   d.line()
+   print("Next + 4:",test_q:peek(4))
+   d.line()
+end
+
+local function q_search_test(verbose)
+   local q = require("frost_queue")
+   local test_q = q_add_setup(verbose)
+   print("Find elements with 'Add' in them:")
+   local hits = test_q:search(string.find, "Add")
+   d.tprint(hits)
+   print("Find elements with '1' in them:")
+   local hits = test_q:search(string.find, "1")
+   d.tprint(hits)
 end
 
 
@@ -269,4 +294,6 @@ end
 --uuid_test(true)
 --destroy_test(true)
 --msg_test(true)
-queue_test(true)
+--queue_test(true)
+--q_peek_test(true)
+q_search_test(true)

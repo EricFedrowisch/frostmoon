@@ -59,9 +59,34 @@ function Queue:use()
    return msg
 end
 
---Look at next nth element without advancing the Q. Default is next element.
+--Look at (next + n) element without advancing the Q.
 function Queue:peek(n)
-   
+   local n = n or 0
+   if self.last_op == "stop" then return nil end --"stop" op means no further Q
+   if self.last_op == "init" then return self[self.read] end --redundant here to cover "init"?
+   local peek = (self.read + n) % self.size
+   if peek == 0 then peek = self.size end --Needed bc Lua's 1st element is 1 not 0
+   local abs = math.abs(self.read - self.write)
+   if abs < n then return nil end
+   return self[peek]
+end
+
+--Peek through elements in Q, returning table of elements that returned true
+--when passed to function "fun".
+function Queue:search(fun, fun_args)
+   local hits = {}
+   if fun ~= nil then --Gotta provide a function that returns a boolean
+      local n = 0
+      local peek = self:peek(n)
+      while peek ~= nil do
+         peek = self:peek(n)
+         if peek ~= nil then
+            if fun(peek, fun_args) then hits[#hits+1] = peek end
+         end
+         n = n + 1
+      end
+   end
+   return hits
 end
 
 --Split a Q into 2 or more Qs based on a filter function and return a table of the resulting Qs
