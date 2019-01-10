@@ -166,11 +166,107 @@ local function destroy_test(verbose)
    d.line()
 end
 
+local function q_add_setup(verbose)
+   local q = require("frost_queue")
+   local msgs = {"1st Add", "2nd Add", "3rd Add"}
+   if verbose then
+      print("Basic Non-Grow Required Q Test:")
+      d.line()
+      print("Init new Q:")
+   end
+   local test_q = q:new(3)
+   if verbose then
+      d.tprint(test_q)
+      d.line()
+      print("Add element...")
+   end
+   test_q:add(msgs[1])
+   if verbose then
+      d.tprint(test_q)
+      d.line()
+      print("Add element...")
+   end
+   test_q:add(msgs[2])
+   if verbose then
+      d.tprint(test_q)
+      d.line()
+      print("Add element...")
+   end
+   test_q:add(msgs[3])
+   if verbose then
+      d.tprint(test_q)
+      d.line()
+   end
+   return test_q
+end
 
 local function queue_test(verbose)
-   
+   local q = require("frost_queue")
+   local test_q = q_add_setup(verbose)
+   if verbose then
+      print("Add element...")
+      print("Should invoke grow here...")
+   end
+   test_q:add("Overrun")
+   if verbose then
+      d.tprint(test_q)
+      d.line()
+      print("Resetting Q to before overrun test...")
+   end
+   test_q = q_add_setup(false)
+   if verbose then
+      d.tprint(test_q)
+      d.line()
+      print("Use Tests:")
+   end
+   local use = test_q:use()
+   if verbose then
+      print("Use 1st = ", use)
+      d.tprint(test_q)
+      d.line()
+   end
+   use = test_q:use()
+   if verbose then
+      print("Use 2nd = ", use)
+      d.tprint(test_q)
+      d.line()
+   end
+   use = test_q:use()
+   if verbose then
+      print("Use 3rd = ", use)
+      d.tprint(test_q)
+      d.line()
+   end
+   use = test_q:use()
+   if verbose then
+      print("Use Nonexistent 4th = ", use)
+      d.tprint(test_q)
+      d.line()
+   end
+   test_q:add("4th")
+   if verbose then
+      print("Adding 4th")
+      d.tprint(test_q)
+      d.line()
+   end
+   use = test_q:use()
+   if verbose then
+      print("Use 4th = ", use)
+      d.tprint(test_q)
+      d.line()
+   end
+   use = test_q:use()
+   if verbose then
+      print("Use Nonexistent 5th = ", use)
+      d.tprint(test_q)
+      d.line()
+   end
+
 end
+
+
 --contain_test(true)
 --uuid_test(true)
 --destroy_test(true)
 --msg_test(true)
+queue_test(true)
