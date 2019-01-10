@@ -73,7 +73,7 @@ end
 
 --Peek through elements in Q, returning table of elements that returned true
 --when passed to function "fun".
-function Queue:search(fun, fun_args)
+function Queue:search(fun, ...)
    local hits = {}
    if fun ~= nil then --Gotta provide a function that returns a boolean
       local n = 0
@@ -81,7 +81,7 @@ function Queue:search(fun, fun_args)
       while peek ~= nil do
          peek = self:peek(n)
          if peek ~= nil then
-            if fun(peek, fun_args) then hits[#hits+1] = peek end
+            if fun(peek, ...) then hits[#hits+1] = peek end
          end
          n = n + 1
       end
