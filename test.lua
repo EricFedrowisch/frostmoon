@@ -200,20 +200,9 @@ local function q_add_setup(verbose)
    return test_q
 end
 
-local function queue_test(verbose)
+local function q_test(verbose)
    local q = require("frost_queue")
    local test_q = q_add_setup(verbose)
-   if verbose then
-      print("Add element...")
-      print("Should invoke grow here...")
-   end
-   test_q:add("Overrun")
-   if verbose then
-      d.tprint(test_q)
-      d.line()
-      print("Resetting Q to before overrun test...")
-   end
-   test_q = q_add_setup(false)
    if verbose then
       d.tprint(test_q)
       d.line()
@@ -263,9 +252,24 @@ local function queue_test(verbose)
    end
 end
 
-local function q_peek_test(verbose)
+local function q_overrun_setup(verbose)
    local q = require("frost_queue")
    local test_q = q_add_setup(verbose)
+   test_q:add("4, 1st Overrun")
+   if verbose then
+      d.tprint(test_q)
+      d.line()
+   end
+   test_q:add("5, 2nd Overrun")
+   if verbose then
+      d.tprint(test_q)
+      d.line()
+   end
+   return test_q
+end
+
+local function q_peek_test(verbose)
+   local test_q = queue_overrun_setup(verbose)
    print("Next + 0:",test_q:peek())
    d.line()
    print("Next + 1:",test_q:peek(1))
@@ -276,11 +280,12 @@ local function q_peek_test(verbose)
    d.line()
    print("Next + 4:",test_q:peek(4))
    d.line()
+   print("Next + 5:",test_q:peek(5))
+   d.line()
 end
 
 local function q_search_test(verbose)
-   local q = require("frost_queue")
-   local test_q = q_add_setup(verbose)
+   local test_q = q_overrun_setup(verbose)
    print("Find elements with 'Add' in them:")
    local hits = test_q:search(string.find, "Add")
    d.tprint(hits)
@@ -289,11 +294,22 @@ local function q_search_test(verbose)
    d.tprint(hits)
 end
 
+local function q_overrun_test(verbose)
+   local test_q = queue_overrun_setup(verbose)
+   local got = nil
+   for i=1,5 do
+      print("Use #" .. i)
+      print("Got " .. tostring(test_q:use()))
+      d.tprint(test_q)
+      d.line()
+   end
+end
 
 --contain_test(true)
 --uuid_test(true)
 --destroy_test(true)
 --msg_test(true)
---queue_test(true)
+--q_test(true)
 --q_peek_test(true)
-q_search_test(true)
+--q_search_test(true)
+--q_overrun_test(true)

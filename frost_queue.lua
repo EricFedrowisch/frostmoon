@@ -20,55 +20,85 @@ exports.queue = Queue
 --Make queues inherit from Component
 setmetatable(Queue , {__index = f.Component})
 
-function Queue:new(size, obj)
-   local q = obj or {} --Either make new Queue or use whatever is in obj
+function Queue:new(size)
+   local q = {}
    setmetatable(q , {__index = Queue}) --Make Queue instance inherit from Queue
-   q.read = q.read or 1 --Either use old read or make new one at index 1
+   q.elements = {}
+   q.read = 1
    q.size = size
-   q.write = q.write or q.size
+   q.write = size
    q.last_op = "init"
    return q
 end
 
 --Add and element to the Q, growing the Q size if needed.
 function Queue:add(msg)
-   local add = (self.write + 1) % self.size
-   if add == 0 then add = self.size end --Needed bc Lua's 1st element is 1 not 0
-   if self.last_op == "add" and add == self.read then
-      --We have a problem, unhandled messages are being overwritten
-      print("DEBUG STUB: INVOKE GROW HERE")
+   if self.cascade then --If you have an overflow q, then add to that not this.
+      self.cascade:add(msg)
+      self.last_op = "add"
+   else
+      local add = (self.write + 1) % self.size
+      if add == 0 then add = self.size end --Needed bc Lua's 1st element is 1 not 0
+      if self.last_op == "add" and add == self.read then
+         --We have a problem, time to grow
+         self.cascade = self:new(self.size * 2) --Make a new, bigger Q
+         self.cascade:add(msg)
+         self.last_op = "add"
+         return
+      end
+      self.elements[add] = msg
+      self.write = add
+      self.last_op = "add"
    end
-   self[add] = msg
-   self.write = add
-   self.last_op = "add"
+end
+
+function Queue:grow()
+   self.elements = self.cascade.elements
+   self.read = 1
+   self.write = self.cascade.write
+   self.last_op = "use"
+   self.size = self.cascade.size
+   if self.cascade.cascade ~= nil then
+      self.cascade = self.cascade.cascade
+   end
+   self.cascade = nil
 end
 
 --Use/process next element of Q
 function Queue:use()
    local msg = nil
    if self.last_op ~= "stop" then
-      msg = self[self.read]
+      msg = self.elements[self.read]
       if self.read == self.write then
          self.last_op = "stop"
+         if self.cascade ~= nil then self:grow() end
       else
          self.last_op = "use"
+         self.read = (self.read + 1) % self.size
+         if self.read == 0 then self.read = self.size end --Needed bc Lua's 1st element is 1 not 0
       end
-      self.read = (self.read + 1) % self.size
-      if self.read == 0 then self.read = self.size end --Needed bc Lua's 1st element is 1 not 0
    end
    return msg
 end
 
 --Look at (next + n) element without advancing the Q.
-function Queue:peek(n)
-   local n = n or 0
+function Queue:peek(nth)
+   local n = nth or 0
    if self.last_op == "stop" then return nil end --"stop" op means no further Q
-   if self.last_op == "init" then return self[self.read] end --redundant here to cover "init"?
-   local peek = (self.read + n) % self.size
-   if peek == 0 then peek = self.size end --Needed bc Lua's 1st element is 1 not 0
+   if self.last_op == "init" then return self.elements[self.read] end --redundant here to cover "init"?
    local abs = math.abs(self.read - self.write)
-   if abs < n then return nil end
-   return self[peek]
+   if n > abs and self.cascade ~= nil then
+      return self.cascade:peek(n-abs-1)
+   end
+   local element = nil
+   if abs < n then
+      element = nil
+   else
+      local peek = (self.read + n) % self.size
+      if peek == 0 then peek = self.size end --Needed bc Lua's 1st element is 1 not 0
+      element = self.elements[peek]
+   end
+   return element
 end
 
 --Peek through elements in Q, returning table of elements that returned true
@@ -90,11 +120,11 @@ function Queue:search(fun, ...)
 end
 
 --Split a Q into 2 or more Qs based on a filter function and return a table of the resulting Qs
-function Queue:split(q, filter)
+function Queue:split(q, filter, ...)
 end
 
 --Merge two Qs using function or do a simple merge of b becomes a's tail if none given
-function Queue:merge(a,b,fun)
+function Queue:merge(a, b, fun, ...)
 end
 
 --Doooo stuff?
@@ -102,7 +132,7 @@ function Queue:update()
 end
 
 --Return Q which has had fnctn called on all its elements. Elements may be transformed.
-function Queue:map(fnctn)
+function Queue:map(fun, ...)
 end
 
 return export()
