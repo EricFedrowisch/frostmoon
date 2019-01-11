@@ -60,8 +60,9 @@ function Queue:grow()
    self.size = self.cascade.size
    if self.cascade.cascade ~= nil then
       self.cascade = self.cascade.cascade
+   else
+      self.cascade = nil
    end
-   self.cascade = nil
 end
 
 --Use/process next element of Q
