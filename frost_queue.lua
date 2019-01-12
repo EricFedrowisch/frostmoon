@@ -120,15 +120,39 @@ function Queue:search(fun, ...)
    return hits
 end
 
---Split a Q into 2 or more Qs based on a filter function and return a table of the resulting Qs
-function Queue:split(q, filter, ...)
+--Split a Q into 2 Qs based on an element filter function and return a table of the resulting Qs
+function Queue:split(filter, ...)
+   local a, b = {}, {}
+   if filter ~= nil then --Gotta provide a function that returns a boolean
+      local n = 0
+      local peek = self:peek(n)
+      while peek ~= nil do
+         peek = self:peek(n)
+         if peek ~= nil then
+            if filter(peek, ...) then
+               a[#a+1] = peek
+            else
+               b[#b+1] = peek
+            end
+         end
+         n = n + 1
+      end
+   end
+   --Make two new Qs
+   local q_a = Queue:new(#a*2)
+   local q_b = Queue:new(#b*2)
+   q_a.write = #a
+   q_b.write = #b
+   q_a.elements = a
+   q_b.elements = b
+   return q_a, q_b
 end
 
 --Merge two Qs using function or do a simple merge of b becomes a's tail if none given
 function Queue:merge(a, b, fun, ...)
 end
 
---Doooo stuff?
+--Check if Q has been changed since last update call.
 function Queue:update()
 end
 

@@ -305,6 +305,17 @@ local function q_overrun_test(verbose)
    end
 end
 
+
+local function q_split_test(verbose)
+   local test_q = q_overrun_setup(verbose)
+   local a,b = test_q:split(string.find, "1")
+   print("Q A, matches filter: 'string.find, 1")
+   d.tprint(a)
+   print("Q B, does not match filter: 'string.find, 1")
+   d.tprint(b)
+   print("Original Q Should be unchanged:")
+   d.tprint(test_q)
+end
 --contain_test(true)
 --uuid_test(true)
 --destroy_test(true)
@@ -313,3 +324,4 @@ end
 --q_peek_test(true)
 --q_search_test(true)
 --q_overrun_test(true)
+q_split_test(true)
