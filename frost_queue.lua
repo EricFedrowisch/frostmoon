@@ -28,11 +28,13 @@ function Queue:new(size)
    q.size = size
    q.write = size
    q.last_op = "init"
+   q.updated = false
    return q
 end
 
 --Add and element to the Q, growing the Q size if needed.
 function Queue:add(msg)
+   self.updated = true
    if self.cascade then --If you have an overflow q, then add to that not this.
       self.cascade:add(msg)
       self.last_op = "add"
@@ -67,6 +69,7 @@ end
 
 --Use/process next element of Q
 function Queue:use()
+   self.updated = true
    local msg = nil
    if self.last_op ~= "stop" then
       msg = self.elements[self.read]
@@ -104,15 +107,15 @@ end
 
 --Peek through elements in Q, returning table of elements that returned true
 --when passed to function "fun".
-function Queue:search(fun, ...)
+function Queue:search(filter, ...)
    local hits = {}
-   if fun ~= nil then --Gotta provide a function that returns a boolean
+   if filter ~= nil then --Gotta provide a function that returns a boolean
       local n = 0
       local peek = self:peek(n)
       while peek ~= nil do
          peek = self:peek(n)
          if peek ~= nil then
-            if fun(peek, ...) then hits[#hits+1] = peek end
+            if filter(peek, ...) then hits[#hits+1] = peek end
          end
          n = n + 1
       end
@@ -154,6 +157,11 @@ end
 
 --Check if Q has been changed since last update call.
 function Queue:update()
+   if self.updated then
+      self.updated = false
+      return true
+   end
+   return false
 end
 
 --Return Q which has had fnctn called on all its elements. Elements may be transformed.
