@@ -54,9 +54,9 @@ function Queue:add(msg)
    end
 end
 
-function Queue:grow()
+function Queue:grow(read_pos)
    self.elements = self.cascade.elements
-   self.read = 1
+   self.read = read_pos or 1
    self.write = self.cascade.write
    self.last_op = "use"
    self.size = self.cascade.size
@@ -151,8 +151,28 @@ function Queue:split(filter, ...)
    return q_a, q_b
 end
 
---Merge two Qs using function or do a simple merge of b becomes a's tail if none given
+--Merge two Qs using a simple merge where b becomes a's tail. Optionally merge using function.
 function Queue:merge(a, b, fun, ...)
+   local merged = Queue:new(a.size + b.size)
+   if fun ~= nil then
+      merged = fun(a, b, ...)
+   else
+      local n = 0
+      local peek = a:peek(n)
+      while peek ~= nil do
+         merged:add(peek)
+         n = n + 1
+         peek = a:peek(n)
+      end
+      n = 0
+      peek = b:peek(n)
+      while peek ~= nil do
+         merged:add(peek)
+         n = n + 1
+         peek = b:peek(n)
+      end
+   end
+   return merged
 end
 
 --Check if Q has been changed since last update call.
@@ -164,8 +184,18 @@ function Queue:update()
    return false
 end
 
---Return Q which has had fnctn called on all its elements. Elements may be transformed.
+--Return Q which has had function called on all its elements.
 function Queue:map(fun, ...)
+   local map_q = self:new(self.size)
+   local n = 0
+   local peek = self:peek(n)
+   while peek ~= nil do
+      local mapped = fun(peek, ...)
+      map_q:add(mapped)
+      n = n + 1
+      peek = self:peek(n)
+   end
+   return map_q
 end
 
 return export()

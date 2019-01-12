@@ -342,6 +342,50 @@ local function q_update_test(verbose)
    print(test_q:update())
 end
 
+local function q_merge_test(verbose)
+   local q = require("frost_queue")
+   local a_msgs = {"1st Add", "2nd Add", "3rd Add", "QA Over 1", "QA Over 2"}
+   local b_msgs = {"1st Add", "2nd Add", "3rd Add", "QB Over 1", "QB Over 2"}
+   local q_a = q:new(3)
+   q_a:add(a_msgs[1])
+   q_a:add(a_msgs[2])
+   q_a:add(a_msgs[3])
+   q_a:add(a_msgs[4])
+   q_a:add(a_msgs[5])
+   local q_b = q:new(3)
+   q_b:add(b_msgs[1])
+   q_b:add(b_msgs[2])
+   q_b:add(b_msgs[3])
+   q_b:add(b_msgs[4])
+   q_b:add(b_msgs[5])
+   local merged_q = q.queue:merge(q_a, q_b)
+   d.tprint(merged_q)
+   local use = merged_q:use()
+   while use ~= nil do
+      print(use)
+      use = merged_q:use()
+   end
+   d.tprint(merged_q)
+end
+
+local function q_map_test(verbose)
+   local q = require("frost_queue")
+   local function test_function(x)
+      return x + 5
+   end
+   local map_q = q:new(3)
+   map_q:add(5)
+   map_q:add(10)
+   map_q:add(15)
+   map_q:add(20)
+   d.tprint(map_q)
+   d.line()
+   local mapped = map_q:map(test_function)
+   d.tprint(mapped)
+
+
+end
+
 local verbose = true
 --contain_test(verbose)
 --uuid_test(verbose)
@@ -352,4 +396,6 @@ local verbose = true
 --q_search_test(verbose)
 --q_overrun_test(verbose)
 --q_split_test(verbose)
- q_update_test(verbose)
+ --q_update_test(verbose)
+--q_merge_test(verbose)
+q_map_test(verbose)
