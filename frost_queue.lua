@@ -24,9 +24,10 @@ function Queue:new(size)
    local q = {}
    setmetatable(q , {__index = Queue}) --Make Queue instance inherit from Queue
    q.elements = {}
-   q.read = 1
+   q.read = 1 --Next element to read, internal. Leave alone
    q.size = size
-   q.write = size
+   q.written = size --Internal write variable. Leave alone
+   q.next_write = nil --Commit is the last position written to
    q.last_op = "init"
    q.updated = false
    return q
@@ -39,7 +40,7 @@ function Queue:add(msg)
       self.cascade:add(msg)
       self.last_op = "add"
    else
-      local add = (self.write + 1) % self.size
+      local add = (self.written + 1) % self.size
       if add == 0 then add = self.size end --Needed bc Lua's 1st element is 1 not 0
       if self.last_op == "add" and add == self.read then
          --We have a problem, time to grow
@@ -49,7 +50,9 @@ function Queue:add(msg)
          return
       end
       self.elements[add] = msg
-      self.write = add
+      self.written = add
+      self.next_write = (self.written + 1) % self.size
+      if self.next_write == 0 then self.next_write = self.size end
       self.last_op = "add"
    end
 end
@@ -57,7 +60,7 @@ end
 function Queue:grow(read_pos)
    self.elements = self.cascade.elements
    self.read = read_pos or 1
-   self.write = self.cascade.write
+   self.written = self.cascade.written
    self.last_op = "use"
    self.size = self.cascade.size
    if self.cascade.cascade ~= nil then
@@ -73,7 +76,7 @@ function Queue:use()
    local msg = nil
    if self.last_op ~= "stop" then
       msg = self.elements[self.read]
-      if self.read == self.write then
+      if self.read == self.written then
          self.last_op = "stop"
          if self.cascade ~= nil then self:grow() end
       else
@@ -90,7 +93,7 @@ function Queue:peek(nth)
    local n = nth or 0
    if self.last_op == "stop" then return nil end --"stop" op means no further Q
    if self.last_op == "init" then return self.elements[self.read] end --redundant here to cover "init"?
-   local abs = math.abs(self.read - self.write)
+   local abs = math.abs(self.read - self.written)
    if n > abs and self.cascade ~= nil then
       return self.cascade:peek(n-abs-1)
    end
@@ -144,8 +147,8 @@ function Queue:split(filter, ...)
    --Make two new Qs
    local q_a = Queue:new(#a*2)
    local q_b = Queue:new(#b*2)
-   q_a.write = #a
-   q_b.write = #b
+   q_a.written = #a
+   q_b.written = #b
    q_a.elements = a
    q_b.elements = b
    return q_a, q_b
