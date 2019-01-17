@@ -11,6 +11,7 @@ local exports = {} --Temp storage for exported functionality
 local function export()
    return {iprint = exports.iprint, --Print a table's ipairs
            kprint = exports.kprint, --Print all a table's keys, value pairs
+           vprint = exports.vprint, --Print just a table's ipair values.
            line = exports.line,     --Print a line to divide up output visually
            tprint = exports.tprint, --Print a table's values recursively indented
            ttest = exports.ttest,   --Return boolean of table-ness and error message if need
@@ -36,6 +37,15 @@ local function table_test(t)
 end
 exports.ttest = table_test
 
+local function vprint(t)
+   local ttest = {table_test(t)}
+   if ttest[1] then
+      for i,v in ipairs(t) do print(v) end
+   else
+      print(ttest[2])
+   end
+end
+exports.vprint = vprint
 
 local function iprint(t)
    local ttest = {table_test(t)}

@@ -54,7 +54,7 @@ end
 function Component:uuid_msg(uuid, msg)
    local response = nil
    if Component:valid_component(_G.frostmoon.instances._uuid[uuid]) then
-      response = _G.frostmoon.instances._uuid[target]:receive_msg(msg)
+      response = _G.frostmoon.instances._uuid[uuid]:receive_msg(msg)
    end
    return response
 end

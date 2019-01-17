@@ -269,7 +269,7 @@ local function q_overrun_setup(verbose)
 end
 
 local function q_peek_test(verbose)
-   local test_q = queue_overrun_setup(verbose)
+   local test_q = q_overrun_setup(verbose)
    print("Next + 0:",test_q:peek())
    d.line()
    print("Next + 1:",test_q:peek(1))
@@ -295,7 +295,7 @@ local function q_search_test(verbose)
 end
 
 local function q_overrun_test(verbose)
-   local test_q = queue_overrun_setup(verbose)
+   local test_q = q_overrun_setup(verbose)
    local got = nil
    for i=1,5 do
       print("Use #" .. i)
