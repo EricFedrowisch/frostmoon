@@ -16,7 +16,7 @@ local adapter = f:new({["component_type"] = "gui.loveadapter"}) --Make new Adapt
 adapter:receive_msg({["type"] = "init", ["love"] = love}) --Init Adapter with löve instance
 local q = queue:new(1000)
 assert(loadfile("callbacks.lua"))(q, love)
-
+assert(loadfile("gen_callbacks.lua"))(q, love)
 function test()
    --local get_var = adapter:receive_msg({["type"] = "get_var", ["var"] = "_os"})
    --print(get_var)
