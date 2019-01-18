@@ -46,19 +46,20 @@ local function make_generic_callback(f)
       if info.linedefined == info.lastlinedefined then --Should be a shell
          f_args = parse_def(lines[info.linedefined]) --Parse source line for arg names
          def = def:gsub("end","\n")
+         write(out, lines[info.linedefined-1] .. '\n') --Write out comment
          write(out, def)
-         write(out, "msg = {\n    ")
-         write(out, "[\"type\"] = " .. '"' .. f_args[1] .. '"' .. ",\n    ")
-         write(out, "[\"args\"] = {\n        ")
+         write(out, "    msg = {\n")
+         write(out, "        [\"type\"] = " .. '"' .. f_args[1] .. '"' .. ",\n")
+         write(out, "        [\"args\"] = {\n        ")
          for k,v in pairs(f_args) do
             if k > 1 then
-               write(out, "[\""..v.."\"] = ".. v)
+               write(out, "    [\""..v.."\"] = ".. v)
                if k ~= #f_args then write(out, ",\n        ") end
             end
          end
-         write(out, "\n    }\n")
-         write(out, "}\n")
-         write(out, "q:add(msg)\n")
+         write(out, "\n        }\n")
+         write(out, "    }\n")
+         write(out, "    q:add(msg)\n")
          write(out, "end\n\n")
       end
    end
@@ -67,18 +68,123 @@ end
 
 ------------------------------------------
 --Shell Function declarations.
+--WINDOW--
+--Callback function triggered when window receives or loses focus.
+function love.focus(focus) end
+--Called when the window is resized
+function love.resize(w, h) end
+--Callback function triggered when window is minimized/hidden or unminimized by the user.
+function love.visible(visible) end
+--Callback function triggered when a file is dragged and dropped onto the window.
+function love.filedropped(file) end
+--Callback function triggered when a directory is dragged and dropped onto the window.
+function love.directorydropped(path) end
+
+--MOUSE--
+--Callback function triggered when window receives or loses mouse focus.
+function love.mousefocus(focus) end
 --Callback function triggered when the mouse is moved.
 function love.mousemoved(x, y, dx, dy, istouch) end
+--Callback function triggered when a mouse button is pressed.
+function love.mousepressed(x, y, button, istouch, presses) end
+--Callback function triggered when a mouse button is released.
+function love.mousereleased(x, y, button, istouch, presses) end
+--Callback function triggered when the mouse wheel is moved.
+function love.wheelmoved(x, y) end
+
+--KEYBOARD--
 --Callback function triggered when a key is pressed.
 function love.keypressed(key, scancode, isrepeat) end
 --Callback function triggered when a keyboard key is released.
 function love.keyreleased(key, scancode) end
+
+--MOBILE--
+--Called when the device display orientation changed.
+function love.displayrotated(index, orientation) end
+--Callback function triggered when a touch press moves inside the touch screen.
+function love.touchmoved(id, x, y, dx, dy, pressure) end
+--Callback function triggered when the touch screen is touched.
+function love.touchpressed(id, x, y, dx, dy, pressure) end
+--Callback function triggered when the touch screen stops being touched.
+function love.touchreleased(id, x, y, dx, dy, pressure) end
+--Callback function triggered when the system is running out of memory on mobile devices.
+function love.lowmemory() end
+
+--JOYSTICK--
+--Called when a Joystick's virtual gamepad axis is moved.
+function love.gamepadaxis(joystick, axis, value) end
+--Called when a Joystick's virtual gamepad button is pressed.
+function love.gamepadpressed(joystick, button) end
+--Called when a Joystick's virtual gamepad button is released.
+function love.gamepadreleased(joystick, button) end
+--Called when a Joystick is connected.
+function love.joystickadded(joystick) end
+--Called when a Joystick is disconnected.
+function love.joystickremoved(joystick) end
+--Called when a joystick axis moves.
+function love.joystickaxis(joystick, axis, value) end
+--Called when a joystick hat direction changes.
+function love.joystickhat(joystick, hat, direction) end
+--Called when a joystick button is pressed.
+function love.joystickpressed(joystick, button) end
+--Called when a joystick button is released.
+function love.joystickreleased(joystick, button) end
+
+--MISC--
+--Callback function triggered when a Thread encounters an error.
+function love.threaderror(thread, errorstr) end
+--Called when the candidate text for an IME (Input Method Editor) has changed.
+function love.textedited(text, start, length) end
+--Called when text has been entered by the user.
+function love.textinput(text) end
+
+
 ------------------------------------------
+--These functions have defaults set by Löve. Not sure I want to override them rn.
+--The error handler, used to display error messages.
+--function love.errhand(msg) end
+--The error handler, used to display error messages.
+--function love.errorhandler(msg) end
+
 ------------------------------------------
 local function_names = {
+   --WINDOW--
+   love.focus,
+   love.resize,
+   love.visible,
+   love.filedropped,
+   love.directorydropped,
+   --MOUSE--
+   love.mousefocus,
    love.mousemoved,
+   love.mousepressed,
+   love.mousereleased,
+   love.wheelmoved,
+   --KEYBOARD--
    love.keypressed,
    love.keyreleased,
+   --MOBILE--
+   love.displayrotated,
+   love.touchmoved,
+   love.touchpressed,
+   love.touchreleased,
+   love.lowmemory,
+   --JOYSTICK--
+   love.gamepadaxis,
+   love.gamepadpressed,
+   love.gamepadreleased,
+   love.joystickadded,
+   love.joystickremoved,
+   love.joystickaxis,
+   love.joystickhat,
+   love.joystickpressed,
+   love.joystickreleased,
+   --MISC--
+   love.threaderror,
+   love.textedited,
+   love.textinput,
+   --love.errhand, --Not sure I want to override these
+   --love.errorhandler, --Not sure I want to override these
 }
 ------------------------------------------
 write(out, 'local args = {...} --Get arguments passed when this module is loaded\n')
@@ -88,31 +194,4 @@ write(out, 'local love = args[2] --The main Löve table from main.lua\n\n')
 for k,v in ipairs(function_names) do
    make_generic_callback(v)
 end
-
---[[
-Desktop Specific
-love.filedropped	Callback function triggered when a file is dragged and dropped onto the window.
-love.directorydropped	Callback function triggered when a directory is dragged and dropped onto the window.
-
-Mobile Specific
-love.displayrotated	Called when the device display orientation changed.
-love.touchmoved	Callback function triggered when a touch press moves inside the touch screen.
-love.touchpressed	Callback function triggered when the touch screen is touched.
-love.touchreleased	Callback function triggered when the touch screen stops being touched.
-
-General
-love.errhand	The error handler, used to display error messages.
-love.errorhandler	The error handler, used to display error messages.
-love.threaderror	Callback function triggered when a Thread encounters an error.
-
-Low Priority Atm
-love.gamepadaxis	Called when a Joystick's virtual gamepad axis is moved.
-love.gamepadpressed	Called when a Joystick's virtual gamepad button is pressed.
-love.gamepadreleased	Called when a Joystick's virtual gamepad button is released.
-love.joystickadded	Called when a Joystick is connected.
-love.joystickaxis	Called when a joystick axis moves.
-love.joystickhat	Called when a joystick hat direction changes.
-love.joystickpressed	Called when a joystick button is pressed.
-love.joystickreleased	Called when a joystick button is released.
-love.joystickremoved	Called when a Joystick is disconnected.
-]]
+------------------------------------------
