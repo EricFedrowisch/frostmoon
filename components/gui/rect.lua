@@ -3,9 +3,9 @@ Rect object for storing/testing collisions.
 ]]
 local Rect = {}
 Rect.defaults = {
-   ["x"] = 0,
-   ["y"]= 0,
-   ["z"] = 0,
+   ["x"] = 100,
+   ["y"]= 100,
+   ["z"] = 1,
    ["width"] = 100,
    ["height"] = 100,
 }

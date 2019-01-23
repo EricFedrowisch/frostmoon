@@ -3,7 +3,7 @@ local q = args[1] --The main Queue object from main.lua
 local love = args[2] --The main Löve table from main.lua
 
 --Callback function triggered when window receives or loses focus.
-function love.focus(focus)
+function love.focus(focus) 
     msg = {
         ["type"] = "focus",
         ["args"] = {
@@ -14,7 +14,7 @@ function love.focus(focus)
 end
 
 --Called when the window is resized
-function love.resize(w, h)
+function love.resize(w, h) 
     msg = {
         ["type"] = "resize",
         ["args"] = {
@@ -26,7 +26,7 @@ function love.resize(w, h)
 end
 
 --Callback function triggered when window is minimized/hidden or unminimized by the user.
-function love.visible(visible)
+function love.visible(visible) 
     msg = {
         ["type"] = "visible",
         ["args"] = {
@@ -37,7 +37,7 @@ function love.visible(visible)
 end
 
 --Callback function triggered when a file is dragged and dropped onto the window.
-function love.filedropped(file)
+function love.filedropped(file) 
     msg = {
         ["type"] = "filedropped",
         ["args"] = {
@@ -48,7 +48,7 @@ function love.filedropped(file)
 end
 
 --Callback function triggered when a directory is dragged and dropped onto the window.
-function love.directorydropped(path)
+function love.directorydropped(path) 
     msg = {
         ["type"] = "directorydropped",
         ["args"] = {
@@ -59,7 +59,7 @@ function love.directorydropped(path)
 end
 
 --Callback function triggered when window receives or loses mouse focus.
-function love.mousefocus(focus)
+function love.mousefocus(focus) 
     msg = {
         ["type"] = "mousefocus",
         ["args"] = {
@@ -70,7 +70,7 @@ function love.mousefocus(focus)
 end
 
 --Callback function triggered when the mouse is moved.
-function love.mousemoved(x, y, dx, dy, istouch)
+function love.mousemoved(x, y, dx, dy, istouch) 
     msg = {
         ["type"] = "mousemoved",
         ["args"] = {
@@ -85,7 +85,7 @@ function love.mousemoved(x, y, dx, dy, istouch)
 end
 
 --Callback function triggered when a mouse button is pressed.
-function love.mousepressed(x, y, button, istouch, presses)
+function love.mousepressed(x, y, button, istouch, presses) 
     msg = {
         ["type"] = "mousepressed",
         ["args"] = {
@@ -100,7 +100,7 @@ function love.mousepressed(x, y, button, istouch, presses)
 end
 
 --Callback function triggered when a mouse button is released.
-function love.mousereleased(x, y, button, istouch, presses)
+function love.mousereleased(x, y, button, istouch, presses) 
     msg = {
         ["type"] = "mousereleased",
         ["args"] = {
@@ -115,7 +115,7 @@ function love.mousereleased(x, y, button, istouch, presses)
 end
 
 --Callback function triggered when the mouse wheel is moved.
-function love.wheelmoved(x, y)
+function love.wheelmoved(x, y) 
     msg = {
         ["type"] = "wheelmoved",
         ["args"] = {
@@ -127,7 +127,7 @@ function love.wheelmoved(x, y)
 end
 
 --Callback function triggered when a key is pressed.
-function love.keypressed(key, scancode, isrepeat)
+function love.keypressed(key, scancode, isrepeat) 
     msg = {
         ["type"] = "keypressed",
         ["args"] = {
@@ -140,7 +140,7 @@ function love.keypressed(key, scancode, isrepeat)
 end
 
 --Callback function triggered when a keyboard key is released.
-function love.keyreleased(key, scancode)
+function love.keyreleased(key, scancode) 
     msg = {
         ["type"] = "keyreleased",
         ["args"] = {
@@ -152,7 +152,7 @@ function love.keyreleased(key, scancode)
 end
 
 --Called when the device display orientation changed.
-function love.displayrotated(index, orientation)
+function love.displayrotated(index, orientation) 
     msg = {
         ["type"] = "displayrotated",
         ["args"] = {
@@ -164,7 +164,7 @@ function love.displayrotated(index, orientation)
 end
 
 --Callback function triggered when a touch press moves inside the touch screen.
-function love.touchmoved(id, x, y, dx, dy, pressure)
+function love.touchmoved(id, x, y, dx, dy, pressure) 
     msg = {
         ["type"] = "touchmoved",
         ["args"] = {
@@ -180,7 +180,7 @@ function love.touchmoved(id, x, y, dx, dy, pressure)
 end
 
 --Callback function triggered when the touch screen is touched.
-function love.touchpressed(id, x, y, dx, dy, pressure)
+function love.touchpressed(id, x, y, dx, dy, pressure) 
     msg = {
         ["type"] = "touchpressed",
         ["args"] = {
@@ -196,7 +196,7 @@ function love.touchpressed(id, x, y, dx, dy, pressure)
 end
 
 --Callback function triggered when the touch screen stops being touched.
-function love.touchreleased(id, x, y, dx, dy, pressure)
+function love.touchreleased(id, x, y, dx, dy, pressure) 
     msg = {
         ["type"] = "touchreleased",
         ["args"] = {
@@ -212,18 +212,18 @@ function love.touchreleased(id, x, y, dx, dy, pressure)
 end
 
 --Callback function triggered when the system is running out of memory on mobile devices.
-function love.lowmemory()
+function love.lowmemory() 
     msg = {
         ["type"] = "lowmemory",
         ["args"] = {
-
+        
         }
     }
     q:add(msg)
 end
 
 --Called when a Joystick's virtual gamepad axis is moved.
-function love.gamepadaxis(joystick, axis, value)
+function love.gamepadaxis(joystick, axis, value) 
     msg = {
         ["type"] = "gamepadaxis",
         ["args"] = {
@@ -236,7 +236,7 @@ function love.gamepadaxis(joystick, axis, value)
 end
 
 --Called when a Joystick's virtual gamepad button is pressed.
-function love.gamepadpressed(joystick, button)
+function love.gamepadpressed(joystick, button) 
     msg = {
         ["type"] = "gamepadpressed",
         ["args"] = {
@@ -248,7 +248,7 @@ function love.gamepadpressed(joystick, button)
 end
 
 --Called when a Joystick's virtual gamepad button is released.
-function love.gamepadreleased(joystick, button)
+function love.gamepadreleased(joystick, button) 
     msg = {
         ["type"] = "gamepadreleased",
         ["args"] = {
@@ -260,7 +260,7 @@ function love.gamepadreleased(joystick, button)
 end
 
 --Called when a Joystick is connected.
-function love.joystickadded(joystick)
+function love.joystickadded(joystick) 
     msg = {
         ["type"] = "joystickadded",
         ["args"] = {
@@ -271,7 +271,7 @@ function love.joystickadded(joystick)
 end
 
 --Called when a Joystick is disconnected.
-function love.joystickremoved(joystick)
+function love.joystickremoved(joystick) 
     msg = {
         ["type"] = "joystickremoved",
         ["args"] = {
@@ -282,7 +282,7 @@ function love.joystickremoved(joystick)
 end
 
 --Called when a joystick axis moves.
-function love.joystickaxis(joystick, axis, value)
+function love.joystickaxis(joystick, axis, value) 
     msg = {
         ["type"] = "joystickaxis",
         ["args"] = {
@@ -295,7 +295,7 @@ function love.joystickaxis(joystick, axis, value)
 end
 
 --Called when a joystick hat direction changes.
-function love.joystickhat(joystick, hat, direction)
+function love.joystickhat(joystick, hat, direction) 
     msg = {
         ["type"] = "joystickhat",
         ["args"] = {
@@ -308,7 +308,7 @@ function love.joystickhat(joystick, hat, direction)
 end
 
 --Called when a joystick button is pressed.
-function love.joystickpressed(joystick, button)
+function love.joystickpressed(joystick, button) 
     msg = {
         ["type"] = "joystickpressed",
         ["args"] = {
@@ -320,7 +320,7 @@ function love.joystickpressed(joystick, button)
 end
 
 --Called when a joystick button is released.
-function love.joystickreleased(joystick, button)
+function love.joystickreleased(joystick, button) 
     msg = {
         ["type"] = "joystickreleased",
         ["args"] = {
@@ -332,7 +332,7 @@ function love.joystickreleased(joystick, button)
 end
 
 --Callback function triggered when a Thread encounters an error.
-function love.threaderror(thread, errorstr)
+function love.threaderror(thread, errorstr) 
     msg = {
         ["type"] = "threaderror",
         ["args"] = {
@@ -344,7 +344,7 @@ function love.threaderror(thread, errorstr)
 end
 
 --Called when the candidate text for an IME (Input Method Editor) has changed.
-function love.textedited(text, start, length)
+function love.textedited(text, start, length) 
     msg = {
         ["type"] = "textedited",
         ["args"] = {
@@ -357,7 +357,7 @@ function love.textedited(text, start, length)
 end
 
 --Called when text has been entered by the user.
-function love.textinput(text)
+function love.textinput(text) 
     msg = {
         ["type"] = "textinput",
         ["args"] = {
@@ -366,3 +366,4 @@ function love.textinput(text)
     }
     q:add(msg)
 end
+

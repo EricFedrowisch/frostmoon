@@ -6,43 +6,59 @@ Copyright Aug. 9th, 2018 Eric Fedrowisch All rights reserved.
 ------------------------------------------
 --#TODO:GUI layouts; grid, anchor, etc
 if package.config:sub(1,1) == "/" then os.execute("clear") end --Clear terminal output of Unix-like OS
-local debug = require "debug"
-
 
 local f = require "frostmoon"
 local d = require "frost_debug"
 local queue = require "frost_queue"
-local adapter = f:new({["component_type"] = "gui.loveadapter"}) --Make new Adapter
-adapter:receive_msg({["type"] = "init", ["love"] = love}) --Init Adapter with löve instance
-local q = queue:new(1000)
+local vc, adapter, q;
+q = queue:new(1000)
 assert(loadfile("callbacks.lua"))(q, love)
 assert(loadfile("gen_callbacks.lua"))(q, love)
-function test()
-   --local get_var = adapter:receive_msg({["type"] = "get_var", ["var"] = "_os"})
-   --print(get_var)
-   --local width, height = love.graphics.getDimensions()
-   --print("Window width, height? Love says: ", width, height)
-   --local fm_width, fm_height = unpack(adapter:receive_msg({["type"] = "graphics.getDimensions"}))
-   --print("Window width, height? Frost says: ", fm_width, fm_height)
-   --local adapter_uuid = adapter._uuid
-   --local set_clip = {["type"] = "system.setClipboardText", ["args"] = {"HEY! IT WORKED!"}}
-   --local other = f:new({["component_type"]="data.object"})
-   --other:uuid_msg(adapter_uuid, set_clip)
-   --adapter:receive_msg(set_clip)
-   --d.tprint(q)
-   --local keys = {}
-   --for k in pairs(adapter.event_types) do table.insert(keys, k) end
-   --table.sort(keys)
-   --d.vprint(keys)
-   --print("love")
-   --d.tprint(love)
+
+function love.update(dt)
+   vc:update()
+   if love.keyboard.isDown("escape") then love.event.quit() end
 end
 
 --love.load	This function is called exactly once at the beginning of the game.
 function love.load()
-   test()
+   local s_width, s_height = love.window.getMode()
+   love.window.setMode(s_width, s_height, {["resizable"] = true})
+   adapter = f:new({["component_type"] = "gui.loveadapter"}) --Make new Adapter
+   vc = f:new({ --Make new View Controller
+     ["component_type"] = "gui.viewcontroller",
+     ["listeners"] = {},
+     })
+   vc.love = love
+   vc.q = q --Why this? Idk. Can't seem to pass in table of vc args.
+   local button_img = love.graphics.newImage("1stButton.png")
+   local button_img_onClick = love.graphics.newImage("1st_Button_Darken_OnClick.png")
 
-   --q:add({["type"]="love_load"})
+   local rect_args = {
+      ["component_type"] = "gui.rect",
+      ["width"] = button_img:getWidth(),
+      ["height"] = button_img:getHeight(),
+      ["x"] = (s_width/2)-(button_img:getWidth()/2),
+      ["y"] = (s_height/2)-(button_img:getHeight()/2),
+   }
+   local rect = f:new(rect_args)
+   local button_view_args = {
+      ["component_type"] = "gui.view",
+      ["image"] = button_img,
+      ["image_initial"] = button_img,
+      ["image_on_click"] = button_img_onClick,
+      ["x"] = rect["x"],
+      ["y"]= rect["y"],
+      ["z"] = rect["z"],
+      ["width"] = button_img:getWidth(),
+      ["height"] = button_img:getHeight(),
+   }
+   local button_view = f:new(button_view_args)
+   local button = f:new({["component_type"] = "gui.button"})
+   button["rect"] = rect
+   button["view"] = button_view
+   vc:register_obj(button)
+
    --image = love.graphics.newImage("Lua-logo.png")
    --love.graphics.setNewFont(24)
    --love.graphics.setColor(0,0,0)
@@ -50,64 +66,15 @@ function love.load()
    --love.window.setMode( width, height)
 end
 
-function love.update(dt)
-   if love.keyboard.isDown("escape") then
-      love.event.quit()
-   end
-end
-
-
-
 --love.draw	Callback function used to draw on the screen every frame.
 function love.draw()
-end
-
-
---love.run	The main function, containing the main loop.
-function love.run()
-	if love.load then love.load(love.arg.parseGameArguments(arg), arg) end
-
-	-- We don't want the first frame's dt to include time taken by love.load.
-	if love.timer then love.timer.step() end
-
-	local dt = 0
-
-	-- Main loop time.
-	return function()
-		-- Process events.
-		if love.event then
-			love.event.pump()
-			for name, a,b,c,d,e,f in love.event.poll() do
-				if name == "quit" then
-					if not love.quit or not love.quit() then
-						return a or 0
-					end
-				end
-				love.handlers[name](a,b,c,d,e,f)
-			end
-		end
-
-		-- Update dt, as we'll be passing it to update
-		if love.timer then dt = love.timer.step() end
-
-		-- Call update and draw
-		if love.update then love.update(dt) end -- will pass 0 if love.timer is disabled
-
-		if love.graphics and love.graphics.isActive() then
-			love.graphics.origin()
-			love.graphics.clear(love.graphics.getBackgroundColor())
-
-			if love.draw then love.draw() end
-
-			love.graphics.present()
-		end
-
-		if love.timer then love.timer.sleep(0.001) end
-	end
+   vc:draw()
 end
 
 --love.quit	Callback function triggered when the game is closed.
 function love.quit()
    print("Until we meet again, stay frosty!")
-   d.tprint(q)
+   vc.love = nil
+   vc.q = nil
+   d.tprint(vc)
 end
