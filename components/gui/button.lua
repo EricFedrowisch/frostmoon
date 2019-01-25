@@ -20,10 +20,13 @@ function Button:change_image()
 end
 
 Button.event_types = {
+   --MOUSE--
    ["mousepressed"]=function(self, msg) self.pressed = true; self:change_image() end,
    ["mousereleased"]=function(self, msg) self.pressed = false; self:push() end,
    ["mouseover_end"]=function(self, msg) self.pressed = false; self:change_image() end,
-   ["push"]=function(self, msg)  end,
+   --TOUCH--
+   ["touchpressed"]=function(self, msg) self.pressed = true; self:change_image() end,
+   ["touchreleased"]=function(self, msg) self.pressed = false; self:push() end,
 }
 
 return Button

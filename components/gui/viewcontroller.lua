@@ -22,11 +22,11 @@ function ViewController:update()
    local event = self.q:use()
    while event ~= nil do
       --If message is one you handle...
-      d.tprint(event)
+      --d.tprint(event)
       if self.event_types[event.type] then --Then handle it
          self:receive_msg(event)
       else --If not event you handle then...
-         for listener in self.listeners do --Pass to listeners
+         for i,listener in ipairs(self.listeners) do --Pass to listeners
             listener:receive_msg(event)
          end
       end
@@ -80,6 +80,9 @@ ViewController.event_types = {
    ["keyreleased"]=function(self, msg) end,
    ["textedited"]=function(self, msg) end,
    ["textinput"]=function(self, msg) end,
+   --TOUCH--
+   ["touchpressed"]=function(self, msg) self:check_collisions(msg) end,
+   ["touchreleased"]=function(self, msg) self:check_collisions(msg) end,
 }
 
 return ViewController

@@ -1,7 +1,6 @@
 --[[Config data storage.
 https://love2d.org/wiki/Config_Files
 ]]
-local lfs = require("lfs")
 local Config = {}
 
 Config.defaults = {

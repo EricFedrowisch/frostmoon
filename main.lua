@@ -12,8 +12,7 @@ local d = require "frost_debug"
 local queue = require "frost_queue"
 local vc, adapter, q;
 q = queue:new(1000)
-assert(loadfile("callbacks.lua"))(q, love)
-assert(loadfile("gen_callbacks.lua"))(q, love)
+local callbacks = love.filesystem.load("callbacks.lua")(q, love)
 
 function love.update(dt)
    vc:update()
@@ -25,10 +24,8 @@ function love.load()
    local s_width, s_height = love.window.getMode()
    love.window.setMode(s_width, s_height, {["resizable"] = true})
    adapter = f:new({["component_type"] = "gui.loveadapter"}) --Make new Adapter
-   vc = f:new({ --Make new View Controller
-     ["component_type"] = "gui.viewcontroller",
-     ["listeners"] = {},
-     })
+   vc = f:new({["component_type"] = "gui.viewcontroller"}) --Make new View Controller
+   d.tprint(vc)
    vc.love = love
    vc.q = q --Why this? Idk. Can't seem to pass in table of vc args.
    local button_img = love.graphics.newImage("1stButton.png")
@@ -57,6 +54,7 @@ function love.load()
    local button = f:new({["component_type"] = "gui.button"})
    button["rect"] = rect
    button["view"] = button_view
+   --d.tprint(vc)
    vc:register_obj(button)
 
    --image = love.graphics.newImage("Lua-logo.png")
@@ -74,7 +72,4 @@ end
 --love.quit	Callback function triggered when the game is closed.
 function love.quit()
    print("Until we meet again, stay frosty!")
-   vc.love = nil
-   vc.q = nil
-   d.tprint(vc)
 end

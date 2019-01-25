@@ -18,11 +18,9 @@ end
 
 
 ------------------------------------------
-local Component = {}
 local frost_load = require("frost_load")
-local instances = {["_uuid"] = {}}
 
-exports.instances = instances
+exports.instances = {["_uuid"] = {}} --Create Component instances table
 exports.components = frost_load.components
 
 local frost_proto = require("frost_proto")
