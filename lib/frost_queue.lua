@@ -4,7 +4,6 @@ targeting iOS, OSX and Windows 10
 Copyright Aug. 9th, 2018 Eric Fedrowisch All rights reserved.
 --]]
 ------------------------------------------
-local f = require("frostmoon")
 
 local exports = {} --Temp storage for exported functionality
 local function export()
@@ -17,8 +16,6 @@ end
 local Queue = {}
 exports.queue = Queue
 
---Make queues inherit from Component
-setmetatable(Queue , {__index = f.Component})
 
 function Queue:new(size)
    local q = {}

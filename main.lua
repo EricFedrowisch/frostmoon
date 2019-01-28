@@ -6,67 +6,40 @@ Copyright Aug. 9th, 2018 Eric Fedrowisch All rights reserved.
 ------------------------------------------
 --#TODO:GUI layouts; grid, anchor, etc
 if package.config:sub(1,1) == "/" then os.execute("clear") end --Clear terminal output of Unix-like OS
-
+------------------------------------------
+_G.os_sep = package.config:sub(1,1)
+local lib = "" .. os_sep  .. "lib" .. os_sep
+love.filesystem.setRequirePath(love.filesystem.getRequirePath().. ";" .. lib .. "?.lua")
 local f = require "frostmoon"
+------------------------------------------
 local d = require "frost_debug"
-local queue = require "frost_queue"
-local vc, adapter, q;
-q = queue:new(1000)
-local callbacks = love.filesystem.load("callbacks.lua")(q, love)
-
-function love.update(dt)
-   vc:update()
-   if love.keyboard.isDown("escape") then love.event.quit() end
-end
+-----------------------------------------
+local vc, adapter, q; --Declare variables for the ViewController, loveadapter and Queue
 
 --love.load	This function is called exactly once at the beginning of the game.
 function love.load()
-   local s_width, s_height = love.window.getMode()
-   love.window.setMode(s_width, s_height, {["resizable"] = true})
+   q = f.queue:new(1000) --Create Event Queue
+   local callbacks = love.filesystem.load(lib .. "callbacks.lua")(love, q, vc, adapter)
    adapter = f:new({["component_type"] = "gui.loveadapter"}) --Make new Adapter
    vc = f:new({["component_type"] = "gui.viewcontroller"}) --Make new View Controller
-   d.tprint(vc)
-   vc.love = love
-   vc.q = q --Why this? Idk. Can't seem to pass in table of vc args.
-   local button_img = love.graphics.newImage("1stButton.png")
-   local button_img_onClick = love.graphics.newImage("1st_Button_Darken_OnClick.png")
+   vc.love, vc.q = love, q --Why this? Idk. Can't seem to pass in the table of vc args.
+   vc.s_width, vc.s_height = love.window.getMode()
+   love.window.setMode(vc.s_width, vc.s_height, {["resizable"] = true})
+   local app_comps = love.filesystem.load("app.lua")(love, q, vc, adapter)
 
-   local rect_args = {
-      ["component_type"] = "gui.rect",
-      ["width"] = button_img:getWidth(),
-      ["height"] = button_img:getHeight(),
-      ["x"] = (s_width/2)-(button_img:getWidth()/2),
-      ["y"] = (s_height/2)-(button_img:getHeight()/2),
-   }
-   local rect = f:new(rect_args)
-   local button_view_args = {
-      ["component_type"] = "gui.view",
-      ["image"] = button_img,
-      ["image_initial"] = button_img,
-      ["image_on_click"] = button_img_onClick,
-      ["x"] = rect["x"],
-      ["y"]= rect["y"],
-      ["z"] = rect["z"],
-      ["width"] = button_img:getWidth(),
-      ["height"] = button_img:getHeight(),
-   }
-   local button_view = f:new(button_view_args)
-   local button = f:new({["component_type"] = "gui.button"})
-   button["rect"] = rect
-   button["view"] = button_view
-   --d.tprint(vc)
-   vc:register_obj(button)
-
-   --image = love.graphics.newImage("Lua-logo.png")
-   --love.graphics.setNewFont(24)
-   --love.graphics.setColor(0,0,0)
-   --love.graphics.setBackgroundColor(255,255,255)
-   --love.window.setMode( width, height)
+   for k,v in pairs(app_comps) do
+      vc:register_obj(v)
+   end
 end
 
 --love.draw	Callback function used to draw on the screen every frame.
 function love.draw()
    vc:draw()
+end
+
+function love.update(dt)
+   vc:update(dt)
+   if love.keyboard.isDown("escape") then love.event.quit() end
 end
 
 --love.quit	Callback function triggered when the game is closed.

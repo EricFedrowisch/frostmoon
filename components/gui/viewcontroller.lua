@@ -1,4 +1,5 @@
 --[[ViewController controls input and rendering of Frostmoon objects.]]
+local debug = false
 local d = require("frost_debug")
 local ViewController = {}
 
@@ -10,12 +11,16 @@ ViewController.defaults = {
 
 function ViewController:draw()
    for i, view in ipairs(self.views) do --#TODO: Make views have a love.drawable to replace view.image here.
-      self.love.graphics.draw(view.image, view.x, view.y)
+      self.love.graphics.draw(view.image, view.x(), view.y())
    end
 end
 
-function ViewController:update()
+function ViewController:update(dt)
    local event = self.q:use()
+   if debug and event then
+      d.tprint(event)
+   end
+
    while event ~= nil do
       --If message is one you handle...
       if self.event_types[event.type] then --Then handle it
@@ -58,10 +63,14 @@ function ViewController:register_obj(obj)
    self.views[#self.views + 1] = obj.view  --Add view
 end
 
+function ViewController:resize()
+   self.s_width, self.s_height = love.window.getMode()
+end
+
 ViewController.event_types = {
    --WINDOW--
    ["focus"]=function(self, msg) self.focus = msg.args["focus"] end,
-   ["resize"]=function(self, msg) end,
+   ["resize"]=function(self, msg) self:resize(msg) end,
    ["visible"]=function(self, msg) self.visible = msg.args["visible"] end,
    --MOUSE--
    ["mousefocus"]=function(self, msg) self.mousefocus = msg.args["mousefocus"] end,

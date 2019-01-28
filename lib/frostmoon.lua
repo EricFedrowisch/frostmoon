@@ -12,19 +12,22 @@ local function export()
       components = exports.components,    --Table of component types
       instances  = exports.instances,     --Table of component instances
       Component  = exports.Component,     --Base Component prototype
-      new        = exports.Component.new  --Convenience binding of Component.new()
+      new        = exports.Component.new, --Convenience binding of Component.new()
+      queue      = exports.queue,         --Frost Queue Class
           }
 end
 
 
 ------------------------------------------
-local frost_load = require("frost_load")
-
-exports.instances = {["_uuid"] = {}} --Create Component instances table
-exports.components = frost_load.components
-
 local frost_proto = require("frost_proto")
 exports.Component = frost_proto.component_prototype
+
+local frost_load = require("frost_load")
+exports.components = frost_load.components
+
+exports.queue = require "frost_queue"
+
+exports.instances = {["_uuid"] = {}} --Create Component instances table
 
 for k,v in pairs(exports.components) do --For each component type...
    exports.instances[k] = {} --Create tables to store component instance uuids by component type
