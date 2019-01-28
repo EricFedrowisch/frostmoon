@@ -3,18 +3,14 @@ local d = require("frost_debug")
 local ViewController = {}
 
 ViewController.defaults = {
-   ["listeners"] = {},
-   ["views"] = {},
-   ["mouse_over"] = {}
+   ["listeners"] = {},  --Registered listeners to receive events
+   ["views"] = {},      --Registered components to draw to screen
+   ["_mouse_over"] = {} --Internal table of objects the mouse is over.
 }
 
 function ViewController:draw()
-   for i, view in ipairs(self.views) do
-      if view.is_image then --If simple image then
-         self.love.graphics.draw(view.image, view.x, view.y) --Draw it
-      else --Else not simple image then..
-         self.love.graphics.draw(view.image, view.x, view.y)
-      end
+   for i, view in ipairs(self.views) do --#TODO: Make views have a love.drawable to replace view.image here.
+      self.love.graphics.draw(view.image, view.x, view.y)
    end
 end
 
@@ -22,7 +18,6 @@ function ViewController:update()
    local event = self.q:use()
    while event ~= nil do
       --If message is one you handle...
-      --d.tprint(event)
       if self.event_types[event.type] then --Then handle it
          self:receive_msg(event)
       else --If not event you handle then...
@@ -40,17 +35,17 @@ function ViewController:check_collisions(msg)
          if obj.rect["z"] > 0 then
             if obj.rect:inside(msg.args.x, msg.args.y) then
                obj:receive_msg(msg)
-               self.mouse_over[#self.mouse_over + 1] = obj
+               self._mouse_over[#self._mouse_over + 1] = obj
             end
          end
       end
    end
    local msg_mouseover_end = {["type"] = "mouseover_end"}
-   local i, size = 1, #self.mouse_over
+   local i, size = 1, #self._mouse_over
    while i <= size do
-      if not self.mouse_over[i].rect:inside(msg.args.x, msg.args.y) then
-         self.mouse_over[i]:receive_msg(msg_mouseover_end)
-         self.mouse_over[i] = self.mouse_over[size]
+      if not self._mouse_over[i].rect:inside(msg.args.x, msg.args.y) then
+         self._mouse_over[i]:receive_msg(msg_mouseover_end)
+         self._mouse_over[i] = self._mouse_over[size]
          size = size - 1
       else
          i = i + 1
@@ -62,7 +57,6 @@ function ViewController:register_obj(obj)
    self.listeners[#self.listeners + 1] = obj --Add object to listeners
    self.views[#self.views + 1] = obj.view  --Add view
 end
-
 
 ViewController.event_types = {
    --WINDOW--
