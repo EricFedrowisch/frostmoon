@@ -4,18 +4,8 @@ targeting iOS, OSX and Windows 10
 Copyright Aug. 9th, 2018 Eric Fedrowisch All rights reserved.
 --]]
 ------------------------------------------
-
-local exports = {} --Temp storage for exported functionality
-local function export()
-   return {
-      queue = exports.queue,
-      new = exports.queue.new,
-          }
-end
-
+local uuid = require "uuid"
 local Queue = {}
-exports.queue = Queue
-
 
 function Queue:new(size)
    local q = {}
@@ -32,6 +22,7 @@ end
 
 --Add and element to the Q, growing the Q size if needed.
 function Queue:add(msg)
+   msg._uuid = uuid()
    self.updated = true
    if self.cascade then --If you have an overflow q, then add to that not this.
       self.cascade:add(msg)
@@ -198,4 +189,4 @@ function Queue:map(fun, ...)
    return map_q
 end
 
-return export()
+return Queue

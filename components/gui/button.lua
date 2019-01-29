@@ -2,12 +2,15 @@
 local Button = {}
 
 Button.defaults = {
-   ["toggleable"]=false,
+   ["toggleable"] = false,
+   ["count"] = 0,
+   ["last"] = "none"
 }
---["image_initial"] = button_img1,
---["image_on_click"] = button_img_onClick,
+
 function Button:push()
    self:change_image()
+   self.count = self.count + 1
+   print("Count:", self.count)
    print("Button uuid" .. tostring(self._uuid) .. " pushed.")
 end
 

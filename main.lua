@@ -14,19 +14,17 @@ local f = require "frostmoon"
 ------------------------------------------
 local d = require "frost_debug"
 -----------------------------------------
-local vc, adapter, q; --Declare variables for the ViewController, loveadapter and Queue
+local vc, q; --Declare variables for the ViewController and Queue
 
 --love.load	This function is called exactly once at the beginning of the game.
 function love.load()
    q = f.queue:new(1000) --Create Event Queue
-   local callbacks = love.filesystem.load(lib .. "callbacks.lua")(love, q, vc, adapter)
-   adapter = f:new({["component_type"] = "gui.loveadapter"}) --Make new Adapter
+   local callbacks = love.filesystem.load(lib .. "callbacks.lua")(love, q, vc)
    vc = f:new({["component_type"] = "gui.viewcontroller"}) --Make new View Controller
    vc.love, vc.q = love, q --Why this? Idk. Can't seem to pass in the table of vc args.
    vc.s_width, vc.s_height = love.window.getMode()
    love.window.setMode(vc.s_width, vc.s_height, {["resizable"] = true})
-   local app_comps = love.filesystem.load("app.lua")(love, q, vc, adapter)
-
+   local app_comps = love.filesystem.load("app.lua")(love, q, vc)
    for k,v in pairs(app_comps) do
       vc:register_obj(v)
    end

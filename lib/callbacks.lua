@@ -2,7 +2,6 @@ local args = {...}   --Get arguments passed when this module is loaded
 local love = args[1] --The main Löve table from main.lua
 local q = args[2]    --The main Queue object from main.lua
 local vc = args[3]   --The main ViewController object from main.lua
-local a = args[4]    --The main LoveAdapter object from main.lua
 
 --Callback function triggered when window receives or loses focus.
 function love.focus(focus)
