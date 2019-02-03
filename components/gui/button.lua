@@ -40,13 +40,15 @@ function Button:init(new_args)
       ["height"] = height,
       ["x"] = new_args.x,
       ["y"] = new_args.y,
-   })
+   }, self)
+
    self.view = f:new({
       ["component_type"] = "gui.view",
       ["image"] = res.img["button/button.png"],
       ["x"] = new_args.x,
       ["y"] = new_args.y,
-   })
+   }, self)
+   
    return self
 end
 
