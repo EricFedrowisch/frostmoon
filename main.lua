@@ -6,28 +6,26 @@ Copyright Aug. 9th, 2018 Eric Fedrowisch All rights reserved.
 ------------------------------------------
 --#TODO:GUI layouts; grid, anchor, etc
 if package.config:sub(1,1) == "/" then os.execute("clear") end --Clear terminal output of Unix-like OS
-------------------------------------------
-_G.os_sep = package.config:sub(1,1)
-local lib = "" .. os_sep  .. "lib" .. os_sep
-love.filesystem.setRequirePath(love.filesystem.getRequirePath().. ";" .. lib .. "?.lua")
-local f = require "frostmoon"
-------------------------------------------
-local d = require "frost_debug"
 -----------------------------------------
-local vc, q; --Declare variables for the ViewController and Queue
+local lib = "" .. package.config:sub(1,1)  .. "lib" .. package.config:sub(1,1)
+love.filesystem.setRequirePath(love.filesystem.getRequirePath().. ";" .. lib .. "?.lua")
+------------------------------------------
+--GLOBALS
+--(Love itself is implicitly in the globals)
+_G.os_sep = package.config:sub(1,1)
+_G.d = require "frost_debug"
+_G.f = require "frostmoon"
+_G.q = f.queue:new(1000) --Create Event Queue,
+_G.vc = f:new({["component_type"] = "gui.viewcontroller"}) --Make new View Controller
+------------------------------------------
 
 --love.load	This function is called exactly once at the beginning of the game.
 function love.load()
-   q = f.queue:new(1000) --Create Event Queue
-   local callbacks = love.filesystem.load(lib .. "callbacks.lua")(love, q, vc)
-   vc = f:new({["component_type"] = "gui.viewcontroller"}) --Make new View Controller
-   vc.love, vc.q = love, q --Why this? Idk. Can't seem to pass in the table of vc args.
+   love.filesystem.load(lib .. "callbacks.lua")() --Load and run the callbacks
    vc.s_width, vc.s_height = love.window.getMode()
    love.window.setMode(vc.s_width, vc.s_height, {["resizable"] = true})
-   local app_comps = love.filesystem.load("app.lua")(love, q, vc)
-   for k,v in pairs(app_comps) do
-      vc:register_obj(v)
-   end
+   local app_comps = love.filesystem.load("app.lua")()
+   for k,v in pairs(app_comps) do vc:register_obj(v) end
 end
 
 --love.draw	Callback function used to draw on the screen every frame.

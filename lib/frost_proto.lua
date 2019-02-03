@@ -182,6 +182,7 @@ function Component:new(args, container)
          obj[k]=v
       end
    end
+   if obj.init ~= nil then obj = obj:init(args) end 
    return obj
 end
 exports.component_prototype = Component

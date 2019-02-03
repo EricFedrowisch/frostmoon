@@ -1,6 +1,5 @@
 --[[ViewController controls input and rendering of Frostmoon objects.]]
 local debug = false
-local d = require("frost_debug")
 local ViewController = {}
 
 ViewController.defaults = {
@@ -11,12 +10,12 @@ ViewController.defaults = {
 
 function ViewController:draw()
    for i, view in ipairs(self.views) do --#TODO: Make views have a love.drawable to replace view.image here.
-      self.love.graphics.draw(view.image, view.x(), view.y())
+      love.graphics.draw(view.image, view.x(), view.y())
    end
 end
 
 function ViewController:update(dt)
-   local event = self.q:use()
+   local event = q:use()
    if debug and event then
       d.tprint(event)
    end
@@ -30,7 +29,7 @@ function ViewController:update(dt)
             listener:receive_msg(event)
          end
       end
-      event = self.q:use() --Get next event
+      event = q:use() --Get next event
    end
 end
 

@@ -3,8 +3,7 @@ local Button = {}
 
 Button.defaults = {
    ["toggleable"] = false,
-   ["count"] = 0,
-   ["last"] = "none"
+   ["count"] = 0
 }
 
 function Button:push()
@@ -31,5 +30,9 @@ Button.event_types = {
    ["touchpressed"]=function(self, msg) self.pressed = true; self:change_image() end,
    ["touchreleased"]=function(self, msg) self.pressed = false; self:push() end,
 }
+
+function Button:init(new_args)
+   return self
+end
 
 return Button

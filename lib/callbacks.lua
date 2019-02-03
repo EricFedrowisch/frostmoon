@@ -1,7 +1,9 @@
-local args = {...}   --Get arguments passed when this module is loaded
-local love = args[1] --The main Löve table from main.lua
-local q = args[2]    --The main Queue object from main.lua
-local vc = args[3]   --The main ViewController object from main.lua
+--[[
+FrostMoon, cross platform Composition Based Object Factory and GUI library
+targeting iOS, OS X and Windows 10
+Copyright Aug. 9th, 2018 Eric Fedrowisch All rights reserved.
+--]]
+------------------------------------------
 
 --Callback function triggered when window receives or loses focus.
 function love.focus(focus)
