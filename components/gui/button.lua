@@ -15,7 +15,7 @@ end
 
 function Button:change_image()
    if self.pressed then
-      self.view.image = self.view.image_on_click
+      self.view.image = self.image_on_click
    else
       self.view.image = self.view.image_initial
    end
@@ -32,6 +32,21 @@ Button.event_types = {
 }
 
 function Button:init(new_args)
+   local width = new_args.image:getWidth()
+   local height = new_args.image:getHeight()
+   self.rect = f:new({
+      ["component_type"] = "gui.rect",
+      ["width"] = width,
+      ["height"] = height,
+      ["x"] = new_args.x,
+      ["y"] = new_args.y,
+   })
+   self.view = f:new({
+      ["component_type"] = "gui.view",
+      ["image"] = res.img["button/button.png"],
+      ["x"] = new_args.x,
+      ["y"] = new_args.y,
+   })
    return self
 end
 
