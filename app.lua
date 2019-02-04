@@ -16,7 +16,15 @@ local button = f:new({
    ["interact_sound"] = res.snd["Click.mp3"],
 })
 
+local textbox = f:new({
+   ["component_type"] = "gui.textbox",
+   ["x"] = function () return (vc.s_width/2) - 50 end ,
+   ["y"] = function () return (vc.s_height/2 - 200) end,
+})
+
+components.textbox = textbox
 components.button = button
+
 ------------------------------------------
 
 return components

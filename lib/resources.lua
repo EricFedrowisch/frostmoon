@@ -9,8 +9,10 @@ local res_dir = "" .. os_sep  .. "res"
 local img_dir = res_dir .. os_sep  .. "img"
 local snd_dir = res_dir .. os_sep  .. "snd"
 local msx_dir = res_dir .. os_sep  .. "msx"
+local fnt_dir = res_dir .. os_sep  .. "fnt"
 --Table of supported image types
 local img_types_supported = {["png"] = true, ["tga"] = true}
+local fnt_types_supported = {["ttf"] = true}
 local snd_types_supported = {["wav"] = true, ["mp3"] = true, ["ogg"] = true, ["oga"] = true, ["ogv"] = true}
 
 
@@ -85,12 +87,29 @@ local function load_music()
    return msx
 end
 
+local function load_fonts()
+   local fnts, files = {}, {}
+   local fnt_files = get_files(fnt_dir)
+   for i,v in ipairs(fnt_files) do
+      local f_type =  v:match("[^.]+$") --Get file extension
+      if fnt_types_supported[f_type] ~= nil then --If file type supported
+         local key = v:match("[^/]+$")
+         files[key] = v
+         fnts[key] = love.graphics.newFont(v, 12)
+      end
+   end
+   fnts.default = love.graphics.newFont(12)
+   --d.tprint(fnts)
+   --d.tprint(files)
+   return fnts, files
+end
 
 local function load_resources(dir)
-   local res = {} --Initiale resources table
+   local res = {}
    res.img = load_imgs()
    res.snd = load_sounds()
    res.msx = load_music()
+   res.fnt, res.fnt_files = load_fonts()
    return res
 end
 ------------------------------------------

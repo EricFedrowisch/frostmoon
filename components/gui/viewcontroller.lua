@@ -10,7 +10,11 @@ ViewController.defaults = {
 
 function ViewController:draw()
    for i, view in ipairs(self.views) do --#TODO: Make views have a love.drawable to replace view.image here.
-      love.graphics.draw(view.image, view.x(), view.y())
+      if view.is_image == true then
+         love.graphics.draw(view.image, view.x(), view.y())
+      else
+         view:draw()
+      end
    end
 end
 
