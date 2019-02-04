@@ -3,14 +3,14 @@ local Button = {}
 
 Button.defaults = {
    ["toggleable"] = false,
-   ["count"] = 0
 }
 
-function Button:push()
-   self:change_image()
-   self.count = self.count + 1
-   print("Count:", self.count)
-   print("Button uuid" .. tostring(self._uuid) .. " pushed.")
+function Button:push(dt)
+   if msg.dt ~= nil then --Prevent "mouse bounce"
+      self:change_image()
+      if self.interact_sound ~= nil then self.interact_sound:play() end
+      if self.button_function ~= nil then self:button_function() end
+   end
 end
 
 function Button:change_image()
@@ -24,10 +24,10 @@ end
 Button.event_types = {
    --MOUSE--
    ["mousepressed"]=function(self, msg) self.pressed = true; self:change_image() end,
-   ["mousereleased"]=function(self, msg) self.pressed = false; self:push() end,
+   ["mousereleased"]=function(self, msg) self.pressed = false; self:push(msg.dt) end,
    ["mouseover_end"]=function(self, msg) self.pressed = false; self:change_image() end,
    --TOUCH--
-   ["touchpressed"]=function(self, msg) self.pressed = true; self:change_image() end,
+   ["touchpressed"]=function(self, msg) self.pressed = true; self:change_image(msg.dt) end,
    ["touchreleased"]=function(self, msg) self.pressed = false; self:push() end,
 }
 
@@ -48,7 +48,7 @@ function Button:init(new_args)
       ["x"] = new_args.x,
       ["y"] = new_args.y,
    }, self)
-   
+
    return self
 end
 

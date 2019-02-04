@@ -13,6 +13,7 @@ local button = f:new({
    ["image_on_click"] = res.img["button/button_onClick.png"],
    ["x"] = function () return (vc.s_width/2)-(res.img["button/button.png"]:getWidth()/2) end ,
    ["y"] = function () return (vc.s_height/2)-(res.img["button/button.png"]:getHeight()/2) end,
+   ["interact_sound"] = res.snd["Click.mp3"],
 })
 
 components.button = button

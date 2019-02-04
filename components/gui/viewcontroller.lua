@@ -21,6 +21,7 @@ function ViewController:update(dt)
    end
 
    while event ~= nil do
+      event.dt = dt
       --If message is one you handle...
       if self.event_types[event.type] then --Then handle it
          self:receive_msg(event)
