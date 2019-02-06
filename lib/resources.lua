@@ -10,20 +10,10 @@ local img_dir = res_dir .. os_sep  .. "img"
 local snd_dir = res_dir .. os_sep  .. "snd"
 local msx_dir = res_dir .. os_sep  .. "msx"
 local fnt_dir = res_dir .. os_sep  .. "fnt"
---Table of supported image types
+--Tables of supported image types
 local img_types_supported = {["png"] = true, ["tga"] = true}
 local fnt_types_supported = {["ttf"] = true}
 local snd_types_supported = {["wav"] = true, ["mp3"] = true, ["ogg"] = true, ["oga"] = true, ["ogv"] = true}
-
-
-local function _split(str, sep)
-   local t={}
-   if sep == nil then sep = "%s" end --Default to whitespace
-   for str in string.gmatch(str, "([^"..sep.."]+)") do
-      t[#t+1] = str
-   end
-   return t
-end
 
 --Recursively get all files in dir and subdirs. Return table with filepaths.
 local function get_files(dir, _files)
@@ -55,10 +45,10 @@ local function load_imgs()
          imgs[v:gsub(img_dir .. os_sep, "")] = love.graphics.newImage(v)
       end
    end
-   --d.tprint(imgs)
    return imgs
 end
 
+--Return table of sounds loaded into memory
 local function load_sounds()
    local snds = {}
    local snd_files = get_files(snd_dir)
@@ -69,10 +59,10 @@ local function load_sounds()
          snds[v:gsub(snd_dir .. os_sep, "")] = love.audio.newSource(v, "static")
       end
    end
-   --d.tprint(snds)
    return snds
 end
 
+--Return table of functions that will stream a music file if called, then invoked with music:play()
 local function load_music()
    local msx = {}
    local msx_files = get_files(msx_dir)
@@ -83,10 +73,11 @@ local function load_music()
          msx[v:gsub(msx_dir .. os_sep, "")] = function () return love.audio.newSource(v, "stream") end --Returning function here to keep memory cost low.
       end
    end
-   --d.tprint(msx)
    return msx
 end
 
+--Return table of ttf style fonts (non-glyph) objects initialized to font size 12.
+--The font files  are loaded seperately for making fonts of different sizes.
 local function load_fonts()
    local fnts, files = {}, {}
    local fnt_files = get_files(fnt_dir)
@@ -99,8 +90,6 @@ local function load_fonts()
       end
    end
    fnts.default = love.graphics.newFont(12)
-   --d.tprint(fnts)
-   --d.tprint(files)
    return fnts, files
 end
 
