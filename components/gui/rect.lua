@@ -27,7 +27,7 @@ function Rect:get_mobile_touch_pos()
    local tx, ty
    for i, id in ipairs(love.touch.getTouches()) do --for each touch in touches...
       local x, y = love.touch.getPosition(id) --Get touch position
-      if self.rect:inside(x,y) then --If touch is inside self
+      if self:inside(x,y) then --If touch is inside self
          on_touch[#on_touch + 1] = {x,y} --Then add it to list of touches on self
       end
    end
