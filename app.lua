@@ -15,7 +15,7 @@ local button = f:new({
    ["x"] = bx(),
    ["y"] = by(),
    ["interact_sound"] = res.snd["Click.mp3"],
-   ["resize"] = {bx, by}
+   ["resize"] = {bx, by},
 })
 
 local tx = function () return (vc.s_width/2) - 50 end
@@ -24,7 +24,8 @@ local textbox = f:new({
    ["component_type"] = "gui.textbox",
    ["x"] = tx(),
    ["y"] = ty(),
-   ["resize"] = {tx, ty}
+   ["resize"] = {tx, ty},
+   ["draggable"] = true,
 })
 
 local tooltip = f:new({
