@@ -21,15 +21,14 @@ function Button:change_image()
    end
 end
 
-Button.event_types = {
-   --MOUSE--
-   ["mousepressed"]=function(self, msg) self.pressed = true; self:change_image() end,
-   ["mousereleased"]=function(self, msg) self.pressed = false; self:push(msg.dt) end,
-   ["mouseover_end"]=function(self, msg) self.pressed = false; self:change_image() end,
-   --TOUCH--
-   ["touchpressed"]=function(self, msg) self.pressed = true; self:change_image(msg.dt) end,
-   ["touchreleased"]=function(self, msg) self.pressed = false; self:push() end,
-}
+--Make a change to postion. Changes are either relative or absolute. Absolute by default.
+function Button:update_position(dx, dy, relative)
+   local x, y = dx, dy
+   if relative ~= nil then x, y = self.x + dx, self.y + dy end
+   if self.rect then self.rect.x, self.rect.y = x, y end
+   if self.view then self.view.x, self.view.y = x, y end
+   self.x, self.y = x, y
+end
 
 function Button:init(new_args)
    local width = new_args.image:getWidth()
@@ -51,5 +50,17 @@ function Button:init(new_args)
 
    return self
 end
+
+Button.event_types = {
+   --MOUSE--
+   ["mousepressed"]=function(self, msg) self.pressed = true; self:change_image() end,
+   ["mousereleased"]=function(self, msg) self.pressed = false; self:push(msg.dt) end,
+   ["mouseover_end"]=function(self, msg) self.pressed = false; self:change_image() end,
+   --TOUCH--
+   ["touchpressed"]=function(self, msg) self.pressed = true; self:change_image(msg.dt) end,
+   ["touchreleased"]=function(self, msg) self.pressed = false; self:push() end,
+   --WINDOW
+   ["resize"]=function(self, msg) self:update_position(self.resize[1](),self.resize[2]())end,
+}
 
 return Button

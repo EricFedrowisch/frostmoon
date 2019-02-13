@@ -30,9 +30,18 @@ function love.load()
    for k,v in pairs(app_components) do vc:register_obj(v) end
 end
 
+local function draw_touches()
+   local touches = love.touch.getTouches()
+   for i, id in ipairs(touches) do
+      local x, y = love.touch.getPosition(id)
+      love.graphics.circle("fill", x, y, 20)
+   end
+end
+
 --love.draw	Callback function used to draw on the screen every frame.
 function love.draw()
    love.graphics.clear(0, 0, 0, 1)
+   if _G.OS == "iOS" then draw_touches() end
    vc:draw()
 end
 

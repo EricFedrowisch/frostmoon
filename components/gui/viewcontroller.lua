@@ -30,6 +30,12 @@ function ViewController:draw()
    end
 end
 
+function ViewController:pass_msg(msg)
+   for i,listener in ipairs(self.listeners) do --Pass to listeners
+      listener:receive_msg(msg)
+   end
+end
+
 function ViewController:update(dt)
    local event = q:use()
    if debug and event then
@@ -85,8 +91,9 @@ function ViewController:register_obj(obj)
    self.views[#self.views + 1] = obj.view  --Add view
 end
 
-function ViewController:resize()
+function ViewController:resize(msg)
    self.s_width, self.s_height = love.window.getMode()
+   self:pass_msg(msg)
 end
 
 ViewController.event_types = {
