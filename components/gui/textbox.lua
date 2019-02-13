@@ -14,22 +14,21 @@ Textbox.defaults = {
    ["padding"] = 0,
    ["text_color"] = {1,0,0,1},
    ["draggable"] = true,
-   ["last_mouse_pos"] = {},
+   ["last_mouse_pos"] = {0,0},
 }
 
 function Textbox:draw()
+   --Init Things needed for Draw
    love.graphics.setColor(unpack(self.text_color))
    love.graphics.setFont(res.fnt[self.font])
-
+   --Draw Wireframe
    love.graphics.rectangle("line", self.x, self.y, self.width, self.height )
-
-   --love.graphics.printf( text, x, y, limit, align )
+   --Draw Text
    love.graphics.printf(self.text, self.x, self.y, self.width, 'center')
+   --Reset Phase
    love.graphics.setColor(1,1,1,1) --Reset Color to White to Prevent messing up other stuff
 end
 
---Get mouse position over self and fix that point as the fixed point of reference
---for drag motions
 function Textbox:last_mouse_position()
    self.last_mouse_pos.mx, self.last_mouse_pos.my = love.mouse.getPosition()
 end
@@ -37,17 +36,21 @@ end
 function Textbox:drag()
    if self.pressed then
       local mx, my = love.mouse.getPosition()
-      --Shift the rect by the change between the fix point and the mouse cursor
-      self.rect.x = self.rect.x - (self.last_mouse_pos.mx - mx)
-      self.rect.y = self.rect.y - (self.last_mouse_pos.my - my)
-      --Update fixed drag point to be the current mouse cursor
-      self.last_mouse_pos.mx, self.last_mouse_pos.my = mx, my
-      --Update View based on Rect
-      self.view.x, self.view.y = self.rect.x, self.rect.y
-      --Update self as well...
-      self.x, self.y = self.rect.x, self.rect.y
+      --Calculate the change between the last point and the mouse cursor
+      local dx = self.rect.x - (self.last_mouse_pos.mx - mx)
+      local dy = self.rect.y - (self.last_mouse_pos.my - my)
+      self:update_position(dx, dy)
       self:last_mouse_position()
    end
+end
+
+--Make a change to postion. Changes are either relative or absolute. Absolute by default.
+function Textbox:update_position(dx, dy, relative)
+   local x, y = dx, dy
+   if relative ~= nil then x, y = self.x + dx, self.y + dy end
+   if self.rect then self.rect.x, self.rect.y = x, y end
+   if self.view then self.view.x, self.view.y = x, y end
+   self.x, self.y = x, y
 end
 
 function Textbox:init(new_args)
@@ -79,12 +82,12 @@ end
 
 Textbox.event_types = {
    --MOUSE--
-   ["mousepressed"]=function(self, msg) self.pressed = true; self:last_mouse_position() end,
+   ["mousepressed"]=function(self, msg) if self.draggable then self.pressed = true; self:last_mouse_position() end end,
    ["mousereleased"]=function(self, msg) self.pressed = false end,
    ["mouseover_end"]=function(self, msg) self.pressed = false end,
    ["mouseover_cont"]=function(self, msg) self:drag() end,
    --TOUCH--
-   ["touchpressed"]=function(self, msg) self.pressed = true end,
+   ["touchpressed"]=function(self, msg) if self.draggable then self.pressed = true end end,
    ["touchreleased"]=function(self, msg) self.pressed = false end,
 }
 
