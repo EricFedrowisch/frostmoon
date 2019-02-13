@@ -18,6 +18,7 @@ _G.f = require "frostmoon"
 _G.q = f.queue:new(1000) --Create Event Queue,
 _G.vc = f:new({["component_type"] = "gui.viewcontroller"}) --Make new View Controller
 _G.res = require "resources" --Load imgs, sounds, video, etc
+_G.OS = love.system.getOS() --The current operating system. "OS X", "Windows", "Linux", "Android" or "iOS".
 ------------------------------------------
 
 --love.load	This function is called exactly once at the beginning of the game.

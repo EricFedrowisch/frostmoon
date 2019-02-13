@@ -11,7 +11,7 @@ Rect.defaults = {
 }
 
 function Rect:inside(x, y)
-   local fx, fy = self.x(), self.y()
+   local fx, fy = self.x, self.y
    return (x >= fx and x <= (fx + self.width)) and
           (y >= fy and y <= (fy + self.height))
 end

@@ -22,8 +22,8 @@ function View:init(new_args)
       self.height = self.image:getHeight()
    else
       self.draw = function () self._container:draw() end
-      self.x = self._container.x
-      self.y = self._container.y
+      self.x = self.x or self._container.x
+      self.y = self.x or self._container.y
    end
    return self
 end

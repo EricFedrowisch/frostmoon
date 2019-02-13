@@ -9,11 +9,23 @@ ViewController.defaults = {
 }
 
 function ViewController:draw()
-   for i, view in ipairs(self.views) do --#TODO: Make views have a love.drawable to replace view.image here.
-      if view.is_image == true then
-         love.graphics.draw(view.image, view.x(), view.y())
-      else
-         view:draw()
+   --First sort views by z axis render layer
+   local z_layer = {}
+   for i, view in ipairs(self.views) do
+      local z = 1
+      if view.z ~= nil then
+         z = view.z
+         if z_layer[z] == nil then z_layer[z] = {} end --If entry for z axis coordinate doesn't exist yet, make it
+      end
+      z_layer[z][#z_layer[z]+1] = view --Put view in the next entry in that z coordinate.
+   end
+   for i, z in ipairs(z_layer) do --#TODO: Make views respect z axis here...
+      for n, view in ipairs(z) do
+         if view.is_image == true then
+            love.graphics.draw(view.image, view.x, view.y)
+         else
+            view:draw()
+         end
       end
    end
 end
@@ -23,9 +35,13 @@ function ViewController:update(dt)
    if debug and event then
       d.tprint(event)
    end
+   if event == nil then  --If there are no events do heartbeat dt
+      event = {["type"] = "heartbeat"}
+   end
 
    while event ~= nil do
       event.dt = dt
+      --if event.type == "heartbeat" then print("Beat", dt) end
       --If message is one you handle...
       if self.event_types[event.type] then --Then handle it
          self:receive_msg(event)
@@ -49,7 +65,8 @@ function ViewController:check_collisions(msg)
          end
       end
    end
-   local msg_mouseover_end = {["type"] = "mouseover_end"}
+   local msg_mouseover_end = {["type"] = "mouseover_end"} --Make mouse over end message to send to pertinent objects
+   local msg_mouseover_cont = {["type"] = "mouseover_cont", ["dt"] = msg.dt} --Make mouse over continues message to send to pertinent objects
    local i, size = 1, #self._mouse_over
    while i <= size do
       if not self._mouse_over[i].rect:inside(msg.args.x, msg.args.y) then
@@ -57,6 +74,7 @@ function ViewController:check_collisions(msg)
          self._mouse_over[i] = self._mouse_over[size]
          size = size - 1
       else
+         self._mouse_over[i]:receive_msg(msg_mouseover_cont)
          i = i + 1
       end
    end

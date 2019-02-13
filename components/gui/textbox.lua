@@ -12,36 +12,45 @@ Textbox.defaults = {
    ["z"] = 1,
    ["text"] = "Hello, World",
    ["padding"] = 0,
-   ["text_color"] = {1,0,0,1}
+   ["text_color"] = {1,0,0,1},
+   ["draggable"] = true,
+   ["last_mouse_pos"] = {},
 }
 
 function Textbox:draw()
    love.graphics.setColor(unpack(self.text_color))
    love.graphics.setFont(res.fnt[self.font])
 
-   local x, y = 0, 0
-   if type(self.x) == "function" then x = self.x() else x = self.x  end
-   if type(self.y) == "function" then y = self.y() else y = self.y  end
+   love.graphics.rectangle("line", self.x, self.y, self.width, self.height )
 
-   love.graphics.rectangle("line", x, y, self.width, self.height )
    --love.graphics.printf( text, x, y, limit, align )
-   love.graphics.printf(self.text, x, y, self.width, 'center')
+   love.graphics.printf(self.text, self.x, self.y, self.width, 'center')
    love.graphics.setColor(1,1,1,1) --Reset Color to White to Prevent messing up other stuff
 end
 
-function Textbox:init(new_args)
-   --[[
-   if new_args.font_size ~= 12 then --Fonts are size 12 by default, set new font if different
-      local font = new_args.font or "default" --Either given font name or 'default'
-      if font == "default" then
-         self.font_obj = love.graphics.newFont(12)
-      else
-         self.font_obj = love.graphics.newFont(res.fnt_files[new_args.font], new_args.font_size)
-      end
-   else
-      self.font_obj = res.fnt[new_args.font]
+--Get mouse position over self and fix that point as the fixed point of reference
+--for drag motions
+function Textbox:last_mouse_position()
+   self.last_mouse_pos.mx, self.last_mouse_pos.my = love.mouse.getPosition()
+end
+
+function Textbox:drag()
+   if self.pressed then
+      local mx, my = love.mouse.getPosition()
+      --Shift the rect by the change between the fix point and the mouse cursor
+      self.rect.x = self.rect.x - (self.last_mouse_pos.mx - mx)
+      self.rect.y = self.rect.y - (self.last_mouse_pos.my - my)
+      --Update fixed drag point to be the current mouse cursor
+      self.last_mouse_pos.mx, self.last_mouse_pos.my = mx, my
+      --Update View based on Rect
+      self.view.x, self.view.y = self.rect.x, self.rect.y
+      --Update self as well...
+      self.x, self.y = self.rect.x, self.rect.y
+      self:last_mouse_position()
    end
-   ]]
+end
+
+function Textbox:init(new_args)
 
    self.rect = f:new({
       ["component_type"] = "gui.rect",
@@ -58,8 +67,25 @@ function Textbox:init(new_args)
       ["y"] = self.y,
       ["z"] = self.z,
    }, self)
+
+   if new_args.tooltip_text ~= nil then
+      local textbox = f:new({
+         ["component_type"] = "gui.tooltip",
+         ["text"] = new_args.tooltip_text,
+      }, self)
+   end
    return self
 end
 
+Textbox.event_types = {
+   --MOUSE--
+   ["mousepressed"]=function(self, msg) self.pressed = true; self:last_mouse_position() end,
+   ["mousereleased"]=function(self, msg) self.pressed = false end,
+   ["mouseover_end"]=function(self, msg) self.pressed = false end,
+   ["mouseover_cont"]=function(self, msg) self:drag() end,
+   --TOUCH--
+   ["touchpressed"]=function(self, msg) self.pressed = true end,
+   ["touchreleased"]=function(self, msg) self.pressed = false end,
+}
 
 return Textbox
