@@ -47,13 +47,7 @@ function Textbox:init(new_args)
       ["y"] = self.y,
       ["z"] = self.z,
    }, self)
-
-   if new_args.tooltip_text ~= nil then
-      local textbox = f:new({
-         ["component_type"] = "gui.tooltip",
-         ["text"] = new_args.tooltip_text,
-      }, self)
-   end
+   
    return self
 end
 

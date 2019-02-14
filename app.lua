@@ -28,14 +28,8 @@ local textbox = f:new({
    ["draggable"] = true,
 })
 
-local tooltip = f:new({
-   ["component_type"] = "gui.tooltip",
-}, button)
-
-
 components.textbox = textbox
 components.button = button
-components.tooltip = tooltip
 
 ------------------------------------------
 
