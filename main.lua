@@ -16,7 +16,7 @@ _G.os_sep = package.config:sub(1,1)
 _G.d = require "frost_debug"
 _G.f = require "frostmoon"
 _G.q = f.queue:new(1000) --Create Event Queue,
-_G.vc = f:new({["component_type"] = "gui.viewcontroller"}) --Make new View Controller
+--_G.vc = f:new({["component_type"] = "gui.viewcontroller"}) --Make new View Controller
 _G.res = require "resources" --Load imgs, sounds, video, etc
 _G.OS = love.system.getOS() --The current operating system. "OS X", "Windows", "Linux", "Android" or "iOS".
 ------------------------------------------
@@ -24,10 +24,11 @@ _G.OS = love.system.getOS() --The current operating system. "OS X", "Windows", "
 --love.load	This function is called exactly once at the beginning of the game.
 function love.load()
    love.filesystem.load(lib .. "callbacks.lua")() --Load and run the callbacks
-   vc.s_width, vc.s_height = love.window.getMode()
-   love.window.setMode(vc.s_width, vc.s_height, {["resizable"] = true})
-   local app_components = love.filesystem.load("app.lua")()
-   for k,v in pairs(app_components) do vc:register_obj(v) end
+   scenes = love.filesystem.load("app.lua")()
+   --vc = _G.current_scene.view
+   _G.current_scene.view.s_width, _G.current_scene.view.s_height = love.window.getMode()
+   love.window.setMode(_G.current_scene.view.s_width, _G.current_scene.view.s_height, {["resizable"] = true})
+
 end
 
 local function draw_touches()
@@ -42,11 +43,11 @@ end
 function love.draw()
    love.graphics.clear(0, 0, 0, 1)
    if _G.OS == "iOS" then draw_touches() end
-   vc:draw()
+   _G.current_scene.view:draw()
 end
 
 function love.update(dt)
-   vc:update(dt)
+   _G.current_scene.view:update(dt)
    if love.keyboard.isDown("escape") then love.event.quit() end
 end
 
