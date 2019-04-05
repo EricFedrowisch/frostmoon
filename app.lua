@@ -8,11 +8,10 @@ local scenes = {} --List of scenes to register
 ------------------------------------------
 local menus_screen = f:new({
    ["component_type"] = "gui.scene",
-   ["view"] = f:new({["component_type"] = "gui.viewcontroller"}),
-   --["background" = _G.res.img[""]]
+   ["background"] = _G.res.img["backgrounds/forest.png"],
 })
 
---d.tprint(menus_screen)
+d.tprint(menus_screen)
 ------------------------------------------
 _G.current_scene = menus_screen
 scenes.menus_screen = menus_screen

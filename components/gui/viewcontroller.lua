@@ -4,27 +4,27 @@ local ViewController = {}
 
 ViewController.defaults = {
    ["listeners"] = {},  --Registered listeners to receive events
-   ["views"] = {},      --Registered components to draw to screen
+   ["elements"] = {},      --Registered components to draw to screen
    ["_mouse_over"] = {} --Internal table of objects the mouse is over.
 }
 
 function ViewController:draw()
-   --First sort views by z axis render layer
+   --First sort elements by z axis render layer
    local z_layer = {}
-   for i, view in ipairs(self.views) do
+   for i, e in ipairs(self.elements) do
       local z = 1
-      if view.z ~= nil then
-         z = view.z
+      if e.z ~= nil then
+         z = e.z
          if z_layer[z] == nil then z_layer[z] = {} end --If entry for z axis coordinate doesn't exist yet, make it
       end
-      z_layer[z][#z_layer[z]+1] = view --Put view in the next entry in that z coordinate.
+      z_layer[z][#z_layer[z]+1] = e --Put element in the next entry in that z coordinate.
    end
-   for i, z in ipairs(z_layer) do --#TODO: Make views respect z axis here...
-      for n, view in ipairs(z) do
-         if view.is_image == true then
-            love.graphics.draw(view.image, view.x, view.y)
+   for i, z in ipairs(z_layer) do --#TODO: Make elements respect z axis here...
+      for n, e in ipairs(z) do
+         if e.is_image == true then
+            love.graphics.draw(e.image, e.x, e.y)
          else
-            view:draw()
+            e:draw()
          end
       end
    end
@@ -86,9 +86,14 @@ function ViewController:check_collisions(msg)
    end
 end
 
-function ViewController:register_obj(obj)
+function ViewController:register_listener(obj) --Adds object that listens for events
    self.listeners[#self.listeners + 1] = obj --Add object to listeners
-   self.views[#self.views + 1] = obj.view  --Add view
+   self.elements[#self.elements + 1] = obj.view  --Add view
+end
+
+function ViewController:register_element(obj) --Adds object that has a on-screen drawn image
+   self.elements[#self.elements + 1] = obj --Add object to elements
+   self.elements[#self.elements + 1] = obj.view  --Add view
 end
 
 function ViewController:resize(msg)
