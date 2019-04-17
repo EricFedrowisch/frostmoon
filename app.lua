@@ -11,7 +11,7 @@ local menu_screen = f:new({
    ["background_img"] = _G.res.img["backgrounds/forest.png"],
 })
 
-d.tprint(menu_screen)
+--d.tprint(menu_screen)
 ------------------------------------------
 _G.current_scene = menu_screen
 scenes.menu_screen = menu_screen

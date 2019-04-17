@@ -68,7 +68,7 @@ local function _load_components(dir, recurse, _components)
 end
 
 ------------------------------------------
-local target_dir = "" .. os_sep  .. component_dir --.. os_sep
+local target_dir = "" .. os_sep  .. component_dir
 exports.components = _load_components(target_dir, true)
 ------------------------------------------
 

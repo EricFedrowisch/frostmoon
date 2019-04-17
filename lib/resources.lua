@@ -58,7 +58,7 @@ local function resize_imgs(elements)
    --Store screen width and height for calculations
    local s_width, s_height = love.graphics.getWidth(), love.graphics.getHeight()
    for k, e in pairs(imgs) do --For each img...
-      e.image = resize(e.image, e.sre_x, e.sre_y, e.maintain_aspect_ratio)
+      e.image = res.resize(e.image, e.sre_x, e.sre_y, e.maintain_aspect_ratio)
    end
    love.graphics.setCanvas() --Important! Reset draw target to main screen.
 end
