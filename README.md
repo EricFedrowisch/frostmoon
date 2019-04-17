@@ -60,5 +60,4 @@ test_obj = f:new(new_args)
 ```
 
 ## Load Order for Frostmoon App
-![Load Order](/docs/Frostmoon_Load_Diagram.png)
-Format: ![Alt Text](url)
+![Load Order](/docs/Frostmoon_Load_Diagram.png?raw=true "Frostmoon Load Order")
