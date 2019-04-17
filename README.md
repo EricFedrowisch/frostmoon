@@ -9,10 +9,9 @@ Frostmoon is meant to be a data driven object oriented library for Lua that runs
 Frostmoon is written in Lua. Lua's only data structure is the table. So in Frostmoon terminology both Objects and Components are tables. Objects are simple tables that are made to be the top level containers of Components. Components don't HAVE to be contained in Objects however. Components can also contain other Components.
 - Class versus Module versus Component:
 All Components must have a Class. That class is in the form of a '.lua' file with the Class name. All the classes are loaded as modules after Frostmoon.lua is required.
-## Loading components
-To load a component, put it in the "components" directory in top level directory. The default location can be overriden by changing the "component_dir" variable in Frostmoon.lua. Frostmoon will go through all the folders and subfolders in the component directory, loading all .lua files it finds as components.
 ## Writing your own components
 Components are easy to write. Simply put a '.lua' file in the components folder.
+At runtime, Frostmoon will go through all the folders and subfolders in the component directory, loading all '.lua' files it finds as component classes.
 ### All component classes MUST do the following:
 Components MUST return a table as the final thing they do. This is because Frostmoon is treating them like modules by using require on them.
 ### Component Type
@@ -43,8 +42,10 @@ end
 
 return Button --Always return class table as last thing
 ```
-## Ineritance in Frostmoon Components
-To make a component inherit from another, put an instantion function call into the
+### The 'init' Component Method
+Component classes can have an optional method named init. If defined, init is called when a component is initialized. It is automatically passed the same arguments used to create the component. This is necessary for certain function calls that would not be certain to have good references before all components have been loaded, or Löve has finished initializing ie. This is also how components can initialize their super classes.
+### Ineritance in Frostmoon Components
+To make a component inherit from another, use the init class function.
 ## Instantiating Components
 Once you have imported the Frostmoon module like so:
 ```
