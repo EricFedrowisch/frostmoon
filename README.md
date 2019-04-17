@@ -58,3 +58,7 @@ local new_args = {
 }
 test_obj = f:new(new_args)
 ```
+
+## Load Order for Frostmoon App
+![Load Order](/docs/Frostmoon_Load_Diagram.png)
+Format: ![Alt Text](url)
