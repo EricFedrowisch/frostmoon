@@ -6,13 +6,13 @@ Copyright Aug. 9th, 2018 Eric Fedrowisch All rights reserved.
 ------------------------------------------
 local scenes = {} --List of scenes to register
 ------------------------------------------
-local menus_screen = f:new({
+local menu_screen = f:new({
    ["component_type"] = "gui.scene",
-   ["background"] = _G.res.img["backgrounds/forest.png"],
+   ["background_img"] = _G.res.img["backgrounds/forest.png"],
 })
 
-d.tprint(menus_screen)
+d.tprint(menu_screen)
 ------------------------------------------
-_G.current_scene = menus_screen
-scenes.menus_screen = menus_screen
+_G.current_scene = menu_screen
+scenes.menu_screen = menu_screen
 return scenes

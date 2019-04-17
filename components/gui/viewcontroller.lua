@@ -21,8 +21,8 @@ function ViewController:draw()
    end
    for i, z in ipairs(z_layer) do --#TODO: Make elements respect z axis here...
       for n, e in ipairs(z) do
-         if e.is_image == true then
-            love.graphics.draw(e.image, e.x, e.y)
+         if e.draw_image == true then
+            love.graphics.draw(e.image, e.x, e.y, e.r, e.sx, e.sy)
          else
             e:draw()
          end
@@ -99,6 +99,7 @@ end
 function ViewController:resize(msg)
    self.s_width, self.s_height = love.window.getMode()
    self:pass_msg(msg)
+   res.resize_imgs(self.elements)
 end
 
 ViewController.event_types = {

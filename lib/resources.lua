@@ -42,10 +42,43 @@ local function load_imgs()
    for i,v in ipairs(img_files) do
       local f_type =  v:match("[^.]+$") --Get file extension
       if img_types_supported[f_type] ~= nil then --If file type supported
-         imgs[v:gsub(img_dir .. os_sep, "")] = love.graphics.newImage(v)
+         img_name = v:gsub(img_dir .. os_sep, "")
+         imgs[img_name] = love.graphics.newImage(v)
       end
    end
    return imgs
+end
+
+--Resize all current images
+local function resize_imgs(elements)
+   local imgs = {} --Make list of unique imgs used
+   for i,e in ipairs(elements) do --Iterate through elements
+      if imgs[e] == nil then imgs[e] = e end --If img not in list then add it
+   end
+   --Store screen width and height for calculations
+   local s_width, s_height = love.graphics.getWidth(), love.graphics.getHeight()
+   for k, e in pairs(imgs) do --For each img...
+      e.image = resize(e.image, e.sre_x, e.sre_y, e.maintain_aspect_ratio)
+   end
+   love.graphics.setCanvas() --Important! Reset draw target to main screen.
+end
+
+--Resize an image file.
+local function resize(img, sre_x, sre_y, maintain_aspect_ratio)
+   --Store screen width and height for calculations
+   local s_width, s_height = love.graphics.getWidth(), love.graphics.getHeight()
+   local cnvs_width, cnvs_height = (s_width * sre_x), (s_height * sre_y)
+   local cnvs = love.graphics.newCanvas(cnvs_width, cnvs_height)
+   love.graphics.setCanvas(cnvs) --Make special canvas current draw target
+   --Resize image
+   local sx = cnvs_width/img:getWidth()
+   local sy = cnvs_height/img:getHeight()
+   love.graphics.draw(img, 0, 0, 0, sx, sy)
+   love.graphics.setCanvas()
+   img = love.graphics.newImage(cnvs:newImageData()) --Make new image from canvas ImageData
+   cnvs = nil
+   love.graphics.setCanvas() --Important! Reset draw target to main screen.
+   return img
 end
 
 --Return table of sounds loaded into memory
@@ -99,6 +132,12 @@ local function load_resources(dir)
    res.snd = load_sounds()
    res.msx = load_music()
    res.fnt, res.fnt_files = load_fonts()
+   res.size = {} --Store original screen size
+   res.size.width  = love.graphics.getWidth()
+   res.size.height = love.graphics.getHeight()
+   --Store image resize functions
+   res.resize_imgs = resize_imgs
+   res.resize = resize
    return res
 end
 ------------------------------------------

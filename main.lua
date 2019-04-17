@@ -16,7 +16,6 @@ _G.os_sep = package.config:sub(1,1)
 _G.d = require "frost_debug"
 _G.f = require "frostmoon"
 _G.q = f.queue:new(1000) --Create Event Queue,
---_G.vc = f:new({["component_type"] = "gui.viewcontroller"}) --Make new View Controller
 _G.res = require "resources" --Load imgs, sounds, video, etc
 _G.OS = love.system.getOS() --The current operating system. "OS X", "Windows", "Linux", "Android" or "iOS".
 ------------------------------------------

@@ -38,8 +38,7 @@ end
 
 return Button
 ```
-Note: At this time there is no way to bind functions invocations in default values. This is due to the dynamic loading of the component classes themselves. For most cases you should be able to just specify them in the class definition
-and then invoke them from the instance.
+
 ## Instantiating Components
 Once you have imported the Frostmoon module like so:
 ```
