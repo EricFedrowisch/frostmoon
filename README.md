@@ -49,7 +49,7 @@ To make a component inherit from another, use the init class function.
 ## Instantiating Components
 Once you have imported the Frostmoon module like so:
 ```
-local f=require("Frostmoon")
+local f=require("frostmoon")
 ```
 You will be able to use tables of arguments to create components using the
 new function of Frostmoon. The arguments table will need to specify at the minimum the component type as explained above. If the component class has
