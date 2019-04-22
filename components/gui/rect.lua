@@ -88,7 +88,7 @@ Rect.event_types = {
    ["touchpressed"]=function(self, msg) if self.draggable then self.pressed = true end end,
    ["touchreleased"]=function(self, msg) self.pressed = false end,
    --WINDOW
-   ["resize"]=function(self, msg) self:update_position(self.resize[1](), self.resize[2]()) end,
+   --["resize"]=function(self, msg) self:update_position(self.resize[1](), self.resize[2]()) end,
 }
 
 return Rect

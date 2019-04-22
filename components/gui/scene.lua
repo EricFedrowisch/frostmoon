@@ -8,8 +8,8 @@ Scene.defaults = {
 }
 
 function Scene:init(new_args)
-   if self.view == nil then
-      self.view = f:new({["component_type"] = "gui.viewcontroller"})
+   if self.vc == nil then
+      self.vc = f:new({["component_type"] = "gui.viewcontroller"})
    end
    if new_args.background_img ~= nil then
       local bg = f:new({
@@ -19,9 +19,14 @@ function Scene:init(new_args)
          ["sre_y"] = 1, --Screen real estate on y axis
       })
 
-      self.view:register_element(bg)
+      self.vc:register_element(bg)
    end
    return self
+end
+
+--Pass thru function to register objects from scene to ViewController
+function Scene:register(obj)
+   self.vc:register(obj)
 end
 
 Scene.event_types = {

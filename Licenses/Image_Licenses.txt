@@ -1,2 +1,3 @@
 res/img/button/button_onClick.png by Eric Fedrowisch. All rights reserved.
 res/img/button/button.png by Eric Fedrowisch. All rights reserved.
+res/img/No-Image.png downloaded from https://publicdomainvectors.org/en/free-clipart/Vector-illustration-of-image-did-not-load-icon/22266.html    Public domain

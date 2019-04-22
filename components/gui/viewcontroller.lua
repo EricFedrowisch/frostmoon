@@ -21,10 +21,12 @@ function ViewController:draw()
    end
    for i, z in ipairs(z_layer) do --#TODO: Make elements respect z axis here...
       for n, e in ipairs(z) do
-         if e.draw_image == true then
-            love.graphics.draw(e.image, e.x, e.y, e.r, e.sx, e.sy)
-         else
-            e:draw()
+         if e.visible == true then
+            if e.draw_image == true then
+               love.graphics.draw(e.image, e.x, e.y, e.r, e.sx, e.sy)
+            else
+               e:draw()
+            end
          end
       end
    end
@@ -86,6 +88,24 @@ function ViewController:check_collisions(msg)
    end
 end
 
+function ViewController:register(obj)
+   if obj.component_type ~= "gui.element" then
+      self:register_listener(obj)
+   end
+   if obj.component_type == "gui.element" then
+      self:register_element(obj)
+   end
+   for k,v in pairs(obj) do --Go through all values of obj...
+      if type(v) == table then   --if table then check...
+         if v.component_type ~= nil then --If component...
+            if v.component_type == "gui.element" then --If element
+               self:register_element(v)   --Register the element
+            end
+         end
+      end
+   end
+end
+
 function ViewController:register_listener(obj) --Adds object that listens for events
    self.listeners[#self.listeners + 1] = obj --Add object to listeners
    self.elements[#self.elements + 1] = obj.view  --Add view
@@ -98,8 +118,8 @@ end
 
 function ViewController:resize(msg)
    self.s_width, self.s_height = love.window.getMode()
-   self:pass_msg(msg)
    res.resize_imgs(self.elements)
+   self:pass_msg(msg)
 end
 
 ViewController.event_types = {

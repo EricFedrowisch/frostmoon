@@ -12,6 +12,7 @@ Element.defaults = {
    ["sre_y"] = 1/8, --Screen real estate on y axis
    ["draw_image"] = true, --Boolean for blitting self.image or calling self.draw
    ["maintain_aspect_ratio"] = true, --Maintain image aspect ratio during resize
+   ["visible"] = true,
 }
 
 function Element:init(new_args)
