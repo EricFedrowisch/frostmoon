@@ -66,7 +66,7 @@ Button.event_types = {
    --MOUSE--
    ["mousepressed"]=function(self, msg) self.pressed = true; self:change_image() end,
    ["mousereleased"]=function(self, msg) self.pressed = false; self:push(msg.dt) end,
-   ["mouseover_end"]=function(self, msg) self.pressed = false; self:change_image() end,
+   ["hover_end"]=function(self, msg) self.pressed = false; self:change_image() end,
    --TOUCH--
    ["touchpressed"]=function(self, msg) self.pressed = true; self:change_image(msg.dt) end,
    ["touchreleased"]=function(self, msg) self.pressed = false; self:push() end,

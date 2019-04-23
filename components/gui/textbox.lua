@@ -47,7 +47,7 @@ function Textbox:init(new_args)
       ["y"] = self.y,
       ["z"] = self.z,
    }, self)
-   
+
    return self
 end
 
@@ -55,8 +55,8 @@ Textbox.event_types = {
    --MOUSE--
    ["mousepressed"]=function(self, msg) self.rect:receive_msg(msg) end,
    ["mousereleased"]=function(self, msg) self.rect:receive_msg(msg) end,
-   ["mouseover_end"]=function(self, msg) self.rect:receive_msg(msg) end,
-   ["mouseover_cont"]=function(self, msg) self.rect:receive_msg(msg) end,
+   ["hover_end"]=function(self, msg) self.rect:receive_msg(msg) end,
+   ["hover_cont"]=function(self, msg) self.rect:receive_msg(msg) end,
    --TOUCH--
    ["touchpressed"]=function(self, msg) self.rect:receive_msg(msg) end,
    ["touchreleased"]=function(self, msg) self.rect:receive_msg(msg) end,

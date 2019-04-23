@@ -82,7 +82,7 @@ Rect.event_types = {
          end
       end,
    ["mousereleased"]=function(self, msg) self.pressed = false end,
-   ["mouseover_end"]=function(self, msg) self.pressed = false end,
+   ["hover_end"]=function(self, msg) self.pressed = false end,
    ["mouseover_cont"]=function(self, msg) if self.draggable then self:drag() end end,
    --TOUCH--
    ["touchpressed"]=function(self, msg) if self.draggable then self.pressed = true end end,

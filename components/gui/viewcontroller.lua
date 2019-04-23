@@ -1,13 +1,17 @@
 --[[ViewController controls input and rendering of Frostmoon objects.]]
 local debug = false
+--local debug = true
+
 local ViewController = {}
 
 ViewController.defaults = {
    ["listeners"] = {},  --Registered listeners to receive events
-   ["elements"] = {},      --Registered components to draw to screen
-   ["_mouse_over"] = {} --Internal table of objects the mouse is over.
+   ["elements"] = {},   --Registered components to draw to screen
+   ["_hover_over"] = {}, --Internal table of objects the mouse or touch is "hovering" over.
+   ["_hover_events"] = {["mousemoved"] = true, ["touchmoved"]=true} --Table to check for event types that can trigger "hovering"
 }
 
+--Draw list of elements to screen in z axis render order
 function ViewController:draw()
    --First sort elements by z axis render layer
    local z_layer = {}
@@ -19,37 +23,40 @@ function ViewController:draw()
       end
       z_layer[z][#z_layer[z]+1] = e --Put element in the next entry in that z coordinate.
    end
-   for i, z in ipairs(z_layer) do --#TODO: Make elements respect z axis here...
+   for i, z in ipairs(z_layer) do
       for n, e in ipairs(z) do
          if e.visible == true then
             if e.draw_image == true then
-               love.graphics.draw(e.image, e.x, e.y, e.r, e.sx, e.sy)
+               if e.image ~= nil then --Rem after rect fix
+                  love.graphics.draw(e.image, e.x, e.y, e.r, e.sx, e.sy)
+               end --Rem after rect fix
             else
-               e:draw()
+               if e.draw ~= nil and type(e.draw) == "function" then --Checks overkill here?
+                  e:draw()
+               end
             end
          end
       end
    end
 end
 
+--Pass message to list of registered listeners.
 function ViewController:pass_msg(msg)
    for i,listener in ipairs(self.listeners) do --Pass to listeners
       listener:receive_msg(msg)
    end
 end
 
+--Get events from queue and handle them or dispatch them to listeners.
 function ViewController:update(dt)
    local event = q:use()
-   if debug and event then
-      d.tprint(event)
-   end
+   if debug and event then d.tprint(event) end --Print events if debug == true
    if event == nil then  --If there are no events do heartbeat dt
       event = {["type"] = "heartbeat"}
    end
 
    while event ~= nil do
       event.dt = dt
-      --if event.type == "heartbeat" then print("Beat", dt) end
       --If message is one you handle...
       if self.event_types[event.type] then --Then handle it
          self:receive_msg(event)
@@ -62,27 +69,30 @@ function ViewController:update(dt)
    end
 end
 
+--Check for collisions among rects of registered listeners for a UI event.
 function ViewController:check_collisions(msg)
-   for i, obj in ipairs(self.listeners) do
-      if obj.rect ~= nil then
-         if obj.rect["z"] > 0 then
-            if obj.rect:inside(msg.args.x, msg.args.y) then
-               obj:receive_msg(msg)
-               self._mouse_over[#self._mouse_over + 1] = obj
+   for i, obj in ipairs(self.listeners) do --For each listener...
+      if obj.rect ~= nil then                --If they have a rect component
+         if obj.rect["z"] > 0 then             --If the rect z axis > 0... (bc reasons?)
+            if obj.rect:inside(msg.args.x, msg.args.y) then  --If the event (x,y) inside event's rect area...
+               obj:receive_msg(msg)                            --Tell object
+               if self._hover_events[msg.args["type"]] ~= nil then  --If msg type is one to trigger "hover over" event
+                  self._hover_over[#self._hover_over + 1] = obj       --Add object to list of hovered over objects
+               end
             end
          end
       end
    end
-   local msg_mouseover_end = {["type"] = "mouseover_end"} --Make mouse over end message to send to pertinent objects
-   local msg_mouseover_cont = {["type"] = "mouseover_cont", ["dt"] = msg.dt} --Make mouse over continues message to send to pertinent objects
-   local i, size = 1, #self._mouse_over
+   local msg_hover_end = {["type"] = "hover_end", ["dt"] = msg.dt} --Make mouse over end message to send to pertinent objects
+   local msg_hover_cont = {["type"] = "hover_cont", ["dt"] = msg.dt} --Make mouse over continues message to send to pertinent objects
+   local i, size = 1, #self._hover_over
    while i <= size do
-      if not self._mouse_over[i].rect:inside(msg.args.x, msg.args.y) then
-         self._mouse_over[i]:receive_msg(msg_mouseover_end)
-         self._mouse_over[i] = self._mouse_over[size]
+      if not self._hover_over[i].rect:inside(msg.args.x, msg.args.y) then
+         self._hover_over[i]:receive_msg(msg_hover_end)
+         self._hover_over[i] = self._hover_over[size]
          size = size - 1
       else
-         self._mouse_over[i]:receive_msg(msg_mouseover_cont)
+         self._hover_over[i]:receive_msg(msg_hover_cont)
          i = i + 1
       end
    end
@@ -96,7 +106,7 @@ function ViewController:register(obj)
       self:register_element(obj)
    end
    for k,v in pairs(obj) do --Go through all values of obj...
-      if type(v) == table then   --if table then check...
+      if type(v) == "table" then   --if table then check...
          if v.component_type ~= nil then --If component...
             if v.component_type == "gui.element" then --If element
                self:register_element(v)   --Register the element
@@ -133,14 +143,15 @@ ViewController.event_types = {
    ["mousepressed"]=function(self, msg) self:check_collisions(msg) end,
    ["mousereleased"]=function(self, msg) self:check_collisions(msg) end,
    ["wheelmoved"]=function(self, msg) end,
+   --TOUCH--
+   ["touchmoved"]=function(self, msg) self:check_collisions(msg) end,
+   ["touchpressed"]=function(self, msg) self:check_collisions(msg) end,
+   ["touchreleased"]=function(self, msg) self:check_collisions(msg) end,
    --KEYBOARD--
    ["keypressed"]=function(self, msg) end,
    ["keyreleased"]=function(self, msg) end,
    ["textedited"]=function(self, msg) end,
    ["textinput"]=function(self, msg) end,
-   --TOUCH--
-   ["touchpressed"]=function(self, msg) self:check_collisions(msg) end,
-   ["touchreleased"]=function(self, msg) self:check_collisions(msg) end,
 }
 
 return ViewController
