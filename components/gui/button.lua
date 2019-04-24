@@ -33,7 +33,6 @@ function Button:init(new_args)
       ["y"] = self.y,
       ["draggable"] = self.draggable,
    }, self)
-   return self
 end
 
 function Button:resize()

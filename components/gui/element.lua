@@ -27,7 +27,6 @@ function Element:init(new_args)
    --If self.x or self.y are nil, then use container's position
    self.x = self.x or self._container.x
    self.y = self.x or self._container.y
-   return self
 end
 
 return Element

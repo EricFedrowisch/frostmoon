@@ -47,8 +47,6 @@ function Textbox:init(new_args)
       ["y"] = self.y,
       ["z"] = self.z,
    }, self)
-
-   return self
 end
 
 Textbox.event_types = {

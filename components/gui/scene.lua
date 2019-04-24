@@ -21,7 +21,6 @@ function Scene:init(new_args)
 
       self.vc:register_element(bg)
    end
-   return self
 end
 
 --Pass thru function to register objects from scene to ViewController

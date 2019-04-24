@@ -10,7 +10,6 @@ function ViewController:init(new_args)
    self.listeners = {}
    self.elements = {}
    self._hover_over = {}
-   return self
 end
 
 --Draw list of elements to screen in z axis render order
@@ -83,9 +82,7 @@ function ViewController:check_collisions(msg)
    end
    local msg_hover_end = {["type"] = "hover_end", ["dt"] = msg.dt} --Make hover over end message to send to pertinent objects
    local msg_hover_cont = {["type"] = "hover_cont", ["dt"] = msg.dt} --Make hover over continues message to send to pertinent objects
-   d.line()
    for k, c in pairs(self._hover_over) do --For each key, component pair in table of "hovered" objects...
-      print("Hover over", k, c.component_type, msg.type)
       if not c.rect:inside(msg.args.x, msg.args.y) then --If not inside component's rect...
          self._hover_over[k]:receive_msg(msg_hover_end)   --Tell object hover over ended
          self._hover_over[k] = nil                        --Remove object from table
