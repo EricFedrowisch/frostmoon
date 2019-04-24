@@ -8,14 +8,14 @@ Button.defaults = {
    ["interact_sound"] = nil,
    ["sre_x"] = 1/8, --Screen real estate on x axis
    ["sre_y"] = 1/8, --Screen real estate on y axis
+   ["x"] = 0,
+   ["y"] = 0,
 }
 
 function Button:init(new_args)
    local image = new_args.image or res.img["No-Image.png"]
    self.image_initial = image
-   local width = image:getWidth()
-   local height = image:getHeight()
-
+   --First make element, to use it's resize functionality
    self.element = f:new({
       ["component_type"] = "gui.element",
       ["image"] = image,
@@ -24,11 +24,11 @@ function Button:init(new_args)
       ["sre_x"] = self.sre_x, --Screen real estate on x axis
       ["sre_y"] = self.sre_x, --Screen real estate on y axis
    }, self)
-
+   --Use element's image for rect's height and width
    self.rect = f:new({
       ["component_type"] = "gui.rect",
-      ["width"] = width,
-      ["height"] = height,
+      ["width"] = self.element.image:getWidth(),
+      ["height"] = self.element.image:getHeight(),
       ["x"] = self.x,
       ["y"] = self.y,
       ["draggable"] = self.draggable,
@@ -37,10 +37,12 @@ function Button:init(new_args)
 end
 
 function Button:resize()
-   self.element.image = _G.res.resize(self.element.image, self.sre_x, self.sre_y, self.maintain_aspect_ratio)
+   self.element.image = _G.res.resize(self.element.image_initial, self.sre_x, self.sre_y, self.maintain_aspect_ratio)
    self.rect.width, self.rect.height = self.element.image:getWidth(), self.element.image:getHeight()
-   if self.image_on_click ~= nil then
-      self.image_on_click = _G.res.resize(self.image_on_click, self.sre_x, self.sre_y, self.maintain_aspect_ratio)
+   if self.image_on_interact ~= nil then
+      self.image_on_interact = _G.res.resize(self.image_on_interact, self.sre_x, self.sre_y, self.maintain_aspect_ratio)
+   else
+      self.image_on_interact = self.element.image --If no interact image, use the main image
    end
 end
 
@@ -54,9 +56,9 @@ end
 
 function Button:change_image()
    if self.pressed then
-      self.element.image = self.image_on_click
+      self.element.image = self.image_on_interact
    else
-      --self.element.image = self.element.image_initial
+      self.element.image = self.element.image_initial
    end
 end
 

@@ -3,8 +3,8 @@ Rect object for storing/testing collisions.
 ]]
 local Rect = {}
 Rect.defaults = {
-   ["x"] = 100,
-   ["y"]= 100,
+   ["x"] = 0,
+   ["y"]= 0,
    ["z"] = 1,
    ["width"] = 100,
    ["height"] = 100,
@@ -64,7 +64,6 @@ function Rect:update_position(dx, dy, relative)
    self.x, self.y = x or self.x, y or self.y
    if self._container then self._container.x, self._container.y = self.x, self.y end
    if self._container.view then self._container.view.x, self._container.view.y = self.x, self.y end
-
 end
 
 function Rect:inside(x, y)
@@ -83,7 +82,7 @@ Rect.event_types = {
       end,
    ["mousereleased"]=function(self, msg) self.pressed = false end,
    ["hover_end"]=function(self, msg) self.pressed = false end,
-   ["mouseover_cont"]=function(self, msg) if self.draggable then self:drag() end end,
+   ["hover_cont"]=function(self, msg) if self.draggable then self:drag() end end,
    --TOUCH--
    ["touchpressed"]=function(self, msg) if self.draggable then self.pressed = true end end,
    ["touchreleased"]=function(self, msg) self.pressed = false end,

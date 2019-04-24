@@ -4,12 +4,17 @@ local debug = false
 
 local ViewController = {}
 
-ViewController.defaults = {
-   ["listeners"] = {},  --Registered listeners to receive events
-   ["elements"] = {},   --Registered components to draw to screen
-   ["_hover_over"] = {}, --Internal table of objects the mouse or touch is "hovering" over.
-   ["_hover_events"] = {["mousemoved"] = true, ["touchmoved"]=true} --Table to check for event types that can trigger "hovering"
-}
+ViewController.defaults = {}
+
+function ViewController:init(new_args)
+   self.listeners = {}
+   self.elements = {}
+   self._hover_over = {}
+   self._hover_events = {}
+   self._hover_events.mousemoved = true
+   self._hover_events.touchmoved = true
+   return self
+end
 
 --Draw list of elements to screen in z axis render order
 function ViewController:draw()
@@ -76,16 +81,18 @@ function ViewController:check_collisions(msg)
          if obj.rect["z"] > 0 then             --If the rect z axis > 0... (bc reasons?)
             if obj.rect:inside(msg.args.x, msg.args.y) then  --If the event (x,y) inside event's rect area...
                obj:receive_msg(msg)                            --Tell object
-               if self._hover_events[msg.args["type"]] ~= nil then  --If msg type is one to trigger "hover over" event
+               --if self._hover_events[msg.args.type] ~= nil then  --If msg type is one to trigger "hover over" event
                   self._hover_over[#self._hover_over + 1] = obj       --Add object to list of hovered over objects
-               end
+               --end
             end
          end
       end
    end
-   local msg_hover_end = {["type"] = "hover_end", ["dt"] = msg.dt} --Make mouse over end message to send to pertinent objects
-   local msg_hover_cont = {["type"] = "hover_cont", ["dt"] = msg.dt} --Make mouse over continues message to send to pertinent objects
+   local msg_hover_end = {["type"] = "hover_end", ["dt"] = msg.dt} --Make hover over end message to send to pertinent objects
+   local msg_hover_cont = {["type"] = "hover_cont", ["dt"] = msg.dt} --Make hover over continues message to send to pertinent objects
    local i, size = 1, #self._hover_over
+   --d.line()
+   --for i,v in ipairs(self._hover_over) do print("Hover over", i, v.component_type) end
    while i <= size do
       if not self._hover_over[i].rect:inside(msg.args.x, msg.args.y) then
          self._hover_over[i]:receive_msg(msg_hover_end)
