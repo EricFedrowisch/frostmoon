@@ -50,12 +50,7 @@ local function load_imgs()
 end
 
 --Resize all current images
-local function resize_imgs(elements)
-   local imgs = {} --Make list of unique imgs used
-   for i,e in ipairs(elements) do --Iterate through elements
-      if imgs[e] == nil then imgs[e] = e end --If img not in list then add it
-   end
-   --Store screen width and height for calculations
+local function resize_imgs(imgs)
    local s_width, s_height = love.graphics.getWidth(), love.graphics.getHeight()
    for k, e in pairs(imgs) do --For each img...
       e.image = res.resize(e.image_initial, e.sre_x, e.sre_y, e.maintain_aspect_ratio)

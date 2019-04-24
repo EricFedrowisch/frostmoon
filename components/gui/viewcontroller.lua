@@ -7,16 +7,16 @@ local ViewController = {}
 ViewController.defaults = {}
 
 function ViewController:init(new_args)
-   self.listeners = {}
-   self.elements = {}
-   self._hover_over = {}
+   self.listeners = {}   --Table of registered listeners to receive events
+   self.elements = {}    --Table of elements to draw to screen
+   self._hover_over = {} --Internal table of elements that are being "hovered over"
 end
 
 --Draw list of elements to screen in z axis render order
 function ViewController:draw()
    --First sort elements by z axis render layer
    local z_layer = {}
-   for i, e in ipairs(self.elements) do
+   for k, e in pairs(self.elements) do
       local z = 1
       if e.z ~= nil then
          z = e.z
@@ -43,7 +43,7 @@ end
 
 --Pass message to list of registered listeners.
 function ViewController:pass_msg(msg)
-   for i,listener in ipairs(self.listeners) do --Pass to listeners
+   for k,listener in pairs(self.listeners) do --Pass to listeners
       listener:receive_msg(msg)
    end
 end
@@ -62,7 +62,7 @@ function ViewController:update(dt)
       if self.event_types[event.type] then --Then handle it
          self:receive_msg(event)
       else --If not event you handle then...
-         for i,listener in ipairs(self.listeners) do --Pass to listeners
+         for k, listener in pairs(self.listeners) do --Pass to listeners
             listener:receive_msg(event)
          end
       end
@@ -72,7 +72,7 @@ end
 
 --Check for UI event collisions among rects of registered listeners.
 function ViewController:check_collisions(msg)
-   for i, obj in ipairs(self.listeners) do --For each listener...
+   for k, obj in pairs(self.listeners) do --For each listener...
       if obj.rect ~= nil then                --If they have a rect component
          if obj.rect:inside(msg.args.x, msg.args.y) then  --If the event (x,y) inside event's rect area...
             obj:receive_msg(msg)                            --Tell object
@@ -111,13 +111,11 @@ function ViewController:register(obj)
 end
 
 function ViewController:register_listener(obj) --Adds object that listens for events
-   self.listeners[#self.listeners + 1] = obj --Add object to listeners
-   self.elements[#self.elements + 1] = obj.view  --Add view
+   self.listeners[obj] = obj --Add object to listeners
 end
 
 function ViewController:register_element(obj) --Adds object that has a on-screen drawn image
-   self.elements[#self.elements + 1] = obj --Add object to elements
-   self.elements[#self.elements + 1] = obj.view  --Add view
+   self.elements[obj] = obj --Add object to elements
 end
 
 function ViewController:resize(msg)
