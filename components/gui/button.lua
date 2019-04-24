@@ -58,7 +58,7 @@ function Button:change_image()
    if self.pressed then
       self.element.image = self.image_on_interact
    else
-      self.element.image = self.element.image_initial
+      self.element.image = _G.res.resize(self.element.image_initial, self.sre_x, self.sre_y, self.maintain_aspect_ratio)
    end
 end
 

@@ -10,9 +10,6 @@ function ViewController:init(new_args)
    self.listeners = {}
    self.elements = {}
    self._hover_over = {}
-   self._hover_events = {}
-   self._hover_events.mousemoved = true
-   self._hover_events.touchmoved = true
    return self
 end
 
@@ -32,9 +29,9 @@ function ViewController:draw()
       for n, e in ipairs(z) do
          if e.visible == true then
             if e.draw_image == true then
-               if e.image ~= nil then --Rem after rect fix
+               if e.image ~= nil then
                   love.graphics.draw(e.image, e.x, e.y, e.r, e.sx, e.sy)
-               end --Rem after rect fix
+               end
             else
                if e.draw ~= nil and type(e.draw) == "function" then --Checks overkill here?
                   e:draw()
@@ -74,33 +71,26 @@ function ViewController:update(dt)
    end
 end
 
---Check for collisions among rects of registered listeners for a UI event.
+--Check for UI event collisions among rects of registered listeners.
 function ViewController:check_collisions(msg)
    for i, obj in ipairs(self.listeners) do --For each listener...
       if obj.rect ~= nil then                --If they have a rect component
-         if obj.rect["z"] > 0 then             --If the rect z axis > 0... (bc reasons?)
-            if obj.rect:inside(msg.args.x, msg.args.y) then  --If the event (x,y) inside event's rect area...
-               obj:receive_msg(msg)                            --Tell object
-               --if self._hover_events[msg.args.type] ~= nil then  --If msg type is one to trigger "hover over" event
-                  self._hover_over[#self._hover_over + 1] = obj       --Add object to list of hovered over objects
-               --end
-            end
+         if obj.rect:inside(msg.args.x, msg.args.y) then  --If the event (x,y) inside event's rect area...
+            obj:receive_msg(msg)                            --Tell object
+            self._hover_over[obj] = obj       --Add object to table of hovered over objects
          end
       end
    end
    local msg_hover_end = {["type"] = "hover_end", ["dt"] = msg.dt} --Make hover over end message to send to pertinent objects
    local msg_hover_cont = {["type"] = "hover_cont", ["dt"] = msg.dt} --Make hover over continues message to send to pertinent objects
-   local i, size = 1, #self._hover_over
-   --d.line()
-   --for i,v in ipairs(self._hover_over) do print("Hover over", i, v.component_type) end
-   while i <= size do
-      if not self._hover_over[i].rect:inside(msg.args.x, msg.args.y) then
-         self._hover_over[i]:receive_msg(msg_hover_end)
-         self._hover_over[i] = self._hover_over[size]
-         size = size - 1
-      else
-         self._hover_over[i]:receive_msg(msg_hover_cont)
-         i = i + 1
+   d.line()
+   for k, c in pairs(self._hover_over) do --For each key, component pair in table of "hovered" objects...
+      print("Hover over", k, c.component_type, msg.type)
+      if not c.rect:inside(msg.args.x, msg.args.y) then --If not inside component's rect...
+         self._hover_over[k]:receive_msg(msg_hover_end)   --Tell object hover over ended
+         self._hover_over[k] = nil                        --Remove object from table
+      else                                              --Else
+         self._hover_over[k]:receive_msg(msg_hover_cont)  --Tell object hover over continues
       end
    end
 end
