@@ -10,17 +10,21 @@ Button.defaults = {
    ["sre_y"] = 1/8, --Screen real estate on y axis
    ["x"] = 0,
    ["y"] = 0,
+   ["z"] = 1,
 }
 
 function Button:init(new_args)
-   local image = new_args.image or res.img["No-Image.png"]
-   self.image_initial = image
+   local image = self.image or res.img["No-Image.png"] --Initialize image or use default
+   local image_on_interact = self.image_on_interact or image --Initialize interact image or use default
+   self.image_initial = image --Set self.image_initial to the original sized image
+   self.image = _G.res.resize(image, self.sre_x, self.sre_y, self.maintain_aspect_ratio) --Resize image
+   self.image_on_interact = _G.res.resize(image_on_interact, self.sre_x, self.sre_y, self.maintain_aspect_ratio)  --Resize interact image
    --First make element, to use it's resize functionality
    self.element = f:new({
       ["component_type"] = "gui.element",
-      ["image"] = image,
       ["x"] = self.x,
       ["y"] = self.y,
+      ["z"] = self.z,
       ["sre_x"] = self.sre_x, --Screen real estate on x axis
       ["sre_y"] = self.sre_x, --Screen real estate on y axis
    }, self)
@@ -31,6 +35,7 @@ function Button:init(new_args)
       ["height"] = self.element.image:getHeight(),
       ["x"] = self.x,
       ["y"] = self.y,
+      ["z"] = self.z,
       ["draggable"] = self.draggable,
    }, self)
 end

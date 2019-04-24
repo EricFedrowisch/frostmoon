@@ -23,17 +23,7 @@ function ViewController:draw()
    end
    for i, z in ipairs(z_layer) do
       for n, e in ipairs(z) do
-         if e.visible == true then
-            if e.draw_image == true then
-               if e.image ~= nil then
-                  love.graphics.draw(e.image, e.x, e.y, e.r, e.sx, e.sy)
-               end
-            else
-               if e.draw ~= nil and type(e.draw) == "function" then --Checks overkill here?
-                  e:draw()
-               end
-            end
-         end
+         if e.visible == true then e:draw() end
       end
    end
 end
