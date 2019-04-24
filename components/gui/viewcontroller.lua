@@ -17,11 +17,8 @@ function ViewController:draw()
    --First sort elements by z axis render layer
    local z_layer = {}
    for k, e in pairs(self.elements) do
-      local z = 1
-      if e.z ~= nil then
-         z = e.z
-         if z_layer[z] == nil then z_layer[z] = {} end --If entry for z axis coordinate doesn't exist yet, make it
-      end
+      local z = e.z or 1 --z is e.z or 1 if e.z is nil
+      if z_layer[z] == nil then z_layer[z] = {} end --If entry for z axis coordinate doesn't exist yet, make it
       z_layer[z][#z_layer[z]+1] = e --Put element in the next entry in that z coordinate.
    end
    for i, z in ipairs(z_layer) do
@@ -80,6 +77,11 @@ function ViewController:check_collisions(msg)
          end
       end
    end
+   self:update_hover(msg) --Call hover update
+end
+
+--Check if hover over status for objects has changed because of UI event.
+function ViewController:update_hover(msg)
    local msg_hover_end = {["type"] = "hover_end", ["dt"] = msg.dt} --Make hover over end message to send to pertinent objects
    local msg_hover_cont = {["type"] = "hover_cont", ["dt"] = msg.dt} --Make hover over continues message to send to pertinent objects
    for k, c in pairs(self._hover_over) do --For each key, component pair in table of "hovered" objects...

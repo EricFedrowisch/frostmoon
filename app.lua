@@ -16,7 +16,16 @@ local button = f:new({
    ["button_function"] = function(self, msg) print("Pressed Button") end
 })
 
+local button2 = f:new({
+   ["component_type"] = "gui.button",
+   ["button_function"] = function(self, msg) print("Pressed Button 2") end,
+   ["x"] = button.element.image:getWidth()/2,
+   ["y"] = button.element.image:getHeight()/2,
+   ["z"] = 2,
+})
+
 menu_screen:register(button)
+menu_screen:register(button2)
 
 
 --d.tprint(menu_screen)
