@@ -41,6 +41,7 @@ end
 --love.draw	Callback function used to draw on the screen every frame.
 function love.draw()
    love.graphics.clear(0, 0, 0, 1)
+   love.graphics.setColor(1, 1, 1, 1)
    if _G.OS == "iOS" and draw_debug == true then draw_touches() end
    _G.current_scene.vc:draw()
 end

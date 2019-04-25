@@ -2,10 +2,10 @@
 local Button = {}
 
 Button.defaults = {
-   ["toggleable"] = false,
-   ["draggable"]  = false,
+   --["toggleable"] = false,
+   --["draggable"]  = false,
    ["button_function"] = function(self, msg) end, --What to do when pressed
-   ["interact_sound"] = nil,
+   --["interact_sound"] = nil,
    ["sre_x"] = 1/8, --Screen real estate on x axis
    ["sre_y"] = 1/8, --Screen real estate on y axis
    ["x"] = 0,
@@ -21,6 +21,7 @@ function Button:init(new_args)
    self.image_on_interact = _G.res.resize(image_on_interact, self.sre_x, self.sre_y, self.maintain_aspect_ratio)  --Resize interact image
    --First make element, to use it's resize functionality
    self.element = f:new({
+      ["image"] = self.image,
       ["component_type"] = "gui.element",
       ["x"] = self.x,
       ["y"] = self.y,

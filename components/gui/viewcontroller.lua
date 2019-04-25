@@ -21,6 +21,11 @@ function ViewController:draw()
       if z_layer[z] == nil then z_layer[z] = {} end --If entry for z axis coordinate doesn't exist yet, make it
       z_layer[z][#z_layer[z]+1] = e --Put element in the next entry in that z coordinate.
    end
+   if z_layer[0] ~= nil then --Draw background at z layer 0
+      for n, e in ipairs(z_layer[0]) do
+         if e.visible == true then e:draw() end
+      end
+   end
    for i, z in ipairs(z_layer) do
       for n, e in ipairs(z) do
          if e.visible == true then e:draw() end

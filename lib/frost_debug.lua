@@ -77,7 +77,7 @@ local function tprint (t, shift, container)
    if t ~= nil and type(t) == 'table' then
       shift = shift or 0
       for k, v in pairs(t) do
-         local str = string.rep("   ", shift) .. k .. " = "
+         local str = string.rep("   ", shift) .. tostring(k) .. " = "
          if type(v) == "table"  and t ~= container and k ~= "_container" and k ~= "self" then
             print(str)
             tprint(v, shift+1, t)

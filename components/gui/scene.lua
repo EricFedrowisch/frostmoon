@@ -17,6 +17,7 @@ function Scene:init(new_args)
          ["image"]=new_args.background_img,
          ["sre_x"] = 1, --Screen real estate on x axis
          ["sre_y"] = 1, --Screen real estate on y axis
+         ["z"] = 0, --Make background use background z layer 0
       })
 
       self.vc:register_element(bg)

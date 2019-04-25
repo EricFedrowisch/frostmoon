@@ -19,7 +19,7 @@ Element.defaults = {
 function Element:init(new_args)
    local image = self.image or res.img["No-Image.png"]
    self.image_initial = image
-   self.image = _G.res.resize(image, self.sre_x, self.sre_y, self.maintain_aspect_ratio)
+   self:resize()
    self.x = self.x or self._container.x
    self.y = self.x or self._container.y
 end
