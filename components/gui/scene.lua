@@ -20,7 +20,7 @@ function Scene:init(new_args)
          ["z"] = 0, --Make background use background z layer 0
       })
 
-      self.vc:register_element(bg)
+      self.vc:register(bg)
    end
 end
 
