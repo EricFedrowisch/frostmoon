@@ -1,6 +1,6 @@
 --[[ViewController controls input and rendering of Frostmoon objects.]]
-local debug = false
---local debug = true
+--local debug = false
+local debug = true
 
 local ViewController = {}
 
@@ -26,28 +26,35 @@ end
 function ViewController:pass_msg(msg)
    local z_vals = self:z_order(self.listeners)
    for i, z in ipairs(z_vals) do --Pass messages in z axis order...
-      for k, listener in pairs(self.listeners[z]) do --Pass to listeners in given z
-         --TODO: Add message handled check here
-         listener:receive_msg(msg)
+      if msg.handled ~= 1 then --If msg not handled (in blocking fashion) then...
+         for k, listener in pairs(self.listeners[z]) do --Pass to listeners in given z
+            if msg.handled ~= 1 then --If msg not handled then...
+               listener:receive_msg(msg) --Pass msg
+            else --Else if msg.handled == 1 then...
+               break --Break out of loop
+            end
+         end
+      else --Else if msg.handled == 1 then...
+         break --Break out of loop
       end
    end
 end
 
 --Get events from queue and handle them or dispatch them to listeners.
 function ViewController:update(dt)
-   local event = q:use()
-   if debug and event then d.tprint(event) end --Print events if debug == true
-   if event == nil then  --If there are no events do heartbeat dt
+   local event = q:use() --Get next event from the queue
+   if event == nil then  --If there are no events do heartbeat event
       event = {["type"] = "heartbeat"}
    end
-
-   while event ~= nil do
-      event.dt = dt
+   --Process all events
+   while event ~= nil do --While there are still events...
+      event.dt = dt --Mark event with delta time passed to update function
+      --if debug and event then d.tprint(event) end --Print events if debug == true
       --If message is one you handle...
       if self.event_types[event.type] then --Then handle it
          self:receive_msg(event)
       else --If not event you handle then...
-         self:pass_msg(event)
+         self:pass_msg(event) --Pass it to listeners
       end
       event = q:use() --Get next event
    end
@@ -55,18 +62,35 @@ end
 
 --Check for UI event collisions among rects of registered listeners.
 function ViewController:check_collisions(msg)
-   local z_vals = self:z_order(self.listeners)
+   local z_vals = self:z_order(self.listeners, true) --Get z values in reverse order
    for i, z in ipairs(z_vals) do --Pass messages in z axis order...
-      for k, obj in pairs(self.listeners[z]) do --For each listener...
-         if obj.rect ~= nil then                --If they have a rect component
-            if obj.rect:inside(msg.args.x, msg.args.y) then  --If the event (x,y) inside event's rect area...
-               obj:receive_msg(msg)                            --Tell object
-               self.hover_over[z][obj] = obj       --Add object to table of hovered over objects
+      if msg.handled ~= 1 then --If msg not handled (in blocking fashion) then...
+         for k, obj in pairs(self.listeners[z]) do --Pass to listeners in given z
+            if msg.handled ~= 1 then --If msg not handled then...
+               if self:check_collide(obj, msg) then
+                  self.hover_over[z][obj] = obj --Add object to table of hovered over objects
+                  obj:receive_msg(msg)
+               end
+            else --Else if msg.handled == 1 then...
+               break --Break out of loop
             end
          end
+      else --Else if msg.handled == 1 then...
+         break --Break out of loop
       end
    end
    self:update_hover(msg) --Call hover update
+end
+
+function ViewController:check_collide(obj, msg)
+   local collide = false
+   local x, y = msg.args.x, msg.args.y
+   if obj.rect ~= nil then --If they have a rect component
+      if obj.rect:inside(x, y) then  --If the event (x,y) inside event's rect area...
+         collide = true
+      end
+   end
+   return collide
 end
 
 --Check if hover over status for objects has changed because of UI event.
@@ -88,13 +112,19 @@ function ViewController:update_hover(msg)
    end
 end
 
-
-
 --Given a table with z values as keys, return a non-sparse table of z values suitable for use with ipairs.
-function ViewController:z_order(t)
+function ViewController:z_order(t, reverse)
    local z_vals = {} --Create an empty table for z values
    for z, v in pairs(t) do table.insert(z_vals, z) end --Insert all z values into table
    table.sort(z_vals) --Sort the z values.
+   --If not reversed needed, the list at this stage will be returned
+   if reverse then --If order should be reversed (for input event handling ie)...
+      local reversed = {} --Make empty table
+      for i = #z_vals, 1, -1 do --Iterate over z_vals in reverse (-1 step)
+         reversed[#reversed+1] = z_vals[i] --Next element of reveresed is z_val[i]
+      end
+      z_vals = reversed --Set z_vals equal to new reversed list
+   end
    return z_vals --Return non-sparse list of z values for use with ipairs
 end
 
