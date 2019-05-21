@@ -29,13 +29,21 @@ local button3 = f:new({
    ["button_function"] = function(self, msg) print("Pressed Button 3") end,
    ["x"] = button.element.image:getWidth(),
    ["y"] = button.element.image:getHeight(),
-   ["z"] = 5,
+   ["z"] = 3,
 })
 
+local button4 = f:new({
+   ["component_type"] = "gui.button",
+   ["button_function"] = function(self, msg) print("Pressed Button 4") end,
+   ["x"] = button.element.image:getWidth() * 1.5,
+   ["y"] = button.element.image:getHeight() * 1.5,
+   ["z"] = 4,
+})
 
 menu_screen:register(button)
 menu_screen:register(button2)
 menu_screen:register(button3)
+menu_screen:register(button4)
 
 
 --d.tprint(menu_screen)

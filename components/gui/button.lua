@@ -17,8 +17,8 @@ function Button:init(new_args)
    local image = self.image or res.img["No-Image.png"] --Initialize image or use default
    local image_on_interact = self.image_on_interact or image --Initialize interact image or use default
    self.image_initial = image --Set self.image_initial to the original sized image
-   self.image = _G.res.resize(image, self.sre_x, self.sre_y, self.maintain_aspect_ratio) --Resize image
-   self.image_on_interact = _G.res.resize(image_on_interact, self.sre_x, self.sre_y, self.maintain_aspect_ratio)  --Resize interact image
+   --self.image = _G.res.resize(image, self.sre_x, self.sre_y, self.maintain_aspect_ratio) --Resize image
+   --self.image_on_interact = _G.res.resize(image_on_interact, self.sre_x, self.sre_y, self.maintain_aspect_ratio)  --Resize interact image
    --First make element, to use it's resize functionality
    self.element = f:new({
       ["image"] = self.image,
@@ -39,16 +39,17 @@ function Button:init(new_args)
       ["z"] = self.z,
       ["draggable"] = self.draggable,
    }, self)
+   self:resize()
 end
 
 function Button:resize()
    self.element.image = _G.res.resize(self.element.image_initial, self.sre_x, self.sre_y, self.maintain_aspect_ratio)
-   self.rect.width, self.rect.height = self.element.image:getWidth(), self.element.image:getHeight()
    if self.image_on_interact ~= nil then
       self.image_on_interact = _G.res.resize(self.image_on_interact, self.sre_x, self.sre_y, self.maintain_aspect_ratio)
    else
       self.image_on_interact = self.element.image --If no interact image, use the main image
    end
+   self.rect.width, self.rect.height = self.element.image:getWidth(), self.element.image:getHeight()
 end
 
 --Button pressed but not yet released

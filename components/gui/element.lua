@@ -20,8 +20,8 @@ function Element:init(new_args)
    local image = self.image or res.img["No-Image.png"]
    self.image_initial = image
    self:resize()
-   self.x = self.x or self._container.x
-   self.y = self.x or self._container.y
+   self.x = self.x or self._container.x or self._container.rect.x
+   self.y = self.x or self._container.y or self._container.rect.y
 end
 
 return Element

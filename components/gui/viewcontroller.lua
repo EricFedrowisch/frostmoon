@@ -20,6 +20,26 @@ function ViewController:draw()
          if e.visible == true then e:draw() end --If element is visible then draw it
       end
    end
+   if _G.draw_debug then self:draw_debug() end
+end
+
+function ViewController:draw_debug()
+   local rects = {}
+   for i,z in pairs(self.listeners) do
+      for k,e in pairs(z) do
+         if e.rect ~= nil then rects[#rects+1]=e.rect end
+      end
+   end
+   for i,z in pairs(self.elements) do
+      for k,e in pairs(z) do
+         if e.rect ~= nil then rects[#rects+1]=e.rect end
+      end
+   end
+   love.graphics.setColor(1, 0, 0, 1)
+   for i,v in ipairs(rects) do
+      love.graphics.rectangle("line", v.x, v.y, v.width, v.height )
+   end
+   love.graphics.setColor(1, 1, 1, 1)
 end
 
 --Pass message to list of registered listeners.
