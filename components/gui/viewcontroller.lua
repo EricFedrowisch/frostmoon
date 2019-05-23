@@ -24,21 +24,26 @@ function ViewController:draw()
 end
 
 function ViewController:draw_debug()
-   local rects = {}
+   local l_rects = {}
    for i,z in pairs(self.listeners) do
       for k,e in pairs(z) do
-         if e.rect ~= nil then rects[#rects+1]=e.rect end
+         if e.rect ~= nil then l_rects[#l_rects+1]=e.rect end
       end
    end
+   local e_rects = {}
    for i,z in pairs(self.elements) do
       for k,e in pairs(z) do
-         if e.rect ~= nil then rects[#rects+1]=e.rect end
+         if e.rect ~= nil then e_rects[#e_rects+1]=e.rect end
       end
    end
    love.graphics.setColor(1, 0, 0, 1)
-   for i,v in ipairs(rects) do
+   for i,v in ipairs(l_rects) do
       love.graphics.rectangle("line", v.x, v.y, v.width, v.height )
    end
+   -- love.graphics.setColor(0, 1, 0, 1)
+   -- for i,v in ipairs(e_rects) do
+   --    love.graphics.rectangle("line", v.x, v.y, v.width, v.height )
+   -- end
    love.graphics.setColor(1, 1, 1, 1)
 end
 

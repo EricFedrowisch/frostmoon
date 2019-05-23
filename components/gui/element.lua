@@ -12,7 +12,7 @@ Element.defaults = {
    ["sre_y"] = 1/8, --Screen real estate on y axis
    ["maintain_aspect_ratio"] = true, --Maintain image aspect ratio during resize
    ["visible"] = true,
-   ["draw"] = function(self) love.graphics.draw(self.image, self.x, self.y, self.r, self.sx, self.sy) end,
+   ["draw"] = function(self) love.graphics.draw(self.image, self.x, self.y, self.r) end,
    ["resize"] = function(self) self.image = _G.res.resize(self.image_initial, self.sre_x, self.sre_y, self.maintain_aspect_ratio) end,
 }
 
@@ -20,8 +20,14 @@ function Element:init(new_args)
    local image = self.image or res.img["No-Image.png"]
    self.image_initial = image
    self:resize()
-   self.x = self.x or self._container.x or self._container.rect.x
-   self.y = self.x or self._container.y or self._container.rect.y
+   self.rect = f:new({
+      ["component_type"] = "gui.rect",
+      ["width"] = self.image:getWidth(),
+      ["height"] = self.image:getHeight(),
+      ["x"] = self.x,
+      ["y"] = self.y,
+      ["z"] = self.z,
+   }, self)
 end
 
 return Element

@@ -19,7 +19,7 @@ _G.res = require "resources" --Load imgs, sounds, video, etc
 _G.OS = love.system.getOS() --The current operating system. "OS X", "Windows", "Linux", "Android" or "iOS".
 ------------------------------------------
 --Debug Stuff. Remove from production.
-_G.draw_debug = true
+--_G.draw_debug = true
 
 --love.load	This function is called exactly once at the beginning of the game.
 function love.load()
