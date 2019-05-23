@@ -51,7 +51,6 @@ end
 
 --Resize all current images
 local function resize_imgs(imgs)
-   local s_width, s_height = love.graphics.getWidth(), love.graphics.getHeight()
    for k, e in pairs(imgs) do --For each img...
       e.image = res.resize(e.image_initial, e.sre_x, e.sre_y, e.maintain_aspect_ratio)
    end
@@ -60,19 +59,22 @@ end
 
 --Resize an image file.
 local function resize(img, sre_x, sre_y, maintain_aspect_ratio)
-   --Store screen width and height for calculations
-   local s_width, s_height = love.graphics.getWidth(), love.graphics.getHeight()
-   local cnvs_width, cnvs_height = (s_width * sre_x), (s_height * sre_y)
-   local cnvs = love.graphics.newCanvas(cnvs_width, cnvs_height)
-   love.graphics.setCanvas(cnvs) --Make special canvas current draw target
-   --Resize image
-   local sx = cnvs_width/img:getWidth()
-   local sy = cnvs_height/img:getHeight()
-   love.graphics.draw(img, 0, 0, 0, sx, sy)
-   love.graphics.setCanvas()
-   img = love.graphics.newImage(cnvs:newImageData()) --Make new image from canvas ImageData
-   cnvs = nil
+   local sre_width  = (love.graphics.getWidth() * sre_x)
+   local sre_height =  (love.graphics.getHeight() * sre_y)
+   local sx = sre_width/img:getWidth() --Calculate image width scale
+   local sy = sre_height/img:getHeight() --Calculate image height scale
+   local fx, fy = 1, 1
+   if maintain_aspect_ratio then
+      fx, fy = math.min(sx, sy), math.min(sx, sy)
+   else
+      fx, fy = sx, sy
+   end
+   local cnvs = love.graphics.newCanvas(img:getWidth()*fx, img:getHeight()*sy) --Create temp canvas
+   love.graphics.setCanvas(cnvs) --Make temp canvas current draw target
+   love.graphics.draw(img, 0, 0, 0, fx, fy) --Draw image resized
    love.graphics.setCanvas() --Important! Reset draw target to main screen.
+   img = love.graphics.newImage(cnvs:newImageData()) --Make new image from canvas ImageData
+   cnvs = nil --Delete temp canvas reference so it can be garbage collected
    return img
 end
 

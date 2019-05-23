@@ -2,24 +2,23 @@
 local Button = {}
 
 Button.defaults = {
-   --["toggleable"] = false,
-   --["draggable"]  = false,
    ["button_function"] = function(self, msg) end, --What to do when pressed
-   --["interact_sound"] = nil,
    ["sre_x"] = 1/8, --Screen real estate on x axis
    ["sre_y"] = 1/8, --Screen real estate on y axis
    ["x"] = 0,
    ["y"] = 0,
    ["z"] = 1,
+   --["toggleable"] = false,
+   --["draggable"]  = false,
+   --["interact_sound"] = nil,
 }
 
 function Button:init(new_args)
    local image = self.image or res.img["No-Image.png"] --Initialize image or use default
-   local image_on_interact = self.image_on_interact or image --Initialize interact image or use default
-   self.image_initial = image --Set self.image_initial to the original sized image
+   local image_on_interact = self.interact_image or image --Initialize interact image or use default
+   self.image_initial, self.interact_image_initial = image, image_on_interact --Set initial images to the original sized image
    self.image = _G.res.resize(image, self.sre_x, self.sre_y, self.maintain_aspect_ratio) --Resize image
-   self.image_on_interact = _G.res.resize(image_on_interact, self.sre_x, self.sre_y, self.maintain_aspect_ratio)  --Resize interact image
-   --First make element, to use it's resize functionality
+   self.interact_image = _G.res.resize(image_on_interact, self.sre_x, self.sre_y, self.maintain_aspect_ratio)  --Resize interact image
    self.element = f:new({
       ["image"] = self.image,
       ["component_type"] = "gui.element",
@@ -43,12 +42,12 @@ end
 
 function Button:resize()
    self.element.image = _G.res.resize(self.element.image_initial, self.sre_x, self.sre_y, self.maintain_aspect_ratio)
-   self.rect.width, self.rect.height = self.element.image:getWidth(), self.element.image:getHeight()
-   if self.image_on_interact ~= nil then
-      self.image_on_interact = _G.res.resize(self.image_on_interact, self.sre_x, self.sre_y, self.maintain_aspect_ratio)
+   if self.interact_image ~= nil then
+      self.interact_image = _G.res.resize(self.interact_image_initial, self.sre_x, self.sre_y, self.maintain_aspect_ratio)
    else
-      self.image_on_interact = self.element.image --If no interact image, use the main image
+      self.interact_image = self.element.image --If no interact image, use the main image
    end
+   self.rect.width, self.rect.height = self.element.image:getWidth(), self.element.image:getHeight()
 end
 
 --Button pressed but not yet released
@@ -77,7 +76,7 @@ end
 
 function Button:change_image()
    if self.pressed then
-      self.element.image = self.image_on_interact
+      self.element.image = self.interact_image
    else
       self.element.image = _G.res.resize(self.element.image_initial, self.sre_x, self.sre_y, self.maintain_aspect_ratio)
    end

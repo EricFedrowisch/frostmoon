@@ -19,7 +19,7 @@ _G.res = require "resources" --Load imgs, sounds, video, etc
 _G.OS = love.system.getOS() --The current operating system. "OS X", "Windows", "Linux", "Android" or "iOS".
 ------------------------------------------
 --Debug Stuff. Remove from production.
-_G.draw_debug = true
+--_G.draw_debug = true
 
 --love.load	This function is called exactly once at the beginning of the game.
 function love.load()
@@ -28,7 +28,6 @@ function love.load()
    _G.current_scene.vc.s_width, _G.current_scene.vc.s_height = love.window.getMode()
    love.window.setMode(_G.current_scene.vc.s_width, _G.current_scene.vc.s_height, {["resizable"] = true})
 end
-
 
 local function draw_touches()
    local touches = love.touch.getTouches()
