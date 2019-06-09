@@ -12,6 +12,10 @@ Rect.defaults = {
    ["last_move_pos"] = {0,0},
 }
 
+function Rect:update_size()
+   self.width, self.height = self._container.width, self._container.height
+end
+
 function Rect:last_move_position()
    local dx, dy
    if _G.OS ~= "iOS" then --If you are not mobile then...

@@ -44,7 +44,7 @@ menu_screen:register(button)
 menu_screen:register(button2)
 menu_screen:register(button3)
 menu_screen:register(button4)
-
+print("Screen W2HRatio:", _G.res.width_height_ratio())
 
 --d.tprint(menu_screen)
 ------------------------------------------

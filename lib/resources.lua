@@ -123,6 +123,21 @@ local function load_fonts()
    return fnts, files
 end
 
+--Returns the width to height ratio of a given element or the ratio for the
+--screen if called without an element
+local function width_height_ratio(element)
+   local e = {}
+   if element ~= nil then
+      if element.height ~= nil and element.width ~= nil then
+         e.height, e.width = element.height, element.width
+      end
+   end
+   if e.height == nil and e.width == nil then
+      e.height, e.width = love.graphics.getWidth(), love.graphics.getHeight()
+   end
+   return e.width/e.height
+end
+
 local function load_resources(dir)
    local res = {}
    res.img = load_imgs()
@@ -135,6 +150,7 @@ local function load_resources(dir)
    --Store image resize functions
    res.resize_imgs = resize_imgs
    res.resize = resize
+   res.width_height_ratio = width_height_ratio
    return res
 end
 ------------------------------------------

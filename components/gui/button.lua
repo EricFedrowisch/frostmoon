@@ -47,7 +47,9 @@ function Button:resize()
    else
       self.interact_image = self.element.image --If no interact image, use the main image
    end
-   self.rect.width, self.rect.height = self.element.image:getWidth(), self.element.image:getHeight()
+   --Update width and height variables
+   self.width, self.height = self.element.image:getWidth(), self.element.image:getHeight()
+   self.rect:update_size()
 end
 
 --Button pressed but not yet released
