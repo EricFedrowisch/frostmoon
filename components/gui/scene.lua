@@ -16,8 +16,8 @@ function Scene:init(new_args)
          ["component_type"] = "gui.element",
          ["image"]=new_args.background_img,
          ["maintain_aspect_ratio"] = false, --Stretch backgrounds by default
-         ["sre_x"] = 1, --Screen real estate on x axis
-         ["sre_y"] = 1, --Screen real estate on y axis
+         ["psp_x"] = 1, --Positive space proportion on x axis
+         ["psp_y"] = 1, --Positive space proportion on y axis
          ["z"] = 0, --Make background use background z layer 0
       })
 

@@ -52,17 +52,17 @@ end
 --Resize all current images
 local function resize_imgs(imgs)
    for k, e in pairs(imgs) do --For each img...
-      e.image = res.resize(e.image_initial, e.sre_x, e.sre_y, e.maintain_aspect_ratio)
+      e.image = res.resize(e.image_initial, e.psp_x, e.psp_y, e.maintain_aspect_ratio)
    end
    love.graphics.setCanvas() --Important! Reset draw target to main screen.
 end
 
 --Resize an image file.
-local function resize(img, sre_x, sre_y, maintain_aspect_ratio)
-   local sre_width  = (love.graphics.getWidth() * sre_x)
-   local sre_height =  (love.graphics.getHeight() * sre_y)
-   local sx = sre_width/img:getWidth() --Calculate image width scale
-   local sy = sre_height/img:getHeight() --Calculate image height scale
+local function resize(img, psp_x, psp_y, maintain_aspect_ratio)
+   local psp_width  = (love.graphics.getWidth() * psp_x)
+   local psp_height =  (love.graphics.getHeight() * psp_y)
+   local sx = psp_width/img:getWidth() --Calculate image width scale
+   local sy = psp_height/img:getHeight() --Calculate image height scale
    local fx, fy = 1, 1
    if maintain_aspect_ratio then
       fx, fy = math.min(sx, sy), math.min(sx, sy)

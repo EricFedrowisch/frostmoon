@@ -3,8 +3,8 @@ local Button = {}
 
 Button.defaults = {
    ["button_function"] = function(self, msg) end, --What to do when pressed
-   ["sre_x"] = 1/8, --Screen real estate on x axis
-   ["sre_y"] = 1/8, --Screen real estate on y axis
+   ["psp_x"] = 1/8, --Positive space proportion on x axis
+   ["psp_y"] = 1/8, --Positive space proportion on y axis
    ["x"] = 0,
    ["y"] = 0,
    ["z"] = 1,
@@ -17,16 +17,16 @@ function Button:init(new_args)
    local image = self.image or res.img["No-Image.png"] --Initialize image or use default
    local image_on_interact = self.interact_image or image --Initialize interact image or use default
    self.image_initial, self.interact_image_initial = image, image_on_interact --Set initial images to the original sized image
-   self.image = _G.res.resize(image, self.sre_x, self.sre_y, self.maintain_aspect_ratio) --Resize image
-   self.interact_image = _G.res.resize(image_on_interact, self.sre_x, self.sre_y, self.maintain_aspect_ratio)  --Resize interact image
+   self.image = _G.res.resize(image, self.psp_x, self.psp_y, self.maintain_aspect_ratio) --Resize image
+   self.interact_image = _G.res.resize(image_on_interact, self.psp_x, self.psp_y, self.maintain_aspect_ratio)  --Resize interact image
    self.element = f:new({
       ["image"] = self.image,
       ["component_type"] = "gui.element",
       ["x"] = self.x,
       ["y"] = self.y,
       ["z"] = self.z,
-      ["sre_x"] = self.sre_x, --Screen real estate on x axis
-      ["sre_y"] = self.sre_x, --Screen real estate on y axis
+      ["psp_x"] = self.psp_x, --Positive space proportion on x axis
+      ["psp_y"] = self.psp_x, --Positive space proportion on y axis
    }, self)
    --Use element's image for rect's height and width
    self.rect = f:new({
@@ -41,9 +41,9 @@ function Button:init(new_args)
 end
 
 function Button:resize()
-   self.element.image = _G.res.resize(self.element.image_initial, self.sre_x, self.sre_y, self.maintain_aspect_ratio)
+   self.element.image = _G.res.resize(self.element.image_initial, self.psp_x, self.psp_y, self.maintain_aspect_ratio)
    if self.interact_image ~= nil then
-      self.interact_image = _G.res.resize(self.interact_image_initial, self.sre_x, self.sre_y, self.maintain_aspect_ratio)
+      self.interact_image = _G.res.resize(self.interact_image_initial, self.psp_x, self.psp_y, self.maintain_aspect_ratio)
    else
       self.interact_image = self.element.image --If no interact image, use the main image
    end
@@ -78,7 +78,7 @@ function Button:change_image()
    if self.pressed then
       self.element.image = self.interact_image
    else
-      self.element.image = _G.res.resize(self.element.image_initial, self.sre_x, self.sre_y, self.maintain_aspect_ratio)
+      self.element.image = _G.res.resize(self.element.image_initial, self.psp_x, self.psp_y, self.maintain_aspect_ratio)
    end
 end
 

@@ -10,6 +10,7 @@ function ViewController:init(new_args)
    self.listeners = {}   --Table of registered listeners to receive events, indexed by z level
    self.elements = {}    --Table of elements to draw to screen, indexed by z level
    self.hover_over = {} --Internal table of elements that are being "hovered over", indexed by z level
+   self.s_width, self.s_height = love.window.getMode()
 end
 
 --Draw list of elements to screen in z axis render order
@@ -194,7 +195,11 @@ function ViewController:register_element(obj) --Adds object that has a on-screen
 end
 
 function ViewController:resize(msg)
+   local old_width, old_height = self.s_width, self.s_height
    self.s_width, self.s_height = love.window.getMode()
+   print("Dimension Changed")
+   print("Width Proportion", self.s_width/old_width)
+   print("Height Proportion", self.s_height/old_height)
    local z_vals = self:z_order(self.elements)
    for i, z in ipairs(z_vals) do --Pass messages in z axis order...
       res.resize_imgs(self.elements[z])
