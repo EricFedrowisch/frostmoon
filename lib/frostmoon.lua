@@ -4,6 +4,12 @@ targeting iOS, OSX and Windows 10
 Copyright Aug. 9th, 2018 Eric Fedrowisch All rights reserved.
 --]]
 ------------------------------------------
+--[[
+This script is the main entry point of FrostMoon. It loads the component and
+queue classes, preparing them for instantiation. The returned table also has
+the "_uuid" table that stores the unique id info for instances.
+--]]
+------------------------------------------
 
 --"Table of Contents" for exports of the module
 local exports = {} --Temp storage for exported functionality

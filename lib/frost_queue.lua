@@ -4,6 +4,19 @@ targeting iOS, OSX and Windows 10
 Copyright Aug. 9th, 2018 Eric Fedrowisch All rights reserved.
 --]]
 ------------------------------------------
+--[[
+This library contains the stand alone queue class used in FrostMoon. These
+queues support the following:
+-adding elements
+-expanding as needed to hold more elements
+-peeking ahead n slots from the front of the queue
+-searching the queue and returning a table of elements that returned true from
+the search function
+-splitting and merging queues
+-mapping a function over all elements of a queue
+--]]
+------------------------------------------
+
 local uuid = require "uuid"
 local Queue = {}
 

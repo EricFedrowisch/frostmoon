@@ -4,6 +4,12 @@ targeting iOS, OSX and Windows 10
 Copyright Aug. 9th, 2018 Eric Fedrowisch All rights reserved.
 --]]
 ------------------------------------------
+--[[
+This library contains the basic component class that all components derive
+from when loaded by "frost_load.lua". This base component has the event message
+functionality to communicate with other components and process events its given.
+--]]
+------------------------------------------
 
 --"Table of Contents" for exports of the module
 local exports = {} --Temp storage for exported functionality
@@ -182,14 +188,9 @@ function Component:new(args, container)
          obj[k]=v
       end
    end
-   if obj.init ~= nil then obj:init(args) end 
+   if obj.init ~= nil then obj:init(args) end
    return obj
 end
 exports.component_prototype = Component
 
 return export()
---[[
-FrostMoon, cross platform Composition Based Object Factory and GUI library
-targeting iOS, OS X and Windows 10
-Copyright Aug. 9th, 2018 Eric Fedrowisch All rights reserved.
---]]

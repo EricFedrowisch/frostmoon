@@ -4,6 +4,16 @@ targeting iOS, OSX and Windows 10
 Copyright Aug. 9th, 2018 Eric Fedrowisch All rights reserved.
 --]]
 ------------------------------------------
+--[[
+Resources library. This script parses the "res" folder and loads various types
+of resources from files into forms usable by löve. It loads images from
+"res/img", sounds from "res/snd", longer music files from "res/msx" and font
+files from "res/fnt".
+It also has utility functions for resource related needs such as resizing
+images.
+--]]
+------------------------------------------
+
 --Directory path variables
 local res_dir = "" .. os_sep  .. "res"
 local img_dir = res_dir .. os_sep  .. "img"

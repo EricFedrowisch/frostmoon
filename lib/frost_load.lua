@@ -4,6 +4,12 @@ targeting iOS, OSX and Windows 10
 Copyright Aug. 9th, 2018 Eric Fedrowisch All rights reserved.
 --]]
 ------------------------------------------
+--[[
+This script parses the component directory recursively making all the files into
+frostmoon component object classes.
+--]]
+------------------------------------------
+
 --"Table of Contents" for exports of the module
 local exports = {} --Temp storage for exported functionality
 local function export()

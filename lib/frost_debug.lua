@@ -4,6 +4,10 @@ targeting iOS, OSX and Windows 10
 Copyright Aug. 9th, 2018 Eric Fedrowisch All rights reserved.
 --]]
 ------------------------------------------
+--[[
+Library of debug functions. Meant to be independant from Frostmoon.
+--]]
+------------------------------------------
 
 local exports = {} --Temp storage for exported functionality
 

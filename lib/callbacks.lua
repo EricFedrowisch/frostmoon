@@ -4,6 +4,12 @@ targeting iOS, OS X and Windows 10
 Copyright Aug. 9th, 2018 Eric Fedrowisch All rights reserved.
 --]]
 ------------------------------------------
+--[[
+Script generated binding of all callbacks in löve. It takes all the callbacks
+and wraps them in functions that create frostmoon messages out of them. Then
+those event messages are pushed onto the global queue variable "_G.q".
+--]]
+------------------------------------------
 
 --Callback function triggered when window receives or loses focus.
 function love.focus(focus)
