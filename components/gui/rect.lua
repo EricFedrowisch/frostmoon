@@ -67,7 +67,7 @@ function Rect:update_position(dx, dy, relative)
    if relative ~= nil then x, y = self.x + dx, self.y + dy end
    self.x, self.y = x or self.x, y or self.y
    if self._container then self._container.x, self._container.y = self.x, self.y end
-   if self._container.view then self._container.view.x, self._container.view.y = self.x, self.y end
+   if self._container.element then self._container.element.x, self._container.element.y = self.x, self.y end
 end
 
 function Rect:inside(x, y)

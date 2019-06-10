@@ -56,14 +56,14 @@ end
 function Button:hover_press(msg)
    self.pressed = true
    self:change_image()
-   msg.handled = 1
+   self:pass_rect_msg(msg)
 end
 
 --Button was pressed but not released. Now its not pressed/hovered over anymore.
 function Button:press_over(msg)
    self.pressed = false
    self:change_image()
-   msg.handled = 1
+   self:pass_rect_msg(msg)
 end
 
 function Button:push(msg)
@@ -73,7 +73,7 @@ function Button:push(msg)
       if self.interact_sound ~= nil then self.interact_sound:play() end
       if self.button_function ~= nil then self:button_function() end
    end
-   msg.handled = 1
+   self:pass_rect_msg(msg)
 end
 
 function Button:change_image()
@@ -84,11 +84,17 @@ function Button:change_image()
    end
 end
 
+function Button:pass_rect_msg(msg)
+   self.rect:receive_msg(msg)
+   msg.handled = 1
+end
+
 Button.event_types = {
    --MOUSE--
    ["mousepressed"]=function(self, msg) self:hover_press(msg) end,
    ["mousereleased"]=function(self, msg) self:push(msg) end,
    ["hover_end"]=function(self, msg) self:press_over(msg) end,
+   ["hover_cont"]=function(self, msg) self:pass_rect_msg(msg) end,
    --TOUCH--
    ["touchpressed"]=function(self, msg) self:hover_press(msg) end,
    ["touchreleased"]=function(self, msg) self:push(msg) end,

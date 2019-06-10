@@ -38,6 +38,7 @@ local button4 = f:new({
    ["x"] = button.element.image:getWidth() * 1.5,
    ["y"] = button.element.image:getHeight() * 1.5,
    ["z"] = 4,
+   ["draggable"] = true,
 })
 
 menu_screen:register(button)
