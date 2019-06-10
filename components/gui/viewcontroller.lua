@@ -186,6 +186,7 @@ end
 
 function ViewController:register_listener(obj) --Adds object that listens for events
    local z = obj.z or 1
+   if self.listeners[z] == nil then self.listeners[z] = {} end
    self.listeners[z][obj] = obj --Add object to listeners
 end
 
@@ -223,10 +224,10 @@ ViewController.event_types = {
    ["touchpressed"]=function(self, msg) self:check_collisions(msg) end,
    ["touchreleased"]=function(self, msg) self:check_collisions(msg) end,
    --KEYBOARD--
-   ["keypressed"]=function(self, msg) end,
-   ["keyreleased"]=function(self, msg) end,
-   ["textedited"]=function(self, msg) end,
-   ["textinput"]=function(self, msg) end,
+   --["keypressed"]=function(self, msg) end,
+   --["keyreleased"]=function(self, msg) end,
+   --["textedited"]=function(self, msg) end,
+   --["textinput"]=function(self, msg) end,
 }
 
 return ViewController
