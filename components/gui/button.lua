@@ -66,9 +66,9 @@ function Button:press_over(msg)
    self:pass_rect_msg(msg)
 end
 
-function Button:push(msg)
-   if msg.dt ~= nil then --Prevent "mouse bounce"
-      self.pressed = false
+function Button:release(msg)
+   self.pressed = false
+   if self.rect.dragging ~= true then
       self:change_image()
       if self.interact_sound ~= nil then self.interact_sound:play() end
       if self.button_function ~= nil then self:button_function() end
@@ -90,15 +90,12 @@ function Button:pass_rect_msg(msg)
 end
 
 Button.event_types = {
-   --MOUSE--
    ["mousepressed"]=function(self, msg) self:hover_press(msg) end,
-   ["mousereleased"]=function(self, msg) self:push(msg) end,
+   ["touchpressed"]=function(self, msg) self:hover_press(msg) end,
+   ["mousereleased"]=function(self, msg) self:release(msg) end,
+   ["touchreleased"]=function(self, msg) self:release(msg) end,
    ["hover_end"]=function(self, msg) self:press_over(msg) end,
    ["hover_cont"]=function(self, msg) self:pass_rect_msg(msg) end,
-   --TOUCH--
-   ["touchpressed"]=function(self, msg) self:hover_press(msg) end,
-   ["touchreleased"]=function(self, msg) self:push(msg) end,
-   --WINDOW
    ["resize"]=function(self, msg) self:resize() end,
 }
 

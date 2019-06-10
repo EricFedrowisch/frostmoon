@@ -10,6 +10,7 @@ Rect.defaults = {
    ["height"] = 100,
    ["draggable"] = false,
    ["last_move_pos"] = {0,0},
+   ["dt_pressed"] = 0,
 }
 
 function Rect:update_size()
@@ -48,8 +49,12 @@ function Rect:get_mobile_touch_pos()
    return tx, ty
 end
 
-function Rect:drag()
+function Rect:drag(msg)
    if self.pressed then
+      self.dt_pressed = msg.dt + self.dt_pressed
+      if self.dt_pressed >= 0.1 then
+         self.dragging = true
+      end
       local mx, my = self:last_move_position()
       if mx ~= nil and my ~= nil then
          --Calculate the change between the last point and the mouse cursor
@@ -76,22 +81,26 @@ function Rect:inside(x, y)
           (y >= fy and y <= (fy + self.height))
 end
 
+function Rect:on_press(msg)
+   if self.draggable then
+      self.last_move_pos.mx, self.last_move_pos.my = self:last_move_position()
+   end
+   self.pressed = true
+end
+
+function Rect:on_release(msg)
+   self.dt_pressed = 0
+   self.pressed = false
+   self.dragging = false
+end
+
 Rect.event_types = {
-   --MOUSE--
-   ["mousepressed"]=function(self, msg)
-         if self.draggable then
-            self.pressed = true;
-            self.last_move_pos.mx, self.last_move_pos.my = self:last_move_position();
-         end
-      end,
-   ["mousereleased"]=function(self, msg) self.pressed = false end,
-   ["hover_end"]=function(self, msg) self.pressed = false end,
-   ["hover_cont"]=function(self, msg) if self.draggable then self:drag() end end,
-   --TOUCH--
-   ["touchpressed"]=function(self, msg) if self.draggable then self.pressed = true end end,
-   ["touchreleased"]=function(self, msg) self.pressed = false end,
-   --WINDOW
-   --["resize"]=function(self, msg) self:update_position(self.resize[1](), self.resize[2]()) end,
+   ["mousepressed"] =function(self, msg) self:on_press(msg) end,
+   ["touchpressed"] =function(self, msg) self:on_press(msg) end,
+   ["mousereleased"]=function(self, msg) self:on_release(msg) end,
+   ["touchreleased"]=function(self, msg) self:on_release(msg) end,
+   ["hover_end"]    =function(self, msg) self:on_release(msg) end,
+   ["hover_cont"]   =function(self, msg) if self.draggable then self:drag(msg) end end,
 }
 
 return Rect
