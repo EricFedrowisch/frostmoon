@@ -7,10 +7,18 @@ Copyright Aug. 9th, 2018 Eric Fedrowisch All rights reserved.
 local scenes = {} --List of scenes to register
 ------------------------------------------
 local hotkey = f:new({["component_type"] = "gui.hotkey"})
-local fx = function () print("It works") end
 local dbg_fx = function () _G.draw_debug = not _G.draw_debug end
-hotkey:register_key("k", fx)
+local examine_fx = function ()
+   if _G.current_scene.vc.hover_over ~= nil and #_G.current_scene.vc.hover_over > 0 then
+      for k, i in pairs(_G.current_scene.vc.hover_over) do
+         d.tprint(i)
+         d.line()
+      end
+   end
+end
 hotkey:register_key("d", dbg_fx)
+hotkey:register_key("x", examine_fx)
+hotkey:register_key("c", d.clear)
 
 
 local menu_screen = f:new({

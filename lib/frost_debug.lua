@@ -13,14 +13,15 @@ local exports = {} --Temp storage for exported functionality
 
 --Table of Contents for the module
 local function export()
-   return {iprint = exports.iprint, --Print a table's ipairs
-           kprint = exports.kprint, --Print all a table's keys, value pairs
-           vprint = exports.vprint, --Print just a table's ipair values.
-           line = exports.line,     --Print a line to divide up output visually
-           tprint = exports.tprint, --Print a table's values recursively indented
-           ttest = exports.ttest,   --Return boolean of table-ness and error message if need
-           kcount = exports.kcount, --Return an int count of table's keys or nil if not table
+   return {iprint  = exports.iprint, --Print a table's ipairs
+           kprint  = exports.kprint, --Print all a table's keys, value pairs
+           vprint  = exports.vprint, --Print just a table's ipair values.
+           line    = exports.line,     --Print a line to divide up output visually
+           tprint  = exports.tprint, --Print a table's values recursively indented
+           ttest   = exports.ttest,   --Return boolean of table-ness and error message if need
+           kcount  = exports.kcount, --Return an int count of table's keys or nil if not table
            mem_use = exports.mem_use, --Return int number of bytes currently used by Lua's memory footprint
+           clear   = exports.clear,  --Clear the terminal output
           }
 end
 
@@ -114,5 +115,13 @@ local function mem_use()
 end
 exports.mem_use = mem_use
 
+local function clear()
+   if not os.execute("clear") then
+      for i = 1,25 do
+         print("\n\n")
+      end
+   end
+end
+exports.clear = clear
 ------------------------------------------
 return export()
