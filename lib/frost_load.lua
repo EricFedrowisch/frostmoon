@@ -61,9 +61,14 @@ local function _load_components(dir, recurse, _components)
       for i = _split_index + 1,#f do t[#t+1] = f[i] end
       local path = table.concat(t,'.');
       components[path]=love.filesystem.load(file)()
-      --Set component private variables here
-      components[path]._type = path
-      components[path]._load_path = file
+      if components[path] == nil or type(components[path]) ~= "table" then
+         print("ERROR: Component file not returning table at ", file)
+         components[path] = nil --Delete malformed component
+      else
+         --Set component private variables here
+         components[path]._type = path
+         components[path]._load_path = file
+      end
    end
    if recurse then
       for i, dir in ipairs(dirs) do
