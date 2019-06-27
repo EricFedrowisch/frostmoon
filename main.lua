@@ -27,6 +27,17 @@ function love.load()
    scenes = love.filesystem.load("app.lua")()
    _G.current_scene.vc.s_width, _G.current_scene.vc.s_height = love.window.getMode()
    love.window.setMode(_G.current_scene.vc.s_width, _G.current_scene.vc.s_height, {["resizable"] = true})
+   autoexec()
+end
+
+--Run lua scripts in autoexec folder
+function autoexec()
+   for _,v in ipairs(_G.res.get_files("" .. os_sep  .. "autoexec")) do
+      if v:match("[^.]+$") == "lua" then
+         print("Running script:", v)
+         love.filesystem.load(v)()
+      end
+   end
 end
 
 local function draw_touches()

@@ -22,6 +22,8 @@ local function export()
            kcount  = exports.kcount, --Return an int count of table's keys or nil if not table
            mem_use = exports.mem_use, --Return int number of bytes currently used by Lua's memory footprint
            clear   = exports.clear,  --Clear the terminal output
+           timestamp = exports.timestamp, --Return current timestamp string
+           get_file_extension = exports.get_file_extension, --Return ".xxx" file extension string
           }
 end
 
@@ -72,7 +74,8 @@ local function kprint(t)
 end
 exports.kprint = kprint
 
-local function line()
+local function line(text)
+   if text ~= nil then print(tostring(text)) end
    print("--------------------------------------------")
 end
 exports.line = line
@@ -125,5 +128,19 @@ local function clear()
    end
 end
 exports.clear = clear
+
+local function get_file_extension(filename)
+   if type(filename) ~= "string" then
+      return nil
+   else
+      return filename:match("[^.]+$") --Get file extension
+   end
+end
+exports.get_file_extension = get_file_extension
+
+local function timestamp()
+   return os.date('%I:%M:%S%p-%b-%d-%Y')
+end
+exports.timestamp = timestamp
 ------------------------------------------
 return export()

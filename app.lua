@@ -16,10 +16,10 @@ local examine_fx = function ()
       end
    end
 end
+
 hotkey:register_key("d", dbg_fx)
 hotkey:register_key("x", examine_fx)
 hotkey:register_key("c", d.clear)
-
 
 local menu_screen = f:new({
    ["component_type"] = "gui.scene",
@@ -57,15 +57,11 @@ local button4 = f:new({
    ["draggable"] = true,
 })
 
-
-
 menu_screen:register(button)
 menu_screen:register(button2)
 menu_screen:register(button3)
 menu_screen:register(button4)
 
---print("Screen W2HRatio:", _G.res.width_height_ratio())
---d.tprint(menu_screen)
 ------------------------------------------
 _G.current_scene = menu_screen
 scenes.menu_screen = menu_screen

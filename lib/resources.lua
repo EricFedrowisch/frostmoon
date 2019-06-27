@@ -27,7 +27,7 @@ local snd_types_supported = {["wav"] = true, ["mp3"] = true, ["ogg"] = true, ["o
 
 --Recursively get all files in dir and subdirs. Return table with filepaths.
 local function get_files(dir, _files)
-   local filelist = _files or {}
+   local filelist = _files or {} --Either make a new empty list or use recursive call results
    local files, dirs = {}, {}
    for i,fh in ipairs(love.filesystem.getDirectoryItems(dir)) do
       local handle = dir .. os_sep .. fh
@@ -161,6 +161,7 @@ local function load_resources(dir)
    res.resize_imgs = resize_imgs
    res.resize = resize
    res.width_height_ratio = width_height_ratio
+   res.get_files = get_files
    return res
 end
 ------------------------------------------

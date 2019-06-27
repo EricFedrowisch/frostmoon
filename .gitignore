@@ -1,5 +1,9 @@
+#Automatic Build Byproducts
 filelist.txt
 *.love
+#Ignore autoexec scripts
+autoexec/*
+
 
 # Compiled Lua sources
 luac.out
