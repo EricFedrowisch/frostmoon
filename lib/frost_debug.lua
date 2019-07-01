@@ -16,6 +16,7 @@ local function export()
    return {iprint  = exports.iprint, --Print a table's ipairs
            kprint  = exports.kprint, --Print all a table's keys, value pairs
            vprint  = exports.vprint, --Print just a table's ipair values.
+           mprint  = exports.mprint, --Print metatable of table.
            line    = exports.line,     --Print a line to divide up output visually
            tprint  = exports.tprint, --Print a table's values recursively indented
            ttest   = exports.ttest,   --Return boolean of table-ness and error message if need
@@ -75,12 +76,14 @@ end
 exports.kprint = kprint
 
 local function line(text)
-   if text ~= nil then print(tostring(text)) end
-   print("--------------------------------------------")
+   local line = "--------------------------------------------\n"
+   if text ~= nil then print(line .. tostring(text)) end
+   print(line)
 end
 exports.line = line
 
-local function tprint (t, shift, container)
+
+local function _tprint (t, shift, container)
    local container = container or nil
    if t ~= nil and type(t) == 'table' then
       shift = shift or 0
@@ -88,7 +91,7 @@ local function tprint (t, shift, container)
          local str = string.rep("   ", shift) .. tostring(k) .. " = "
          if type(v) == "table"  and t ~= container and k ~= "_container" and k ~= "self" then
             print(str)
-            tprint(v, shift+1, t)
+            exports._tprint(v, shift+1, t)
          else
             print(str .. tostring(v))
          end
@@ -101,7 +104,33 @@ local function tprint (t, shift, container)
       end
    end
 end
+exports._tprint = _tprint
+
+local function tprint(t, label)
+   exports.line(label)
+   _tprint(t)
+   if getmetatable(t) then
+      exports.mprint(t)
+   else
+      exports.line()
+   end
+end
 exports.tprint = tprint
+
+local function mprint(t)
+   exports.line("Metatable:")
+   local ttest = {table_test(getmetatable(t))}
+   if ttest[1] then
+      for k,v in pairs(getmetatable(t)) do
+         print(tostring(k) .. " = " .. tostring(v))
+         if type(v) == "table" then exports._tprint(v, 1, v) end
+      end
+   else
+      print(ttest[2])
+   end
+   exports.line()
+end
+exports.mprint = mprint
 
 local function kcount(t)
    local c = nil
@@ -142,5 +171,6 @@ local function timestamp()
    return os.date('%I:%M:%S%p-%b-%d-%Y')
 end
 exports.timestamp = timestamp
+
 ------------------------------------------
 return export()
