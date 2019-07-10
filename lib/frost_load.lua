@@ -38,49 +38,60 @@ local function _split(str, sep)
    return t
 end
 
-local function _load_components(dir, recurse, _components)
-   local components = _components or {}
-   local files, dirs = {}, {}
+local function make_class_key(path)
+   local f = _split(path, os_sep)
+   local _split_index = nil
+   local name = _split(f[#f],".");name = name[1];f[#f]=name --Get file name minus '.lua'
+   for i,v in ipairs(f) do  --Find componet dir index
+      if f[i] == component_dir then _split_index = i; break end
+   end
+   for i,v in ipairs(f) do --Delete preceding path before
+      if i < _split_index then f[i] = nil end
+   end
+   local t = {}
+   for i = _split_index + 1,#f do t[#t+1] = f[i] end
+   return table.concat(t,'.')
+end
+
+local function make_classes(paths)
+   local components = {}
+   for _, path in ipairs(paths) do
+      local key = make_class_key(path)
+      components[key]=love.filesystem.load(path)()
+      if components[key] == nil or type(components[key]) ~= "table" then
+         print("ERROR: Component file not returning table at ", file)
+         components[key] = nil --Delete malformed component
+      else
+         --Set component private variables here
+         components[key]._type = key
+         components[key]._load_path = path
+      end
+   end
+   return components
+end
+
+--Return a list of files' paths from directory and its subdirectories
+local function get_file_paths(dir, _files)
+   local files = files or {}
+   local dirs = {}
    for i,fh in ipairs(love.filesystem.getDirectoryItems(dir)) do
       local handle = dir .. os_sep .. fh
       local info = love.filesystem.getInfo(handle)
       if info.type == "file" then files[#files + 1] = handle end
       if info.type == "directory" then dirs[#dirs+1] = handle end
    end
-   for i,file in ipairs(files) do
-      local f = _split(file,os_sep)
-      local _split_index = nil
-      local name = _split(f[#f],".");name = name[1];f[#f]=name --Get file name minus '.lua'
-      for i,v in ipairs(f) do  --Find componet dir index
-         if f[i] == component_dir then _split_index = i; break end
-      end
-      for i,v in ipairs(f) do --Delete preceding path before
-         if i < _split_index then f[i] = nil end
-      end
-      local t = {}
-      for i = _split_index + 1,#f do t[#t+1] = f[i] end
-      local path = table.concat(t,'.');
-      components[path]=love.filesystem.load(file)()
-      if components[path] == nil or type(components[path]) ~= "table" then
-         print("ERROR: Component file not returning table at ", file)
-         components[path] = nil --Delete malformed component
-      else
-         --Set component private variables here
-         components[path]._type = path
-         components[path]._load_path = file
-      end
+   for i, dir in ipairs(dirs) do
+      files = get_file_paths(dir, files)
    end
-   if recurse then
-      for i, dir in ipairs(dirs) do
-         components = _load_components(dir, recurse, components)
-      end
-   end
-   return components
+   return files
+end
+
+local function _load_components(dir)
+   local files = get_file_paths(dir)
+   return make_classes(files)
 end
 
 ------------------------------------------
-local target_dir = "" .. os_sep  .. component_dir
-exports.components = _load_components(target_dir, true)
+exports.components = _load_components(component_dir)
 ------------------------------------------
-
 return export()
