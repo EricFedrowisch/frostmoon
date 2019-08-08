@@ -25,18 +25,19 @@ end
 
 
 ------------------------------------------
-local frost_proto = require("frost_proto")
-exports.Component = frost_proto.component_prototype
+local componet = require("component")
+exports.Component = componet.component_prototype
 
-local frost_load = require("frost_load")
-exports.components = frost_load.components
+local load = require("load")
+exports.components = load.components
 
-exports.queue = require "frost_queue"
+exports.queue = require "queue"
 
 exports.instances = {["_uuid"] = {}} --Create Component instances table
 
 for k,v in pairs(exports.components) do --For each component type...
    exports.instances[k] = {} --Create tables to store component instance uuids by component type
+   --#TODO: This is naive approach. Breaks multi-level inheritance. Fix by going up chain of parents and make component main parent
    setmetatable(v, {__index = exports.Component})--Makes dynamically loaded components inherit from Component
 end
 

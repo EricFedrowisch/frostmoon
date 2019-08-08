@@ -6,7 +6,7 @@ Copyright Aug. 9th, 2018 Eric Fedrowisch All rights reserved.
 ------------------------------------------
 --[[
 This library contains the basic component class that all components derive
-from when loaded by "frost_load.lua". This base component has the event message
+from when loaded by "load.lua". This base component has the event message
 functionality to communicate with other components and process events its given.
 --]]
 ------------------------------------------

@@ -12,7 +12,7 @@ love.filesystem.setRequirePath(love.filesystem.getRequirePath().. ";" .. lib .. 
 --GLOBALS
 --(Löve itself is implicitly in the globals)
 _G.os_sep = package.config:sub(1,1)
-_G.d = require "frost_debug"
+_G.d = require "debug"
 _G.f = require "frostmoon"
 _G.q = f.queue:new(1000) --Create Event Queue,
 _G.res = require "resources" --Load imgs, sounds, video, etc
