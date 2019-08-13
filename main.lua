@@ -22,9 +22,10 @@ love.filesystem.load(lib .. "callbacks.lua")() --Load and run the callbacks
 
 --love.load	This function is called exactly once at the beginning of the game.
 function love.load()
-   scenes = love.filesystem.load("app.lua")()
-   _G.current_scene.vc.s_width, _G.current_scene.vc.s_height = love.window.getMode()
-   love.window.setMode(_G.current_scene.vc.s_width, _G.current_scene.vc.s_height, {["resizable"] = true})
+   _G.vc = ViewController{} --Create ViewController
+   _G.vc.scenes = love.filesystem.load("app.lua")()
+   _G.vc.s_width, _G.vc.s_height = love.window.getMode()
+   love.window.setMode(_G.vc.s_width, _G.vc.s_height, {["resizable"] = true})
    autoexec()
 end
 
@@ -51,11 +52,11 @@ function love.draw()
    love.graphics.clear(0, 0, 0, 1)
    love.graphics.setColor(1, 1, 1, 1)
    if _G.OS == "iOS" and _G.draw_debug == true then draw_touches() end
-   _G.current_scene.vc:draw()
+   _G.vc:draw()
 end
 
 function love.update(dt)
-   _G.current_scene.vc:update(dt)
+   _G.vc:update(dt)
 end
 
 --love.quit	Callback function triggered when the game is closed.

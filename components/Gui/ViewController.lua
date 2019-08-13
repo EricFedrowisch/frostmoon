@@ -7,6 +7,7 @@ local ViewController = {}
 ViewController.defaults = {}
 
 function ViewController:init(new_args)
+   self.scenes = {}      --Table of registered scenes
    self.listeners = {}   --Table of registered listeners to receive events, indexed by z level
    self.elements = {}    --Table of elements to draw to screen, indexed by z level
    self.hover_over = {} --Internal table of elements that are being "hovered over", indexed by z level
@@ -223,11 +224,6 @@ ViewController.event_types = {
    ["touchmoved"]=function(self, msg) self:check_collisions(msg) end,
    ["touchpressed"]=function(self, msg) self:check_collisions(msg) end,
    ["touchreleased"]=function(self, msg) self:check_collisions(msg) end,
-   --KEYBOARD--
-   --["keypressed"]=function(self, msg) end,
-   --["keyreleased"]=function(self, msg) end,
-   --["textedited"]=function(self, msg) end,
-   --["textinput"]=function(self, msg) end,
 }
 
 return ViewController

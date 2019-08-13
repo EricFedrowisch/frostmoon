@@ -35,22 +35,26 @@ exports.queue = require "queue"
 
 exports.instances = {["_uuid"] = {}} --Create Component instances table
 
-for ck,cv in pairs(exports.components) do --For each component type...
-   exports.instances[ck] = {} --Create tables to store component instance uuids by component type
+local function make_class_type(ckey, cval)
+   exports.instances[ckey] = {} --Create tables to store component instance uuids by component type
    --#TODO: Naive approach. Breaks multi-level inheritance. Fix by going up chain of parents and make component top parent
    local fcall = function (call_args)
       local args = {}
       for k,v  in pairs(call_args) do args[k] = v end
-      args.component_type = cv.component_type
+      args.component_type = cval.component_type
       return component.component_prototype:new(args)
    end
    local meta = {
       __index = exports.Component,
       __call = fcall,
    }
-   setmetatable(cv, meta)--Makes dynamically loaded components inherit from Component
+   setmetatable(cval, meta)--Makes dynamically loaded components inherit from Component
    --#TODO:Check here for classname collisions
-   _G[cv.classname] = cv
+   _G[cval.classname] = cval
+end
+
+for ck,cv in pairs(exports.components) do --For each component type...
+   make_class_type(ck, cv)
 end
 
 --Right now frostmoon has to be in Global namespace.
