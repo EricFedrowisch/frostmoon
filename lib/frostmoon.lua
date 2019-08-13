@@ -25,8 +25,8 @@ end
 
 
 ------------------------------------------
-local componet = require("component")
-exports.Component = componet.component_prototype
+local component = require("component")
+exports.Component = component.component_prototype
 
 local load = require("load")
 exports.components = load.components
@@ -35,12 +35,24 @@ exports.queue = require "queue"
 
 exports.instances = {["_uuid"] = {}} --Create Component instances table
 
-for k,v in pairs(exports.components) do --For each component type...
-   exports.instances[k] = {} --Create tables to store component instance uuids by component type
-   --#TODO: This is naive approach. Breaks multi-level inheritance. Fix by going up chain of parents and make component main parent
-   setmetatable(v, {__index = exports.Component})--Makes dynamically loaded components inherit from Component
+for ck,cv in pairs(exports.components) do --For each component type...
+   exports.instances[ck] = {} --Create tables to store component instance uuids by component type
+   --#TODO: Naive approach. Breaks multi-level inheritance. Fix by going up chain of parents and make component top parent
+   local fcall = function (call_args)
+      local args = {}
+      for k,v  in pairs(call_args) do args[k] = v end
+      args.component_type = cv.component_type
+      return component.component_prototype:new(args)
+   end
+   local meta = {
+      __index = exports.Component,
+      __call = fcall,
+   }
+   setmetatable(cv, meta)--Makes dynamically loaded components inherit from Component
+   --#TODO:Check here for classname collisions
+   _G[cv.classname] = cv
 end
 
---This is here for a reason, even tho I don't like putting things in gloabl namespace.
+--Right now frostmoon has to be in Global namespace.
 _G.frostmoon = export()--Basically needed to avoid null pointers in the Component code.
 return _G.frostmoon

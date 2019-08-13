@@ -56,21 +56,18 @@ new function of Frostmoon. The arguments table will need to specify at the minim
 defaults, you can ovveride them by specifying an argument with the same key.
 You can even put other components inside and instantiate those at the same time.
 ```
-local new_args = {
-   ["component_type"]="data.object",
+local test_obj = Object{
    ["embedded_table"]= {"table entry 1","table entry 2","table entry 3"},
-   ["subcomponent"]= {
-      ["component_type"]="gui.button"
+   ["subcomponent"]= Button{}
    }
 }
-test_obj = f:new(new_args)
+
 ```
-Note: You MUST use the semicolon method notation.
-```frostmoon:new({args})``` when calling Frostmoon's new method. This is required to set the component metatables properly and Frostmoon will error if you accidently use ```frostmoon.new()```.
-### Frostmoon's new method
+
+### Frostmoon's Factory Pattern new method
 When Frostmoon's new method is called, it must be passed a table of arguments to use. This table can contain other tables as well. Frostmoon's new method will recursively create new tables and components from what its given. Frostmoon looks for a table value named 'component_type' to know what type of component to create. If a table in the creation arguments has no 'component_type', it is assumed to be a normal Lua table rather than a component.
 
-Example of using Frostmoon's new method:
+Example of using Frostmoon's Factory Pattern new method:
 ```
 local component = {
    ["component_type"] = "gui.button",
@@ -81,7 +78,7 @@ local component = {
 
 local some_table = {1,2,3,"some string"}
 
-local button = Frostmoon.new({
+local button = Frostmoon:new({
    component,
    some_table
    })

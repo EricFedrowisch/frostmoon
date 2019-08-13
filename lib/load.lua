@@ -42,7 +42,7 @@ local function make_class_key(path)
    local f = _split(path, os_sep)
    local _split_index = nil
    local name = _split(f[#f],".");name = name[1];f[#f]=name --Get file name minus '.lua'
-   for i,v in ipairs(f) do  --Find componet dir index
+   for i,v in ipairs(f) do  --Find component dir index
       if f[i] == component_dir then _split_index = i; break end
    end
    for i,v in ipairs(f) do --Delete preceding path before
@@ -50,20 +50,21 @@ local function make_class_key(path)
    end
    local t = {}
    for i = _split_index + 1,#f do t[#t+1] = f[i] end
-   return table.concat(t,'.')
+   return table.concat(t,'.'), t[#t]
 end
 
 local function make_classes(paths)
    local components = {}
    for _, path in ipairs(paths) do
-      local key = make_class_key(path)
+      local key, classname = make_class_key(path)
       components[key]=love.filesystem.load(path)()
       if components[key] == nil or type(components[key]) ~= "table" then
          print("ERROR: Component file not returning table at ", file)
          components[key] = nil --Delete malformed component
       else
          --Set component private variables here
-         components[key]._type = key
+         components[key].component_type = key
+         components[key].classname = classname
          components[key]._load_path = path
       end
    end

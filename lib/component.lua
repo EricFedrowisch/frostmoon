@@ -27,6 +27,48 @@ uuid.randomseed(socket.gettime()*10000)
 
 local Component = {}
 
+--[[
+Takes:
+   - args = table of arguements
+Returns:
+   - a table of components made using args
+--]]
+function Component:new(args, container)
+--[[
+function Component:new(args)
+   return Component:_make(args, args.container)
+end
+
+function Component:_make(args, container)
+--]]
+   local obj = {}
+   if Component:valid_ctype(args.component_type) then
+      setmetatable(obj, {__index=_G.frostmoon.components[args.component_type]})
+      obj._uuid = uuid()
+      local instances = _G.frostmoon.instances
+      instances._uuid[obj._uuid]=obj --Register UUID
+      instances[args.component_type][obj._uuid] = obj --Keep track of instances for Broadcasts
+      obj._container = container
+      local defaults = _G.frostmoon.components[args.component_type].defaults
+      if defaults then
+         for k,v in pairs(defaults) do obj[k]=v end
+      end
+   end
+   for k,v in pairs(args) do
+      if type(v) == "table" then
+         --obj[k]=Component:_make(v, obj)
+         obj[k]=Component:new(v, obj)
+      else
+         obj[k]=v
+      end
+   end
+   if obj.init ~= nil then obj:init(args) end
+   return obj
+end
+exports.component_prototype = Component
+
+------------------------------------------
+
 --Check if target is a valid and properly initialized Component
 function Component:valid_component(target)
    if target ~= nil then
@@ -161,36 +203,5 @@ function Component:valid_ctype(component_type)
 end
 
 ------------------------------------------
---[[
-Takes:
-   - args = table of arguements
-   - optional container = container for components to pass messages upwards
-Returns:
-   - a table of components made using args
---]]
-function Component:new(args, container)
-   local obj = {}
-   if Component:valid_ctype(args.component_type) then
-      setmetatable(obj, {__index=_G.frostmoon.components[args.component_type]})
-      obj._uuid = uuid()
-      _G.frostmoon.instances._uuid[obj._uuid]=obj --Register UUID
-      _G.frostmoon.instances[args.component_type][obj._uuid] = obj --Keep track of instances for Broadcasts
-      obj._container = container
-      local defaults = _G.frostmoon.components[args.component_type].defaults
-      if defaults then
-         for k,v in pairs(defaults) do obj[k]=v end
-      end
-   end
-   for k,v in pairs(args) do
-      if type(v) == "table" then
-         obj[k]=Component:new(v, obj)
-      else
-         obj[k]=v
-      end
-   end
-   if obj.init ~= nil then obj:init(args) end
-   return obj
-end
-exports.component_prototype = Component
 
 return export()
