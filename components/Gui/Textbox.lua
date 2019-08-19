@@ -28,7 +28,7 @@ function Textbox:draw()
    love.graphics.setColor(1,1,1,1) --Reset Color to White to Prevent messing up other stuff
 end
 
-function Textbox:init(new_args)
+function Textbox:init(args)
 
    self.rect = Rect{
       ["_container"] = self,
@@ -37,7 +37,7 @@ function Textbox:init(new_args)
       ["x"] = self.x,
       ["y"] = self.y,
       ["z"] = self.z,
-      ["resize"] = new_args.resize,
+      ["resize"] = args.resize,
       ["draggable"] = self.draggable,
    }
 

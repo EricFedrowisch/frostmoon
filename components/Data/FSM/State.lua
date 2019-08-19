@@ -11,12 +11,12 @@ State.defaults = {
    ["vars"] = {},    --Table of state variables
 }
 
-function State:init(new_args)--(fsm, name, enter, exit, during)
-   self.name = new_args.name
-   self.enter = new_args.enter or nil  --Function to run when entering this state
-   self.exit = new_args.exit or nil   --Function to run when exiting this state
-   self.during = new_args.during or nil --Function to run while in this state during heartbeat events.
-   self.vars = new_args.vars or {}    --Table of state variables
+function State:init(args)--(fsm, name, enter, exit, during)
+   self.name = args.name
+   self.enter = args.enter or nil  --Function to run when entering this state
+   self.exit = args.exit or nil   --Function to run when exiting this state
+   self.during = args.during or nil --Function to run while in this state during heartbeat events.
+   self.vars = args.vars or {}    --Table of state variables
    self:error_checks()
 end
 

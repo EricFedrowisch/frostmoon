@@ -6,12 +6,19 @@ local ViewController = {}
 
 ViewController.defaults = {}
 
-function ViewController:init(new_args)
+function ViewController:init(args)
    self.scenes = {}      --Table of registered scenes
-   self.listeners = {}   --Table of registered listeners to receive events, indexed by z level
+   self.listeners = {}   --Table of registered listeners to receive events, indexed by scene and then z level
    self.elements = {}    --Table of elements to draw to screen, indexed by z level
    self.hover_over = {} --Internal table of elements that are being "hovered over", indexed by z level
    self.s_width, self.s_height = love.window.getMode()
+end
+
+function ViewController:change_scene(scene)
+   self.listeners = scene.listeners
+   self.elements = scene.elements
+   self:end_hover()
+   self.hover_over = {}
 end
 
 --Draw list of elements to screen in z axis render order
@@ -89,7 +96,7 @@ end
 
 --Check for UI event collisions among rects of registered listeners.
 function ViewController:check_collisions(msg)
-   local z_vals = self:z_order(self.listeners, true) --Get z values in reverse order
+   local z_vals = self:z_order(self.listeners) --Get z values in reverse order
    for i, z in ipairs(z_vals) do --Pass messages in z axis order...
       if msg.handled ~= 1 then --If msg not handled (in blocking fashion) then...
          for k, obj in pairs(self.listeners[z]) do --Pass to listeners in given z
@@ -139,8 +146,30 @@ function ViewController:update_hover(msg)
    end
 end
 
+--End hover over status for all objects in scene.
+function ViewController:end_hover()
+   local msg_hover_end = {["type"] = "hover_end"}   --Make hover over end message to send to pertinent objects
+   for i, obj in self:z_order(self.hover_over) do --For each key, object pair in table of "hovered" objects...
+      if obj.rect ~= nil then --If object has a rect, it cares about collisions
+         self.hover_over[i]:receive_msg(msg_hover_end)   --Tell object hover over ended
+      end
+   end
+   --Remove all objects from table
+   self.hover_over = {}
+end
+
 --Given a table with z values as keys, return a non-sparse table of z values suitable for use with ipairs.
-function ViewController:z_order(t, reverse)
+function ViewController:z_order(t)
+   d.tprint(t)
+   local alpha, omega, step = #t, 1, -1 --Name the list beggining, end and iter step
+   local vals = {}
+   for i = alpha, omega, step do
+      for _,v in pairs(t[i]) do table.insert(vals, v) end
+      i = i + step
+   end
+   local x = 0
+   return function () x = x + 1; return vals[x] end
+   --[[
    local z_vals = {} --Create an empty table for z values
    for z, v in pairs(t) do table.insert(z_vals, z) end --Insert all z values into table
    table.sort(z_vals) --Sort the z values.
@@ -153,6 +182,7 @@ function ViewController:z_order(t, reverse)
       z_vals = reversed --Set z_vals equal to new reversed list
    end
    return z_vals --Return non-sparse list of z values for use with ipairs
+   ]]
 end
 
 --Given z value, register that z as an index in all the ViewController tables
@@ -168,16 +198,16 @@ end
 --Registers all non-element class objects as listeners.
 function ViewController:register(obj)
    self:register_z_index(obj.z)
-   if obj.component_type ~= "gui.element" then
+   if obj.component_type ~= _G.Element.component_type then
       self:register_listener(obj)
    end
-   if obj.component_type == "gui.element" then
+   if obj.component_type == _G.Element.component_type then
       self:register_element(obj)
    end
    for k,v in pairs(obj) do --Go through all values of obj...
       if type(v) == "table" then   --if table then check...
          if v.component_type ~= nil then --If component...
-            if v.component_type == "gui.element" then --If element
+            if v.component_type == _G.Element.component_type then --If element
                self:register_element(v)   --Register the element
             end
          end

@@ -16,7 +16,7 @@ Element.defaults = {
    ["resize"] = function(self) self.image = _G.res.resize(self.image_initial, self.psp_x, self.psp_y, self.maintain_aspect_ratio) end,
 }
 
-function Element:init(new_args)
+function Element:init(args)
    local image = self.image or res.img["No-Image.png"]
    self.image_initial = image
    self:resize()

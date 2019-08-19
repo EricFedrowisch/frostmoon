@@ -59,6 +59,6 @@ menu_screen:register(button3)
 menu_screen:register(button4)
 
 ------------------------------------------
-_G.current_scene = menu_screen
 scenes.menu_screen = menu_screen
+_G.vc:change_scene(menu_screen)
 return scenes

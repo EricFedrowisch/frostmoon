@@ -13,7 +13,7 @@ Button.defaults = {
    --["interact_sound"] = nil,
 }
 
-function Button:init(new_args)
+function Button:init(args)
    local image = self.image or res.img["No-Image.png"] --Initialize image or use default
    local image_on_interact = self.interact_image or image --Initialize interact image or use default
    self.image_initial, self.interact_image_initial = image, image_on_interact --Set initial images to the original sized image
