@@ -27,33 +27,33 @@ local menu_screen = Scene{
    ["hotkey"] = hotkey,
 }
 
-local button = Button{
+local button1 = Button{
    ["button_function"] = function(self, msg) print("Pressed Button 1") end
 }
 
 local button2 = Button{
    ["button_function"] = function(self, msg) print("Pressed Button 2") end,
-   ["x"] = button.element.image:getWidth()/2,
-   ["y"] = button.element.image:getHeight()/2,
+   ["x"] = button1.element.image:getWidth()/2,
+   ["y"] = button1.element.image:getHeight()/2,
    ["z"] = 2,
 }
 
 local button3 = Button{
    ["button_function"] = function(self, msg) print("Pressed Button 3") end,
-   ["x"] = button.element.image:getWidth(),
-   ["y"] = button.element.image:getHeight(),
+   ["x"] = button1.element.image:getWidth(),
+   ["y"] = button1.element.image:getHeight(),
    ["z"] = 3,
 }
 
 local button4 = Button{
    ["button_function"] = function(self, msg) print("Pressed Button 4") end,
-   ["x"] = button.element.image:getWidth() * 1.5,
-   ["y"] = button.element.image:getHeight() * 1.5,
+   ["x"] = button1.element.image:getWidth() * 1.5,
+   ["y"] = button1.element.image:getHeight() * 1.5,
    ["z"] = 4,
    ["draggable"] = true,
 }
 
-menu_screen:register(button)
+menu_screen:register(button1)
 menu_screen:register(button2)
 menu_screen:register(button3)
 menu_screen:register(button4)

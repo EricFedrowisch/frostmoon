@@ -22,11 +22,19 @@ love.filesystem.load(lib .. "callbacks.lua")() --Load and run the callbacks
 
 --love.load	This function is called exactly once at the beginning of the game.
 function love.load()
+   if arg[#arg] == "-debug" then require("mobdebug").start() end --ZeroBrane IDE debug enable
    _G.vc = ViewController{} --Create ViewController
-   _G.vc.scenes = love.filesystem.load("app.lua")()
    _G.vc.s_width, _G.vc.s_height = love.window.getMode()
    love.window.setMode(_G.vc.s_width, _G.vc.s_height, {["resizable"] = true})
+   load_scenes()
    autoexec()
+end
+
+function load_scenes()
+   local scenes = love.filesystem.load("app.lua")()
+   for _,scene in pairs(scenes) do
+      _G.vc.scenes[scene] = scene
+   end
 end
 
 --Run lua scripts in autoexec folder

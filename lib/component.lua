@@ -34,13 +34,6 @@ Returns:
    - a table of components made using args
 --]]
 function Component:new(args, container)
---[[
-function Component:new(args)
-   return Component:_make(args, args.container)
-end
-
-function Component:_make(args, container)
---]]
    local obj = {}
    if Component:valid_ctype(args.component_type) then
       setmetatable(obj, {__index=_G.frostmoon.components[args.component_type]})
@@ -56,13 +49,12 @@ function Component:_make(args, container)
    end
    for k,v in pairs(args) do
       if type(v) == "table" then
-         --obj[k]=Component:_make(v, obj)
          obj[k]=Component:new(v, obj)
       else
          obj[k]=v
       end
    end
-   if obj.init ~= nil then obj:init(args) end
+   if obj.init ~= nil and type(obj.init) == "function" then obj:init(args) end
    return obj
 end
 exports.component_prototype = Component

@@ -2,7 +2,7 @@
 local Button = {}
 
 Button.defaults = {
-   ["button_function"] = function(self, msg) end, --What to do when pressed
+   ["button_function"] = function(self, msg) print("DEFAULT BUTTON FUNCTION INVOKED") end, --What to do when pressed
    ["psp_x"] = 1/8, --Positive space proportion on x axis
    ["psp_y"] = 1/8, --Positive space proportion on y axis
    ["x"] = 0,

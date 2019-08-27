@@ -23,7 +23,6 @@ local function export()
           }
 end
 
-
 ------------------------------------------
 local component = require("component")
 exports.Component = component.component_prototype
@@ -36,21 +35,24 @@ exports.queue = require "queue"
 exports.instances = {["_uuid"] = {}} --Create Component instances table
 
 local function make_class_type(ckey, cval)
+   --Error testing...
+   if _G[cval.classname] ~= nil then
+      error("Class namespace collision (two or more global variables/classes with same name): " .. cval.classname)
+   else
+      _G[cval.classname] = cval
+   end
+
    exports.instances[ckey] = {} --Create tables to store component instance uuids by component type
-   --#TODO: Naive approach. Breaks multi-level inheritance. Fix by going up chain of parents and make component top parent
-   local fcall = function (call_args)
-      local args = {}
-      for k,v  in pairs(call_args) do args[k] = v end
+
+   local fcall = function (args)
       args.component_type = cval.component_type
       return component.component_prototype:new(args)
    end
-   local meta = {
-      __index = exports.Component,
-      __call = fcall,
-   }
-   setmetatable(cval, meta)--Makes dynamically loaded components inherit from Component
-   --#TODO:Check here for classname collisions
-   _G[cval.classname] = cval
+
+   local meta = {}
+   meta.__index = cval.__parent or exports.Component
+   meta.__call = fcall
+   setmetatable(cval, meta)
 end
 
 for ck,cv in pairs(exports.components) do --For each component type...
