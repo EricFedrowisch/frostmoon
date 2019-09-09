@@ -20,7 +20,7 @@ function Button:init(args)
    self.image = _G.res.resize(image, self.psp_x, self.psp_y, self.maintain_aspect_ratio) --Resize image
    self.interact_image = _G.res.resize(image_on_interact, self.psp_x, self.psp_y, self.maintain_aspect_ratio)  --Resize interact image
    self.element = Element{
-      ["_container"] = self,
+
       ["image"] = self.image,
       ["x"] = self.x,
       ["y"] = self.y,
@@ -28,9 +28,10 @@ function Button:init(args)
       ["psp_x"] = self.psp_x, --Positive space proportion on x axis
       ["psp_y"] = self.psp_x, --Positive space proportion on y axis
    }
+   self.element._container = self
    --Use element's image for rect's height and width
    self.rect = Rect{
-      ["_container"] = self,
+
       ["width"] = self.element.image:getWidth(),
       ["height"] = self.element.image:getHeight(),
       ["x"] = self.x,
@@ -38,6 +39,7 @@ function Button:init(args)
       ["z"] = self.z,
       ["draggable"] = self.draggable,
    }
+   self.rect._container = self
 end
 
 function Button:resize()

@@ -78,7 +78,7 @@ local component = {
 
 local some_table = {1,2,3,"some string"}
 
-local button = Frostmoon:new({
+local button = Frostmoon.new({
    component,
    some_table
    })

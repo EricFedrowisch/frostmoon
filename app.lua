@@ -22,10 +22,10 @@ hotkey:register_key("x", examine_fx)
 hotkey:register_key("c", d.clear)
 hotkey:register_key("escape", love.event.quit)
 
-local menu_screen = Scene{
+local menu_screen = Scene({
    ["background_img"] = _G.res.img["backgrounds/forest.png"],
    ["hotkey"] = hotkey,
-}
+})
 
 local button1 = Button{
    ["button_function"] = function(self, msg) print("Pressed Button 1") end

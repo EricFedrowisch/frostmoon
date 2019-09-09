@@ -1,3 +1,4 @@
+if arg[#arg] == "-debug" then require("mobdebug").start() end --ZeroBrane IDE debug enable
 --[[
 FrostMoon, cross platform Composition Based Object Factory and GUI library
 targeting iOS, OSX and Windows 10
@@ -12,7 +13,7 @@ love.filesystem.setRequirePath(love.filesystem.getRequirePath().. ";" .. lib .. 
 _G.os_sep = package.config:sub(1,1)
 _G.d = require "f_debug"
 _G.f = require "frostmoon"
-_G.q = f.queue:new(1000) --Create Event Queue,
+_G.q = f.queue.new(1000) --Create Event Queue,
 _G.res = require "resources" --Load imgs, sounds, video, etc
 _G.OS = love.system.getOS() --The current operating system. "OS X", "Windows", "Linux", "Android" or "iOS".
 love.filesystem.load(lib .. "callbacks.lua")() --Load and run the callbacks
@@ -22,8 +23,8 @@ love.filesystem.load(lib .. "callbacks.lua")() --Load and run the callbacks
 
 --love.load	This function is called exactly once at the beginning of the game.
 function love.load()
-   if arg[#arg] == "-debug" then require("mobdebug").start() end --ZeroBrane IDE debug enable
-   _G.vc = ViewController{} --Create ViewController
+   _G.vc = ViewController{["test"] = "test",["yep"] = 12,["nope"] = 31,} --Create ViewController
+   d.tprint(_G.vc)
    _G.vc.s_width, _G.vc.s_height = love.window.getMode()
    love.window.setMode(_G.vc.s_width, _G.vc.s_height, {["resizable"] = true})
    load_scenes()

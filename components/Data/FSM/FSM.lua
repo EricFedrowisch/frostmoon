@@ -22,7 +22,7 @@ function FSM:register_state(name, enter, exit, during)
       ["exit"] = exit,   --Function to run when exiting this state
       ["during"] = during, --Function to run while in this state during heartbeat events.
    }
-   local state = _G.f:new(state_args, self)
+   local state = _G.f.new(state_args, self)
    self.states[name]=state
    self.transitions[name] = {}
 end

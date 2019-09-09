@@ -10,7 +10,7 @@ Scene.defaults = {
 }
 
 function Scene:init(args)
-   if args.background_img ~= nil then make_bg(args.background_img) end
+   if args.background_img ~= nil then self:make_bg(args.background_img) end
 end
 
 --Register object and internals components recursively.
@@ -18,16 +18,18 @@ end
 --Registers all element class objects as elements.
 function Scene:register(obj)
    self:register_z_index(obj.z) --Make sure lists have correct z
-   if obj.component_type ~= _G.Element.component_type then --If not element..
+   if obj.component_type ~= "Gui.Element" then --If not element..
       self:register_listener(obj) --Register as listener
    end
-   if obj.component_type == _G.Element.component_type then --If element
+   if obj.component_type == "Gui.Element" then --If element
       self:register_element(obj) --Register element
    end
    for k,v in pairs(obj) do --Go through all values of obj...
       if type(v) == "table" then   --if table then check...
-         if v.component_type ~= nil then --If component...
-            self:register(v)   --Register the component
+         if k ~= "_container" then
+            if v.component_type ~= nil then --If component...
+               self:register(v)   --Register the component
+            end
          end
       end
    end
@@ -53,7 +55,6 @@ end
 
 function Scene:make_bg(img)
    local bg = Element{
-      ["_container"] = self,
       ["background"] = true,
       ["image"]=img,
       ["maintain_aspect_ratio"] = false, --Stretch backgrounds by default

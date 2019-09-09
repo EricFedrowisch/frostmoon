@@ -20,7 +20,7 @@ the search function
 local uuid = require "uuid"
 local Queue = {}
 
-function Queue:new(size)
+function Queue.new(size)
    local q = {}
    setmetatable(q , {__index = Queue}) --Make Queue instance inherit from Queue
    q.elements = {}
@@ -45,7 +45,7 @@ function Queue:add(msg)
       if add == 0 then add = self.size end --Needed bc Lua's 1st element is 1 not 0
       if self.last_op == "add" and add == self.read then
          --We have a problem, time to grow
-         self.cascade = self:new(self.size * 2) --Make a new, bigger Q
+         self.cascade = self.new(self.size * 2) --Make a new, bigger Q
          self.cascade:add(msg)
          self.last_op = "add"
          return
@@ -146,8 +146,8 @@ function Queue:split(filter, ...)
       end
    end
    --Make two new Qs
-   local q_a = Queue:new(#a*2)
-   local q_b = Queue:new(#b*2)
+   local q_a = Queue.new(#a*2)
+   local q_b = Queue.new(#b*2)
    q_a.written = #a
    q_b.written = #b
    q_a.elements = a
@@ -157,7 +157,7 @@ end
 
 --Merge two Qs using a simple merge where b becomes a's tail. Optionally merge using function.
 function Queue:merge(a, b, fun, ...)
-   local merged = Queue:new(a.size + b.size)
+   local merged = Queue.new(a.size + b.size)
    if fun ~= nil then
       merged = fun(a, b, ...)
    else
@@ -190,7 +190,7 @@ end
 
 --Return Q which has had function called on all its elements.
 function Queue:map(fun, ...)
-   local map_q = self:new(self.size)
+   local map_q = Queue.new(self.size)
    local n = 0
    local peek = self:peek(n)
    while peek ~= nil do

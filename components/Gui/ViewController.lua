@@ -44,10 +44,12 @@ end
 --Given a table with z values as keys, return a table of values in z order lowest to highest. Suitable for
 --drawing objects with objects on top (higher z) after objects beneath them.
 function ViewController:get_draw_ordered_elements(t)
-   local alpha, omega, step = 1, #t, 1 --Name the list beggining, end and iter step
+   local alpha, omega, step = 0, #t, 1 --Name the list beggining, end and iter step
    local vals = {}
    for i = alpha, omega, step do
-      for _,v in ipairs(t[i]) do table.insert(vals, v) end
+      if t[i] then
+         for _,v in ipairs(t[i]) do table.insert(vals, v) end
+      end
       i = i + step
    end
    return vals

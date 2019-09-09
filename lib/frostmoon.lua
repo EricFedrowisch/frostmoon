@@ -34,29 +34,28 @@ exports.queue = require "queue"
 
 exports.instances = {["_uuid"] = {}} --Create Component instances table
 
-local function make_class_type(ckey, cval)
+local function make_class_syntax_binding(ckey, cval)
    --Error testing...
-   if _G[cval.classname] ~= nil then
+   local class = cval.classname
+   if _G[class] ~= nil then
       error("Class namespace collision (two or more global variables/classes with same name): " .. cval.classname)
    else
-      _G[cval.classname] = cval
+      _G[class] = function (...)
+         local args = {}
+         args.component_type = cval.component_type
+         for i,n in pairs({...}) do
+            for k,v in pairs(n) do args[k] = v end
+         end
+         d.tprint(args)
+         return exports.Component.new(args)
+      end
    end
-
-   exports.instances[ckey] = {} --Create tables to store component instance uuids by component type
-
-   local fcall = function (args)
-      args.component_type = cval.component_type
-      return component.component_prototype:new(args)
-   end
-
-   local meta = {}
-   meta.__index = cval.__parent or exports.Component
-   meta.__call = fcall
-   setmetatable(cval, meta)
 end
 
-for ck,cv in pairs(exports.components) do --For each component type...
-   make_class_type(ck, cv)
+for ck, cv in pairs(exports.components) do --For each component type...
+   exports.instances[ck] = {} --Create tables to store component instance uuids by component type
+   make_class_syntax_binding(ck, cv)
+   setmetatable(cv, {__index = exports.Component})
 end
 
 --Right now frostmoon has to be in Global namespace.

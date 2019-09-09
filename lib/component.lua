@@ -33,23 +33,27 @@ Takes:
 Returns:
    - a table of components made using args
 --]]
-function Component:new(args, container)
+function Component.new(args, container)
+   --d.line()
+   --for k,v in pairs(args) do print(k,v) end
    local obj = {}
-   if Component:valid_ctype(args.component_type) then
-      setmetatable(obj, {__index=_G.frostmoon.components[args.component_type]})
+   local c_type = args.component_type
+   if Component:valid_ctype(c_type) then
+      local class = _G.frostmoon.components[c_type]
+
+      setmetatable(obj, {__index=class})
       obj._uuid = uuid()
       local instances = _G.frostmoon.instances
       instances._uuid[obj._uuid]=obj --Register UUID
-      instances[args.component_type][obj._uuid] = obj --Keep track of instances for Broadcasts
-      obj._container = container
-      local defaults = _G.frostmoon.components[args.component_type].defaults
-      if defaults then
-         for k,v in pairs(defaults) do obj[k]=v end
+      instances[c_type][obj._uuid] = obj --Keep track of instances for Broadcasts
+      if class.defaults then
+         for k,v in pairs(class.defaults) do obj[k]=v end
       end
+      obj._container = container
    end
    for k,v in pairs(args) do
-      if type(v) == "table" then
-         obj[k]=Component:new(v, obj)
+      if type(v) == "table" and v.component_type ~= nil then
+         obj[k]=Component.new(v, obj)
       else
          obj[k]=v
       end
