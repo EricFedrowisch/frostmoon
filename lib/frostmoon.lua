@@ -35,7 +35,6 @@ exports.queue = require "queue"
 exports.instances = {["_uuid"] = {}} --Create Component instances table
 
 local function make_class_syntax_binding(ckey, cval)
-   --Error testing...
    local class = cval.classname
    if _G[class] ~= nil then
       error("Class namespace collision (two or more global variables/classes with same name): " .. cval.classname)
@@ -46,7 +45,6 @@ local function make_class_syntax_binding(ckey, cval)
          for i,n in pairs({...}) do
             for k,v in pairs(n) do args[k] = v end
          end
-         d.tprint(args)
          return exports.Component.new(args)
       end
    end

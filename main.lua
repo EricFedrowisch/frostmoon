@@ -24,7 +24,6 @@ love.filesystem.load(lib .. "callbacks.lua")() --Load and run the callbacks
 --love.load	This function is called exactly once at the beginning of the game.
 function love.load()
    _G.vc = ViewController{["test"] = "test",["yep"] = 12,["nope"] = 31,} --Create ViewController
-   d.tprint(_G.vc)
    _G.vc.s_width, _G.vc.s_height = love.window.getMode()
    love.window.setMode(_G.vc.s_width, _G.vc.s_height, {["resizable"] = true})
    load_scenes()
