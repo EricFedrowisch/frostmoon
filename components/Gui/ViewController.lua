@@ -141,7 +141,8 @@ function ViewController:resize(msg)
    print("Dimension Changed")
    print("Width Proportion", self.s_width/old_width)
    print("Height Proportion", self.s_height/old_height)
-   res.resize_imgs(self.scenes[self.current_scene].elements)
+   local elements = self:get_draw_ordered_elements(self.scenes[self.current_scene].elements)
+   res.resize_imgs(elements)
    self:pass_msg(msg)
 end
 
