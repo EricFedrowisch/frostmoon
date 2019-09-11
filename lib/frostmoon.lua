@@ -41,11 +41,18 @@ local function make_class_syntax_binding(ckey, cval)
    else
       _G[class] = function (...)
          local args = {}
+         local container = nil
          args.component_type = cval.component_type
          for i,n in pairs({...}) do
-            for k,v in pairs(n) do args[k] = v end
+            for k,v in pairs(n) do
+               if k ~= '__container' then
+                  args[k] = v
+               else
+                  container = v
+               end
+            end
          end
-         return exports.Component.new(args)
+         return exports.Component.new(args, container)
       end
    end
 end

@@ -34,14 +34,11 @@ Returns:
    - a table of components made using args
 --]]
 function Component.new(args, container)
-   --d.line()
-   --for k,v in pairs(args) do print(k,v) end
    local obj = {}
    local c_type = args.component_type
    if Component:valid_ctype(c_type) then
       local class = _G.frostmoon.components[c_type]
-
-      setmetatable(obj, {__index=class})
+      setmetatable(obj, {__index=class, __container = container})
       obj._uuid = uuid()
       local instances = _G.frostmoon.instances
       instances._uuid[obj._uuid]=obj --Register UUID
@@ -49,7 +46,6 @@ function Component.new(args, container)
       if class.defaults then
          for k,v in pairs(class.defaults) do obj[k]=v end
       end
-      obj._container = container
    end
    for k,v in pairs(args) do
       if type(v) == "table" and v.component_type ~= nil then
@@ -64,6 +60,14 @@ end
 exports.component_prototype = Component
 
 ------------------------------------------
+function Component:get_container()
+   return getmetatable(self).__container
+end
+
+function Component:set_container(obj)
+   local mt = getmetatable(self)
+   mt.__container = obj
+end
 
 --Check if target is a valid and properly initialized Component
 function Component:valid_component(target)

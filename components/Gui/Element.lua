@@ -21,13 +21,14 @@ function Element:init(args)
    self.image_initial = image
    self:resize()
    self.rect = Rect{
+      ["__container"] = self,
       ["width"] = self.image:getWidth(),
       ["height"] = self.image:getHeight(),
       ["x"] = self.x,
       ["y"] = self.y,
       ["z"] = self.z,
    }
-   self.rect._container = self --HAX HERE.
+   --self.rect._container = self --HAX HERE.
 end
 
 return Element

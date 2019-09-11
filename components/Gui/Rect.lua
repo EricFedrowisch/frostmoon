@@ -14,7 +14,8 @@ Rect.defaults = {
 }
 
 function Rect:update_size()
-   self.width, self.height = self._container.width, self._container.height
+   local container = self:get_container()
+   self.width, self.height = container.width, container.height
 end
 
 function Rect:last_move_position()
@@ -71,8 +72,11 @@ function Rect:update_position(dx, dy, relative)
    local x, y = dx, dy
    if relative ~= nil then x, y = self.x + dx, self.y + dy end
    self.x, self.y = x or self.x, y or self.y
-   if self._container then self._container.x, self._container.y = self.x, self.y end
-   if self._container.element then self._container.element.x, self._container.element.y = self.x, self.y end
+   local container = self:get_container()
+   if container ~= nil then
+      if container then container.x, container.y = self.x, self.y end
+      if container.element then container.element.x, container.element.y = self.x, self.y end
+   end
 end
 
 function Rect:inside(x, y)
