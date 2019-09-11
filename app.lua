@@ -53,6 +53,7 @@ local button4 = Button{
    ["draggable"] = true,
 }
 
+menu_screen:register(hotkey)
 menu_screen:register(button1)
 menu_screen:register(button2)
 menu_screen:register(button3)

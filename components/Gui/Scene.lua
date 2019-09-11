@@ -37,10 +37,9 @@ end
 
 --Given z value, register that z as an index in all the ViewController tables
 function Scene:register_z_index(z)
-   if z ~= nil then
-      if self.listeners[z] == nil then self.listeners[z] = {} end --If entry for z axis coordinate doesn't exist yet, make it
-      if self.elements[z] == nil then self.elements[z] = {} end
-   end
+   if z == nil then z = 1 end --Some Objs may not have a Z (like Hotkey)
+   if self.listeners[z] == nil then self.listeners[z] = {} end --If entry for z axis coordinate doesn't exist yet, make it
+   if self.elements[z] == nil then self.elements[z] = {} end
 end
 
 function Scene:register_listener(obj) --Adds object that listens for events
