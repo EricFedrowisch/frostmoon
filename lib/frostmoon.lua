@@ -60,7 +60,8 @@ end
 for ck, cv in pairs(exports.components) do --For each component type...
    exports.instances[ck] = {} --Create tables to store component instance uuids by component type
    make_class_syntax_binding(ck, cv)
-   setmetatable(cv, {__index = exports.Component})
+   local parent = cv.__parent or exports.Component --Allow for single line inheritance
+   setmetatable(cv, {__index = parent})
 end
 
 --Right now frostmoon has to be in Global namespace.
