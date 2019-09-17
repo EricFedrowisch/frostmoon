@@ -57,10 +57,11 @@ local function make_class_syntax_binding(ckey, cval)
    end
 end
 
+--d.tprint(exports.components)
 for ck, cv in pairs(exports.components) do --For each component type...
    exports.instances[ck] = {} --Create tables to store component instance uuids by component type
    make_class_syntax_binding(ck, cv)
-   local parent = cv.__parent or exports.Component --Allow for single line inheritance
+   local parent = exports.components[cv.__parent] or exports.Component --Allow for single line inheritance
    setmetatable(cv, {__index = parent})
 end
 

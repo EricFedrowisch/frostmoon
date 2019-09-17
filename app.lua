@@ -59,6 +59,12 @@ menu_screen:register(button2)
 menu_screen:register(button3)
 menu_screen:register(button4)
 
+--Test Inheritance
+local a = A{}
+local b = B{}
+b:testB()
+b:testA() 
+
 ------------------------------------------
 scenes.menu_screen = menu_screen
 _G.vc:change_scene(menu_screen)
