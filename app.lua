@@ -7,10 +7,11 @@ Copyright Aug. 9th, 2018 Eric Fedrowisch All rights reserved.
 local scenes = {} --List of scenes to register
 ------------------------------------------
 local hotkey = Hotkey{}
-local dbg_fx = function () _G.draw_debug = not _G.draw_debug end
+local dbg_fx = function () _G.draw_debug = not _G.draw_debug; print("Draw Debug On:", _G.draw_debug) end
 local examine_fx = function ()
-   if _G.current_scene.vc.hover_over ~= nil and #_G.current_scene.vc.hover_over > 0 then
-      for k, i in pairs(_G.current_scene.vc.hover_over) do
+   local hover = _G.vc.hover_over
+   if hover ~= nil and #hover > 0 then
+      for k, i in pairs(hover) do
          d.tprint(i)
          d.line()
       end
@@ -63,7 +64,7 @@ menu_screen:register(button4)
 local a = A{}
 local b = B{}
 b:testB()
-b:testA() 
+b:testA()
 
 ------------------------------------------
 scenes.menu_screen = menu_screen

@@ -61,6 +61,7 @@ function love.draw()
    love.graphics.setColor(1, 1, 1, 1)
    if _G.OS == "iOS" and _G.draw_debug == true then draw_touches() end
    _G.vc:draw()
+   if _G.draw_debug == true then _G.vc:draw_debug() end
 end
 
 function love.update(dt)

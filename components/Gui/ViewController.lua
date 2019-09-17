@@ -147,34 +147,36 @@ function ViewController:resize(msg)
 end
 
 
---[[
-
---#TODO: Check logic
 function ViewController:draw_debug()
-   local l_rects = {}
-   for i,z in pairs(self.listeners) do
-      for k,e in pairs(z) do
-         if e.rect ~= nil then l_rects[#l_rects+1]=e.rect end
-      end
-   end
-   local e_rects = {}
-   for i,z in pairs(self.elements) do
-      for k,e in pairs(z) do
-         if e.rect ~= nil then e_rects[#e_rects+1]=e.rect end
-      end
-   end
+   local listeners = self:get_draw_ordered_elements(self.scenes[self.current_scene].listeners)
+   local elements = self:get_draw_ordered_elements(self.scenes[self.current_scene].elements)
+   --d.tprint(listeners)
    love.graphics.setColor(1, 0, 0, 1)
-   for i,v in ipairs(l_rects) do
-      love.graphics.rectangle("line", v.x, v.y, v.width, v.height )
+   for i,v in ipairs(listeners) do
+      if v.component_type == "Gui.Rect" then
+         love.graphics.rectangle("line", v.x, v.y, v.width, v.height)
+      end
    end
+   --[[
+   love.graphics.setColor(1, 0, 0, 1)
+   for _,l in ipairs(self:get_draw_ordered_elements(listeners)) do
+      if l.rect ~= nil then
+         local r = l.rect
+         love.graphics.rectangle("line", r.x, r.y, r.width, r.height )
+      end
+   end
+
    love.graphics.setColor(0, 1, 0, 1)
-   for i,v in ipairs(e_rects) do
-       love.graphics.rectangle("line", v.x, v.y, v.width, v.height )
+   for _,e in ipairs(self:get_draw_ordered_elements(elements)) do
+      if e.rect ~= nil then
+         local r = e.rect
+         love.graphics.rectangle("line", r.x, r.y, r.width, r.height )
+      end
    end
+   ]]
    love.graphics.setColor(1, 1, 1, 1)
 end
 
-]]
 
 ViewController.event_types = {
    --WINDOW--
