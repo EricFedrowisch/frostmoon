@@ -72,7 +72,7 @@ local function make_classes(paths)
 end
 
 --Return a list of files' paths from directory and its subdirectories
-local function get_file_paths(dir, _files)
+local function get_file_paths(dir, files)
    local files = files or {}
    local dirs = {}
    for i,fh in ipairs(love.filesystem.getDirectoryItems(dir)) do
@@ -87,12 +87,12 @@ local function get_file_paths(dir, _files)
    return files
 end
 
-local function _load_components(dir)
+local function load_components(dir)
    local files = get_file_paths(dir)
    return make_classes(files)
 end
 
 ------------------------------------------
-exports.components = _load_components(component_dir)
+exports.components = load_components(component_dir)
 ------------------------------------------
 return export()
