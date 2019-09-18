@@ -7,7 +7,7 @@ Copyright Aug. 9th, 2018 Eric Fedrowisch All rights reserved.
 local scenes = {} --List of scenes to register
 ------------------------------------------
 local hotkey = Hotkey{}
-local dbg_fx = function () _G.draw_debug = not _G.draw_debug; print("Draw Debug On:", _G.draw_debug) end
+local dbg_fx = function () _G.debug_modes.draw_debug = not _G.debug_modes.draw_debug; print("Draw Debug On:", _G.debug_modes.draw_debug) end
 local examine_fx = function ()
    local hover = _G.vc.hover_over
    if hover ~= nil and #hover > 0 then
@@ -59,12 +59,6 @@ menu_screen:register(button1)
 menu_screen:register(button2)
 menu_screen:register(button3)
 menu_screen:register(button4)
-
---Test Inheritance
-local a = A{}
-local b = B{}
-b:testB()
-b:testA()
 
 ------------------------------------------
 scenes.menu_screen = menu_screen
