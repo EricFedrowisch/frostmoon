@@ -1,12 +1,19 @@
 #Automatic Build Byproducts
 filelist.txt
 *.love
+
 #Ignore autoexec scripts
 autoexec/*
 
+#Ignore Github stuff
+.github
+.github/*
 
 # Compiled Lua sources
 luac.out
+
+# Lua Quick Check
+.lqc
 
 # luarocks build files
 *.src.rock
