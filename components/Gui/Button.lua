@@ -2,15 +2,15 @@
 local Button = {}
 
 Button.defaults = {
-   ["button_function"] = function(self, msg) print("DEFAULT BUTTON FUNCTION INVOKED") end, --What to do when pressed
-   ["psp_x"] = 1/8, --Positive space proportion on x axis
-   ["psp_y"] = 1/8, --Positive space proportion on y axis
-   ["x"] = 0,
-   ["y"] = 0,
-   ["z"] = 1,
-   --["toggleable"] = false,
-   --["draggable"]  = false,
-   --["interact_sound"] = nil,
+   button_function = function(self, msg) print("DEFAULT BUTTON FUNCTION INVOKED") end, --What to do when pressed
+   psp_x = 1/8, --Positive space proportion on x axis
+   psp_y = 1/8, --Positive space proportion on y axis
+   x = 0,
+   y = 0,
+   z = 1,
+   --toggleable = false,
+   --draggable  = false,
+   --interact_sound = nil,
 }
 
 function Button:init(args)
@@ -19,24 +19,26 @@ function Button:init(args)
    self.image_initial, self.interact_image_initial = image, image_on_interact --Set initial images to the original sized image
    self.image = _G.res.resize(image, self.psp_x, self.psp_y, self.maintain_aspect_ratio) --Resize image
    self.interact_image = _G.res.resize(image_on_interact, self.psp_x, self.psp_y, self.maintain_aspect_ratio)  --Resize interact image
+
    self.element = Element{
-      ["__container"] = self,
-      ["image"] = self.image,
-      ["x"] = self.x,
-      ["y"] = self.y,
-      ["z"] = self.z,
-      ["psp_x"] = self.psp_x, --Positive space proportion on x axis
-      ["psp_y"] = self.psp_x, --Positive space proportion on y axis
+      __container = self,
+      image = self.image,
+      x = self.x,
+      y = self.y,
+      z = self.z,
+      psp_x = self.psp_x, --Positive space proportion on x axis
+      psp_y = self.psp_x, --Positive space proportion on y axis
    }
+
    --Use element's image for rect's height and width
    self.rect = Rect{
-      ["__container"] = self,
-      ["width"] = self.element.image:getWidth(),
-      ["height"] = self.element.image:getHeight(),
-      ["x"] = self.x,
-      ["y"] = self.y,
-      ["z"] = self.z,
-      ["draggable"] = self.draggable,
+      __container = self,
+      width = self.element.image:getWidth(),
+      height = self.element.image:getHeight(),
+      x = self.x,
+      y = self.y,
+      z = self.z,
+      draggable = self.draggable,
    }
 end
 
@@ -90,13 +92,13 @@ function Button:pass_rect_msg(msg)
 end
 
 Button.event_types = {
-   ["mousepressed"]=function(self, msg) self:hover_press(msg) end,
-   ["touchpressed"]=function(self, msg) self:hover_press(msg) end,
-   ["mousereleased"]=function(self, msg) self:release(msg) end,
-   ["touchreleased"]=function(self, msg) self:release(msg) end,
-   ["hover_end"]=function(self, msg) self:press_over(msg) end,
-   ["hover_cont"]=function(self, msg) self:pass_rect_msg(msg) end,
-   ["resize"]=function(self, msg) self:resize() end,
+   mousepressed = function(self, msg) self:hover_press(msg) end,
+   touchpressed = function(self, msg) self:hover_press(msg) end,
+   mousereleased = function(self, msg) self:release(msg) end,
+   touchreleased = function(self, msg) self:release(msg) end,
+   hover_end = function(self, msg) self:press_over(msg) end,
+   hover_cont = function(self, msg) self:pass_rect_msg(msg) end,
+   resize = function(self, msg) self:resize() end,
 }
 
 return Button

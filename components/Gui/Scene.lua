@@ -3,6 +3,7 @@ Scene object for storing a scene of a game/program.
 ]]
 local Scene = {}
 Scene.defaults = {
+   name = "Unnamed",
    background_img = nil, --the scene's background image
    hotkey = nil, --The hotkey binding
    listeners = {},

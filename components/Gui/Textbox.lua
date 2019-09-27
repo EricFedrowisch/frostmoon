@@ -2,18 +2,18 @@
 local Textbox = {}
 
 Textbox.defaults = {
-   ["font"] = "default",
-   ["align"] = "center", --Valid text alignments include: 'right', 'left' and 'center'
-   ["font_size"] = 12,
-   ["width"] = 100,
-   ["height"] = 100,
-   ["x"] = 0,
-   ["y"] = 0,
-   ["z"] = 1,
-   ["text"] = "Hello, World",
-   ["padding"] = 0,
-   ["text_color"] = {1,0,0,1},
-   ["draggable"] = false,
+   font = "default",
+   align = "center", --Valid text alignments include: 'right', 'left' and 'center'
+   font_size = 12,
+   width = 100,
+   height = 100,
+   x = 0,
+   y = 0,
+   z = 1,
+   text = "Hello, World",
+   padding = 0,
+   text_color = {1,0,0,1},
+   draggable = false,
 }
 
 function Textbox:draw()
@@ -31,35 +31,35 @@ end
 function Textbox:init(args)
 
    self.rect = Rect{
-      ["_container"] = self,
-      ["width"] = self.width,
-      ["height"] = self.height,
-      ["x"] = self.x,
-      ["y"] = self.y,
-      ["z"] = self.z,
-      ["resize"] = args.resize,
-      ["draggable"] = self.draggable,
+      _container = self,
+      width = self.width,
+      height = self.height,
+      x = self.x,
+      y = self.y,
+      z = self.z,
+      resize = args.resize,
+      draggable = self.draggable,
    }
 
    self.view = Element{
-      ["_container"] = self,
-      ["x"] = self.x,
-      ["y"] = self.y,
-      ["z"] = self.z,
+      _container = self,
+      x = self.x,
+      y = self.y,
+      z = self.z,
    }
 end
 
 Textbox.event_types = {
    --MOUSE--
-   ["mousepressed"]=function(self, msg) self.rect:receive_msg(msg) end,
-   ["mousereleased"]=function(self, msg) self.rect:receive_msg(msg) end,
-   ["hover_end"]=function(self, msg) self.rect:receive_msg(msg) end,
-   ["hover_cont"]=function(self, msg) self.rect:receive_msg(msg) end,
+   mousepressed = function(self, msg) self.rect:receive_msg(msg) end,
+   mousereleased = function(self, msg) self.rect:receive_msg(msg) end,
+   hover_end = function(self, msg) self.rect:receive_msg(msg) end,
+   hover_cont = function(self, msg) self.rect:receive_msg(msg) end,
    --TOUCH--
-   ["touchpressed"]=function(self, msg) self.rect:receive_msg(msg) end,
-   ["touchreleased"]=function(self, msg) self.rect:receive_msg(msg) end,
+   touchpressed = function(self, msg) self.rect:receive_msg(msg) end,
+   touchreleased = function(self, msg) self.rect:receive_msg(msg) end,
    --WINDOW
-   ["resize"]=function(self, msg) self.rect:receive_msg(msg) end,
+   resize = function(self, msg) self.rect:receive_msg(msg) end,
 }
 
 return Textbox

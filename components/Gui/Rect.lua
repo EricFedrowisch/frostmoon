@@ -3,14 +3,14 @@ Rect object for storing/testing collisions.
 ]]
 local Rect = {}
 Rect.defaults = {
-   ["x"] = 0,
-   ["y"]= 0,
-   ["z"] = 1,
-   ["width"] = 100,
-   ["height"] = 100,
-   ["draggable"] = false,
-   ["last_move_pos"] = {0,0},
-   ["dt_pressed"] = 0,
+   x = 0,
+   y= 0,
+   z = 1,
+   width = 100,
+   height = 100,
+   draggable = false,
+   last_move_pos = {0,0},
+   dt_pressed = 0,
 }
 
 function Rect:update_size()
@@ -99,12 +99,12 @@ function Rect:on_release(msg)
 end
 
 Rect.event_types = {
-   ["mousepressed"] =function(self, msg) self:on_press(msg) end,
-   ["touchpressed"] =function(self, msg) self:on_press(msg) end,
-   ["mousereleased"]=function(self, msg) self:on_release(msg) end,
-   ["touchreleased"]=function(self, msg) self:on_release(msg) end,
-   ["hover_end"]    =function(self, msg) self:on_release(msg) end,
-   ["hover_cont"]   =function(self, msg) if self.draggable then self:drag(msg) end end,
+   hover_end    = function(self, msg) self:on_release(msg) end,
+   hover_cont   = function(self, msg) if self.draggable then self:drag(msg) end end,
+   mousepressed = function(self, msg) self:on_press(msg) end,
+   touchpressed = function(self, msg) self:on_press(msg) end,
+   mousereleased = function(self, msg) self:on_release(msg) end,
+   touchreleased = function(self, msg) self:on_release(msg) end,
 }
 
 return Rect

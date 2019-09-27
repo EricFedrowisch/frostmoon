@@ -3,12 +3,12 @@
 local State = {}
 
 State.defaults = {
-   ["name"] = nil,   --State name as string
-   ["enter"] = nil,  --Function to run when entering this state
-   ["exit"] = nil,   --Function to run when exiting this state
-   ["during"] = nil, --Function to run while in this state during heartbeat events.
-   ["in_state"] = false,  --Boolean for whether State is FSM's current state or not
-   ["vars"] = {},    --Table of state variables
+   name = nil,   --State name as string
+   enter = nil,  --Function to run when entering this state
+   exit = nil,   --Function to run when exiting this state
+   during = nil, --Function to run while in this state during heartbeat events.
+   in_state = false,  --Boolean for whether State is FSM's current state or not
+   vars = {},    --Table of state variables
 }
 
 function State:init(args)--(fsm, name, enter, exit, during)

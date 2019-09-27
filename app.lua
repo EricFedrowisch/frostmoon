@@ -24,34 +24,34 @@ hotkey:register_key("c", d.clear)
 hotkey:register_key("escape", love.event.quit)
 
 local menu_screen = Scene{
-   ["background_img"] = _G.res.img["backgrounds/forest.png"],
-   ["hotkey"] = hotkey,
+   background_img = _G.res.img["backgrounds/forest.png"],
+   hotkey = hotkey,
 }
 
 local button1 = Button{
-   ["button_function"] = function(self, msg) print("Pressed Button 1") end
+   button_function = function(self, msg) print("Pressed Button 1") end
 }
 
 local button2 = Button{
-   ["button_function"] = function(self, msg) print("Pressed Button 2") end,
-   ["x"] = button1.element.image:getWidth()/2,
-   ["y"] = button1.element.image:getHeight()/2,
-   ["z"] = 2,
+   button_function = function(self, msg) print("Pressed Button 2") end,
+   x = button1.element.image:getWidth()/2,
+   y = button1.element.image:getHeight()/2,
+   z = 2,
 }
 
 local button3 = Button{
-   ["button_function"] = function(self, msg) print("Pressed Button 3") end,
-   ["x"] = button1.element.image:getWidth(),
-   ["y"] = button1.element.image:getHeight(),
-   ["z"] = 3,
+   button_function = function(self, msg) print("Pressed Button 3") end,
+   x = button1.element.image:getWidth(),
+   y = button1.element.image:getHeight(),
+   z = 3,
 }
 
 local button4 = Button{
-   ["button_function"] = function(self, msg) print("Pressed Button 4") end,
-   ["x"] = button1.element.image:getWidth() * 1.5,
-   ["y"] = button1.element.image:getHeight() * 1.5,
-   ["z"] = 4,
-   ["draggable"] = true,
+   button_function = function(self, msg) print("Pressed Button 4") end,
+   x = button1.element.image:getWidth() * 1.5,
+   y = button1.element.image:getHeight() * 1.5,
+   z = 4,
+   draggable = true,
 }
 
 menu_screen:register(hotkey)
@@ -62,5 +62,5 @@ menu_screen:register(button4)
 
 ------------------------------------------
 scenes.menu_screen = menu_screen
-_G.vc:change_scene(menu_screen)
+_G.vc:change_scene(scenes.menu_screen)
 return scenes

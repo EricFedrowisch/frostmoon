@@ -14,13 +14,13 @@ local Hotkey = {}
 
 
 Hotkey.defaults = {
-   ["keys"] = keys,
-   ["key_fx"] = {},
+   keys = keys,
+   key_fx = {},
 }
 
 --Register a function to call when key is pressed.
 function Hotkey:register_key(k, fx)
-   if k ~= nil and fx ~=nil then --and type(k) == "string" and type(fx) == "function" then
+   if k ~= nil and fx ~= nil then --and type(k) == "string" and type(fx) == "function" then
       self.key_fx[k] = fx
    end
 end
@@ -49,8 +49,8 @@ end
 
 
 Hotkey.event_types = {
-   ["keypressed"]  =function(self, msg) self:pressed(msg) end,
-   ["keyreleased"] =function(self, msg) self:release(msg) end,
+   keypressed  = function(self, msg) self:pressed(msg) end,
+   keyreleased = function(self, msg) self:release(msg) end,
 }
 
 return Hotkey

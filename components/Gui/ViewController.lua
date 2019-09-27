@@ -1,14 +1,12 @@
 --[[ViewController controls input and rendering of Frostmoon objects.]]
---local debug = false
-local debug = true
-
 local ViewController = {}
 
-ViewController.defaults = {}
+ViewController.defaults = {
+   scenes = {},      --Table of registered scenes
+   hover_over = {}, --Internal table of elements that are being "hovered over", indexed by z level
+}
 
 function ViewController:init(args)
-   self.scenes = {}      --Table of registered scenes
-   self.hover_over = {} --Internal table of elements that are being "hovered over", indexed by z level
    self.s_width, self.s_height = love.window.getMode()
 end
 
