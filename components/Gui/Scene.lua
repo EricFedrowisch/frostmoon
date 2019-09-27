@@ -2,22 +2,24 @@
 Scene object for storing a scene of a game/program.
 ]]
 local Scene = {}
+
 Scene.defaults = {
    name = "Unnamed",
    background_img = nil, --the scene's background image
    hotkey = nil, --The hotkey binding
-   listeners = {},
-   elements = {},
 }
 
 function Scene:init(args)
    if args.background_img ~= nil then self:make_bg(args.background_img) end
+   if self.hotkey ~= nil then self:register(self.hotkey) end
 end
 
 --Register object and internals components recursively.
 --Registers all non-element class objects as listeners.
 --Registers all element class objects as elements.
 function Scene:register(obj)
+   self.listeners = self.listeners or {}
+   self.elements = self.elements or {}
    self:register_z_index(obj.z) --Make sure lists have correct z
    if obj.component_type ~= "Gui.Element" then --If not element..
       self:register_listener(obj) --Register as listener
@@ -55,12 +57,12 @@ end
 
 function Scene:make_bg(img)
    local bg = Element{
-      ["background"] = true,
-      ["image"]=img,
-      ["maintain_aspect_ratio"] = false, --Stretch backgrounds by default
-      ["psp_x"] = 1, --Positive space proportion on x axis
-      ["psp_y"] = 1, --Positive space proportion on y axis
-      ["z"] = 0, --Make background use z layer 0
+      background = true,
+      image = img,
+      maintain_aspect_ratio = false, --Stretch backgrounds by default
+      psp_x = 1, --Positive space proportion on x axis
+      psp_y = 1, --Positive space proportion on y axis
+      z = 0, --Make background use z layer 0
    }
    self:register(bg) --Register background
 end

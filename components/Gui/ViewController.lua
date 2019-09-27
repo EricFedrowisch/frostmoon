@@ -10,9 +10,21 @@ function ViewController:init(args)
    self.s_width, self.s_height = love.window.getMode()
 end
 
-function ViewController:change_scene(scene)
-   self:end_hover()
-   self.current_scene = scene
+function ViewController:register_scene(scene)
+   local scene_id = #self.scenes + 1 --Next available int
+   self.scenes[scene_id] = scene --Make menu_screen the 1st scene
+   scene.scene_id = scene_id
+end
+
+--Change scene by passing integer id for scene in self.scenes table
+function ViewController:change_scene(scene_id)
+   if self.scenes[scene_id] ~= nil then
+      self.current_scene = nil
+      self:end_hover()
+      self.current_scene = self.scenes[scene_id]
+   else
+      error("Attempt to change scene with invalid scene id " .. scene_id)
+   end
 end
 
 --End hover over status for all objects in scene.
@@ -55,7 +67,7 @@ end
 
 function ViewController:draw()
    --Get elements of current scene
-   local elements = self.scenes[self.current_scene].elements
+   local elements = self.current_scene.elements
    --Iterate through list ordered by
    for i, e in ipairs(self:get_draw_ordered_elements(elements)) do
       if e.visible == true then e:draw() end --If element is visible then draw it
@@ -66,7 +78,7 @@ end
 --Pass message to list of registered listeners for scene. Message passed to objs
 --with highest z first.
 function ViewController:pass_msg(msg)
-   local listeners = self.scenes[self.current_scene].listeners
+   local listeners = self.current_scene.listeners
    for i, l in ipairs(self:get_event_ordered_elements(listeners)) do
       if msg.handled ~= 1 then --If msg not handled (in blocking fashion) then...
          l:receive_msg(msg)
@@ -98,7 +110,7 @@ end
 
 --Check for UI event collisions among rects of registered listeners.
 function ViewController:check_collisions(msg)
-   local listeners = self.scenes[self.current_scene].listeners
+   local listeners = self.current_scene.listeners
    local current_hover = {}
    for i, l in ipairs(self:get_event_ordered_elements(listeners)) do
       if msg.handled ~= 1 then --If msg not handled (in blocking fashion) then...
@@ -139,16 +151,15 @@ function ViewController:resize(msg)
    print("Dimension Changed")
    print("Width Proportion", self.s_width/old_width)
    print("Height Proportion", self.s_height/old_height)
-   local elements = self:get_draw_ordered_elements(self.scenes[self.current_scene].elements)
+   local elements = self:get_draw_ordered_elements(self.current_scene.elements)
    res.resize_imgs(elements)
    self:pass_msg(msg)
 end
 
 
 function ViewController:draw_debug()
-   local listeners = self:get_draw_ordered_elements(self.scenes[self.current_scene].listeners)
-   local elements = self:get_draw_ordered_elements(self.scenes[self.current_scene].elements)
-   --d.tprint(listeners)
+   local listeners = self:get_draw_ordered_elements(self.current_scene.listeners)
+   local elements = self:get_draw_ordered_elements(self.current_scene.elements)
    love.graphics.setColor(1, 0, 0, 1)
    for i,v in ipairs(listeners) do
       if v.component_type == "Gui.Rect" then

@@ -33,15 +33,16 @@ function love.load()
    _G.vc = ViewController{} --Create ViewController
    _G.vc.s_width, _G.vc.s_height = love.window.getMode()
    love.window.setMode(_G.vc.s_width, _G.vc.s_height, {["resizable"] = true})
-   load_scenes()
    exec("" .. os_sep  .. "autoexec") --Run autoexec scripts
+   load_scenes()
 end
 
 function load_scenes()
    local scenes = love.filesystem.load("app.lua")()
-   for _,scene in pairs(scenes) do
-      _G.vc.scenes[scene] = scene
+   for _, scene in pairs(scenes) do
+      _G.vc:register_scene(scene)
    end
+   _G.vc:change_scene(1) --By default scene 1 is loaded at runtime.
 end
 
 --Run lua scripts in given folder
