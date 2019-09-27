@@ -2,12 +2,12 @@
 local ViewController = {}
 
 ViewController.defaults = {
-   scenes = {},      --Table of registered scenes
-   hover_over = {}, --Internal table of elements that are being "hovered over", indexed by z level
 }
 
 function ViewController:init(args)
    self.s_width, self.s_height = love.window.getMode()
+   self.scenes = {}      --Table of registered scenes
+   self.hover_over = {} --Internal table of elements that are being "hovered over", indexed by z level
 end
 
 function ViewController:register_scene(scene)
@@ -29,7 +29,7 @@ end
 
 --End hover over status for all objects in scene.
 function ViewController:end_hover()
-   local msg_hover_end = {["type"] = "hover_end"}   --Make hover over end message to send to pertinent objects
+   local msg_hover_end = {type = "hover_end"}   --Make hover over end message to send to pertinent objects
    for i, obj in pairs(self.hover_over) do --For each key, object pair in table of "hovered" objects...
       if obj.rect ~= nil then --If object has a rect, it cares about collisions
          obj:receive_msg(msg_hover_end)   --Tell object hover over ended
@@ -76,9 +76,10 @@ function ViewController:draw()
 end
 
 --Pass message to list of registered listeners for scene. Message passed to objs
---with highest z first.
-function ViewController:pass_msg(msg)
-   local listeners = self.current_scene.listeners
+--with highest z first. Scene id arg is int key to self.scenes table. Defaults to current scene
+function ViewController:tell_scene_msg(msg, scene_id)
+   local scene = self.scenes[scene_id] or self.current_scene
+   local listeners = scene.listeners
    for i, l in ipairs(self:get_event_ordered_elements(listeners)) do
       if msg.handled ~= 1 then --If msg not handled (in blocking fashion) then...
          l:receive_msg(msg)
@@ -93,7 +94,7 @@ end
 function ViewController:update(dt)
    local event = q:use() --Get next event from the queue
    if event == nil then  --If there are no events do heartbeat event
-      event = {["type"] = "heartbeat"}
+      event = {type = "heartbeat"}
    end
    --Process all events
    while event ~= nil do --While there are still events...
@@ -102,7 +103,7 @@ function ViewController:update(dt)
       if self.event_types[event.type] then --Then handle it
          self:receive_msg(event)
       else --If not event you handle then...
-         self:pass_msg(event) --Pass it to listeners
+         self:tell_scene_msg(event) --Pass it to listeners
       end
       event = q:use() --Get next event
    end
@@ -126,8 +127,8 @@ function ViewController:check_collisions(msg)
    end
    --Update hover over status, either telling each object its hover over has continued or ended
    if #self.hover_over > 0 then --If there are objects hovered over...
-      local msg_hover_end = {["type"] = "hover_end", ["dt"] = msg.dt}   --Make hover over end message to send to pertinent objects
-      local msg_hover_cont = {["type"] = "hover_cont", ["dt"] = msg.dt} --Make hover over continues message to send to pertinent objects
+      local msg_hover_end = {type = "hover_end", dt = msg.dt}   --Make hover over end message to send to pertinent objects
+      local msg_hover_cont = {type = "hover_cont", dt = msg.dt} --Make hover over continues message to send to pertinent objects
       for i, l in ipairs(self.hover_over) do
          if l.rect ~= nil then --If object has a rect...(shouldn't need this. Being safe)
             if not l.rect:inside(msg.args.x, msg.args.y) then --If not inside
@@ -151,9 +152,12 @@ function ViewController:resize(msg)
    print("Dimension Changed")
    print("Width Proportion", self.s_width/old_width)
    print("Height Proportion", self.s_height/old_height)
-   local elements = self:get_draw_ordered_elements(self.current_scene.elements)
-   res.resize_imgs(elements)
-   self:pass_msg(msg)
+   for id, scene in ipairs(self.scenes) do
+      local elements = self:get_draw_ordered_elements(scene.elements)
+      res.resize_imgs(elements)
+      self:tell_scene_msg(msg, id)
+   end
+
 end
 
 
@@ -189,19 +193,19 @@ end
 
 ViewController.event_types = {
    --WINDOW--
-   ["focus"]=function(self, msg) self.focus = msg.args["focus"] end,
-   ["resize"]=function(self, msg) self:resize(msg) end,
-   ["visible"]=function(self, msg) self.visible = msg.args["visible"] end,
+   focus = function(self, msg) self.focus = msg.args.focus end,
+   resize = function(self, msg) self:resize(msg) end,
+   visible = function(self, msg) self.visible = msg.args.visible end,
    --MOUSE--
-   ["mousefocus"]=function(self, msg) self.mousefocus = msg.args["mousefocus"] end,
-   ["mousemoved"]=function(self, msg) self:check_collisions(msg) end,
-   ["mousepressed"]=function(self, msg) self:check_collisions(msg) end,
-   ["mousereleased"]=function(self, msg) self:check_collisions(msg) end,
-   ["wheelmoved"]=function(self, msg) end,
+   mousefocus = function(self, msg) self.mousefocus = msg.args.mousefocus end,
+   mousemoved = function(self, msg) self:check_collisions(msg) end,
+   mousepressed = function(self, msg) self:check_collisions(msg) end,
+   mousereleased = function(self, msg) self:check_collisions(msg) end,
+   wheelmoved = function(self, msg) end,
    --TOUCH--
-   ["touchmoved"]=function(self, msg) self:check_collisions(msg) end,
-   ["touchpressed"]=function(self, msg) self:check_collisions(msg) end,
-   ["touchreleased"]=function(self, msg) self:check_collisions(msg) end,
+   touchmoved = function(self, msg) self:check_collisions(msg) end,
+   touchpressed = function(self, msg) self:check_collisions(msg) end,
+   touchreleased = function(self, msg) self:check_collisions(msg) end,
 }
 
 return ViewController
