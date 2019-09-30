@@ -15,11 +15,11 @@ images.
 ------------------------------------------
 
 --Directory path variables
-local res_dir = "" .. os_sep  .. "res"
-local img_dir = res_dir .. os_sep  .. "img"
-local snd_dir = res_dir .. os_sep  .. "snd"
-local msx_dir = res_dir .. os_sep  .. "msx"
-local fnt_dir = res_dir .. os_sep  .. "fnt"
+local res_dir = "" .. _G.OS.sep  .. "res"
+local img_dir = res_dir .. _G.OS.sep  .. "img"
+local snd_dir = res_dir .. _G.OS.sep  .. "snd"
+local msx_dir = res_dir .. _G.OS.sep  .. "msx"
+local fnt_dir = res_dir .. _G.OS.sep  .. "fnt"
 --Tables of supported image types
 local img_types_supported = {["png"] = true, ["tga"] = true}
 local fnt_types_supported = {["ttf"] = true}
@@ -30,7 +30,7 @@ local function get_files(dir, _files)
    local filelist = _files or {} --Either make a new empty list or use recursive call results
    local files, dirs = {}, {}
    for i,fh in ipairs(love.filesystem.getDirectoryItems(dir)) do
-      local handle = dir .. os_sep .. fh
+      local handle = dir .. _G.OS.sep .. fh
       local info = love.filesystem.getInfo(handle)
       if info.type == "file" then files[#files + 1] = handle end
       if info.type == "directory" then dirs[#dirs+1] = handle end
@@ -52,7 +52,7 @@ local function load_imgs()
    for i,v in ipairs(img_files) do
       local f_type =  v:match("[^.]+$") --Get file extension
       if img_types_supported[f_type] ~= nil then --If file type supported
-         img_name = v:gsub(img_dir .. os_sep, "")
+         img_name = v:gsub(img_dir .. _G.OS.sep, "")
          imgs[img_name] = love.graphics.newImage(v)
       end
    end
@@ -96,7 +96,7 @@ local function load_sounds()
       local f_type =  v:match("[^.]+$") --Get file extension
       if snd_types_supported[f_type] ~= nil then --If file type supported
          -- the "static" tells LÖVE to load the file into memory, good for short sound effects
-         snds[v:gsub(snd_dir .. os_sep, "")] = love.audio.newSource(v, "static")
+         snds[v:gsub(snd_dir .. _G.OS.sep, "")] = love.audio.newSource(v, "static")
       end
    end
    return snds
@@ -110,7 +110,7 @@ local function load_music()
       local f_type =  v:match("[^.]+$") --Get file extension
       if snd_types_supported[f_type] ~= nil then --If file type supported
          -- if "static" is omitted, LÖVE will stream the file from disk, good for longer music tracks
-         msx[v:gsub(msx_dir .. os_sep, "")] = function () return love.audio.newSource(v, "stream") end --Returning function here to keep memory cost low.
+         msx[v:gsub(msx_dir .. _G.OS.sep, "")] = function () return love.audio.newSource(v, "stream") end --Returning function here to keep memory cost low.
       end
    end
    return msx

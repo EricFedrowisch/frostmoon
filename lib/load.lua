@@ -39,7 +39,7 @@ local function _split(str, sep)
 end
 
 local function make_class_key(path)
-   local f = _split(path, os_sep)
+   local f = _split(path, _G.OS.sep)
    local _split_index = nil
    local name = _split(f[#f],".");name = name[1];f[#f]=name --Get file name minus '.lua'
    for i,v in ipairs(f) do  --Find component dir index
@@ -76,8 +76,9 @@ local function get_file_paths(dir, files)
    local files = files or {}
    local dirs = {}
    for i,fh in ipairs(love.filesystem.getDirectoryItems(dir)) do
-      local handle = dir .. os_sep .. fh
+      local handle = dir .. _G.OS.sep .. fh
       local info = love.filesystem.getInfo(handle)
+      if _G.debug_modes.more_info then print("Component Loading: " .. handle) end
       if info.type == "file" then files[#files + 1] = handle end
       if info.type == "directory" then dirs[#dirs+1] = handle end
    end

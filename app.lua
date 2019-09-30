@@ -22,10 +22,10 @@ local change_scene = function ()
    local scene_id = _G.vc.current_scene.scene_id
    if scene_id ~= 1 then
       _G.vc:change_scene(1)
-      print("Change to scene id 1, named " .. _G.vc.current_scene.name)
+      if _G.debug_modes.more_info then print("Change to scene id 1, named " .. _G.vc.current_scene.name) end
     else
       _G.vc:change_scene(2)
-      print("Change to scene id 2, named " .. _G.vc.current_scene.name)
+      if _G.debug_modes.more_info then print("Change to scene id 2, named " .. _G.vc.current_scene.name) end
     end
 end
 

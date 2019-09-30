@@ -149,9 +149,11 @@ end
 function ViewController:resize(msg)
    local old_width, old_height = self.s_width, self.s_height
    self.s_width, self.s_height = love.window.getMode()
-   print("Dimension Changed")
-   print("Width Proportion", self.s_width/old_width)
-   print("Height Proportion", self.s_height/old_height)
+   if _G.debug_modes.more_info then
+      print("Dimension Changed")
+      print("Width Proportion", self.s_width/old_width)
+      print("Height Proportion", self.s_height/old_height)
+   end
    for id, scene in ipairs(self.scenes) do
       local elements = self:get_draw_ordered_elements(scene.elements)
       res.resize_imgs(elements)

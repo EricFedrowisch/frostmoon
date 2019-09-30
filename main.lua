@@ -4,36 +4,48 @@ targeting iOS, OSX and Windows 10
 Copyright Aug. 9th, 2018 Eric Fedrowisch All rights reserved.
 --]]
 -----------------------------------------
-local lib = "" .. package.config:sub(1,1)  .. "lib" .. package.config:sub(1,1)
-love.filesystem.setRequirePath(love.filesystem.getRequirePath().. ";" .. lib .. "?.lua")
-------------------------------------------
---GLOBALS
---(Löve itself is implicitly in the globals)
-_G.os_sep = package.config:sub(1,1)
-_G.d = require "f_debug"
-_G.f = require "frostmoon"
-_G.q = f.queue.new(1000) --Create Event Queue,
-_G.res = require "resources" --Load imgs, sounds, video, etc
-_G.OS = love.system.getOS() --The current operating system. "OS X", "Windows", "Linux", "Android" or "iOS".
-love.filesystem.load(lib .. "callbacks.lua")() --Load and run the callbacks
-------------------------------------------
 --DEBUG
 --Debug Stuff. Remove from production.
 _G.debug_modes = {}
+_G.debug_modes.more_info = false
 _G.debug_modes.draw_debug = false
 _G.debug_modes.continuous = false --Whether to run during tests every cycle of main loop.
 _G.debug_modes.run_test_countdown = 1 --How many times to run during tests if not continuous
 _G.debug_modes.draw_touches = false --Whether to draw touches on touch screens
 --DEBUG END
+-----------------------------------------
+--Store Operating system info for file system
+_G.OS = {}
+_G.OS.sep = package.config:sub(1,1)
+_G.OS.os_name = love.system.getOS()
+_G.OS.is_fused = love.filesystem.isFused()
+_G.OS.lib = "" .. _G.OS.sep  .. "lib" .. _G.OS.sep --The current operating system. "OS X", "Windows", "Linux", "Android" or "iOS".
+love.filesystem.setRequirePath(love.filesystem.getRequirePath().. ";" .. _G.OS.lib .. "?.lua")
+------------------------------------------
+--System Debug Output
+if _G.debug_modes.more_info then
+   print("OS: " .. _G.OS.os_name)
+   print("Filesystem fused: " .. tostring(_G.OS.is_fused))
+   print("Frostmoon lib files at: " .. _G.OS.lib)
+end
+------------------------------------------
+--GLOBALS
+--(Löve itself is implicitly in the globals)
+_G.d = require "f_debug"
+_G.f = require "frostmoon"
+_G.q = f.queue.new(1000) --Create Event Queue,
+_G.res = require "resources" --Load imgs, sounds, video, etc
+love.filesystem.load(_G.OS.lib .. "callbacks.lua")() --Load and run the callbacks
+------------------------------------------
 
 --love.load	This function is called exactly once at the beginning of the game.
 function love.load()
    if package.config:sub(1,1) == "/" then os.execute("clear") end --Clear terminal output of Unix-like OS
-   exec("" .. os_sep  .. "tests" .. os_sep .. "pre") --Run autoexec scripts
+   exec("" .. _G.OS.sep  .. "tests" .. _G.OS.sep .. "pre") --Run autoexec scripts
    _G.vc = ViewController{} --Create ViewController
    _G.vc.s_width, _G.vc.s_height = love.window.getMode()
    love.window.setMode(_G.vc.s_width, _G.vc.s_height, {["resizable"] = true})
-   exec("" .. os_sep  .. "autoexec") --Run autoexec scripts
+   exec("" .. _G.OS.sep  .. "autoexec") --Run autoexec scripts
    load_scenes()
 end
 
@@ -49,7 +61,7 @@ end
 function exec(path)
    for _,v in ipairs(_G.res.get_files(path)) do
       if v:match("[^.]+$") == "lua" then
-         print("Running script:", v)
+         if _G.debug_modes.more_info then print("Running script:", v) end
          love.filesystem.load(v)()
       end
    end
@@ -78,7 +90,7 @@ function love.update(dt)
    --DEBUG
    if _G.debug_modes.continuous or _G.debug_modes.run_test_countdown > 0 then
       _G.debug_modes.run_test_countdown = _G.debug_modes.run_test_countdown - 1
-      exec("" .. os_sep  .. "tests" .. os_sep .. "during")
+      exec("" .. _G.OS.sep  .. "tests" .. _G.OS.sep .. "during")
    --DEBUG END
    end
 end
@@ -86,6 +98,6 @@ end
 --love.quit	Callback function triggered when the game is closed.
 function love.quit()
 
-   exec("" .. os_sep  .. "tests" .. os_sep .. "post")
+   exec("" .. _G.OS.sep  .. "tests" .. _G.OS.sep .. "post")
    print("Until we meet again, stay frosty!")
 end
