@@ -4,6 +4,9 @@ targeting iOS, OSX and Windows 10
 Copyright Aug. 9th, 2018 Eric Fedrowisch All rights reserved.
 --]]
 -----------------------------------------
+--GLOBALS
+--(Löve itself is implicitly in the globals)
+-----------------------------------------
 --DEBUG
 --Debug Stuff. Remove from production.
 _G.debug_modes = {}
@@ -14,33 +17,58 @@ _G.debug_modes.run_test_countdown = 1 --How many times to run during tests if no
 _G.debug_modes.draw_touches = false --Whether to draw touches on touch screens
 --DEBUG END
 -----------------------------------------
---Store Operating system info for file system
+--Operating system info for file system
 _G.OS = {}
-_G.OS.sep = package.config:sub(1,1)
-_G.OS.os_name = love.system.getOS()
+_G.OS.sep = package.config:sub(1,1) --File system seperator (\ or / usually)
 _G.OS.is_fused = love.filesystem.isFused()
-_G.OS.lib = "" .. _G.OS.sep  .. "lib" .. _G.OS.sep --The current operating system. "OS X", "Windows", "Linux", "Android" or "iOS".
-love.filesystem.setRequirePath(love.filesystem.getRequirePath().. ";" .. _G.OS.lib .. "?.lua")
+_G.OS.os_name = love.system.getOS() --The current operating system. "OS X", "Windows", "Linux", "Android" or "iOS".
+_G.OS.cwd = love.filesystem.getWorkingDirectory
+
+--Lookup table for library file paths
+local lib_locs = {
+   ["OS X"]    = "" .. _G.OS.sep  .. "lib" .. _G.OS.sep,
+   ["iOS"]     = "" .. _G.OS.sep  .. "lib" .. _G.OS.sep, --UNTESTED
+   ["Windows"] = "" .. _G.OS.sep  .. "lib" .. _G.OS.sep, --NOT WORKING
+   ["Linux"]   = "" .. _G.OS.sep  .. "lib" .. _G.OS.sep, --UNTESTED
+   ["Android"] = "" .. _G.OS.sep  .. "lib" .. _G.OS.sep, --UNTESTED
+}
+_G.OS.lib = lib_locs[_G.OS.os_name] --Set library file path according to OS
+--Lookup table for component classes' file paths
+local comp_locs = {
+   ["OS X"]    = "components",
+   ["iOS"]     = "components", --UNTESTED
+   ["Windows"] = "components", --NOT WORKING
+   ["Linux"]   = "components", --UNTESTED
+   ["Android"] = "components", --UNTESTED
+}
+_G.OS.component_dir = comp_locs[_G.OS.os_name] --Set component classes' file path according to OS
+
+love.filesystem.setRequirePath(love.filesystem.getRequirePath() .. ";" .. _G.OS.lib .. "?.lua")
+love.filesystem.setCRequirePath(love.filesystem.getCRequirePath() .. ";" .. _G.OS.lib .. "??")
+_G.OS.require_path = love.filesystem.getRequirePath()
+_G.OS.c_require_path = love.filesystem.getCRequirePath()
 ------------------------------------------
 --System Debug Output
 if _G.debug_modes.more_info then
    print("OS: " .. _G.OS.os_name)
    print("Filesystem fused: " .. tostring(_G.OS.is_fused))
    print("Frostmoon lib files at: " .. _G.OS.lib)
+   print("CWD: " .. _G.OS.cwd())
+   print("Require path: " .. _G.OS.require_path)
+   print("C Require path: " .. _G.OS.c_require_path)
 end
 ------------------------------------------
---GLOBALS
---(Löve itself is implicitly in the globals)
 _G.d = require "f_debug"
-_G.f = require "frostmoon"
-_G.q = f.queue.new(1000) --Create Event Queue,
+_G.frost_sys = require "frost_sys"
+require "frostmoon"
+_G.q = _G.frostmoon.queue.new(1000) --Create Event Queue,
 _G.res = require "resources" --Load imgs, sounds, video, etc
 love.filesystem.load(_G.OS.lib .. "callbacks.lua")() --Load and run the callbacks
 ------------------------------------------
 
 --love.load	This function is called exactly once at the beginning of the game.
 function love.load()
-   if package.config:sub(1,1) == "/" then os.execute("clear") end --Clear terminal output of Unix-like OS
+   --if package.config:sub(1,1) == "/" then os.execute("clear") end --Clear terminal output of Unix-like OS
    exec("" .. _G.OS.sep  .. "tests" .. _G.OS.sep .. "pre") --Run autoexec scripts
    _G.vc = ViewController{} --Create ViewController
    _G.vc.s_width, _G.vc.s_height = love.window.getMode()

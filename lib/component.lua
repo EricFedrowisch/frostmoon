@@ -15,7 +15,7 @@ functionality to communicate with other components and process events its given.
 local exports = {} --Temp storage for exported functionality
 local function export()
    return {
-      component_prototype = exports.component_prototype,
+      prototype = exports.prototype,
           }
 end
 
@@ -57,7 +57,7 @@ function Component.new(args, container)
    if obj.init ~= nil and type(obj.init) == "function" then obj:init(args) end
    return obj
 end
-exports.component_prototype = Component
+exports.prototype = Component
 
 ------------------------------------------
 function Component:get_container()

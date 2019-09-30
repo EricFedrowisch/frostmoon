@@ -10,29 +10,71 @@ queue classes, preparing them for instantiation. The returned table also has
 the "_uuid" table that stores the unique id info for instances.
 --]]
 ------------------------------------------
-
---"Table of Contents" for exports of the module
+local component_dir = _G.OS.component_dir --Directory from which to recursively load components
 local exports = {} --Temp storage for exported functionality
+exports.Component = require "component"
+--"Table of Contents" for exports of the module
+
 local function export()
    return {
       components = exports.components,    --Table of component types
       instances  = exports.instances,     --Table of component instances
-      Component  = exports.Component,     --Base Component prototype
+      Component  = exports.Component.prototype,     --Base Component prototype
       new        = exports.Component.new, --Convenience binding of Component.new()
       queue      = exports.queue,         --Frost Queue Class
           }
 end
 
 ------------------------------------------
-local component = require("component")
-exports.Component = component.component_prototype
 
-local load = require("load")
-exports.components = load.components
+--[[
+Takes:
+   - str = string to split
+   - sep = seperator to use to split string (default is whitespace)
+Returns:
+   - an indexed table of strings
+--]]
+local function split(str, sep)
+   local t={}
+   if sep == nil then sep = "%s" end --Default to whitespace
+   for str in string.gmatch(str, "([^"..sep.."]+)") do
+      t[#t+1] = str
+   end
+   return t
+end
 
-exports.queue = require "queue"
+local function make_class_key(path)
+   local f = split(path, _G.OS.sep)
+   local split_index = nil
+   local name = split(f[#f],".");name = name[1];f[#f]=name --Get file name minus '.lua'
+   for i,v in ipairs(f) do  --Find component dir index
+      if f[i] == component_dir then split_index = i; break end
+   end
+   for i,v in ipairs(f) do --Delete preceding path before
+      if i < split_index then f[i] = nil end
+   end
+   local t = {}
+   for i = split_index + 1,#f do t[#t+1] = f[i] end
+   return table.concat(t,'.'), t[#t]
+end
 
-exports.instances = {["_uuid"] = {}} --Create Component instances table
+local function make_classes(paths)
+   local components = {}
+   for _, path in ipairs(paths) do
+      local key, classname = make_class_key(path)
+      components[key]=love.filesystem.load(path)()
+      if components[key] == nil or type(components[key]) ~= "table" then
+         print("ERROR: Component file not returning table at ", file)
+         components[key] = nil --Delete malformed component
+      else
+         --Set component private variables here
+         components[key].component_type = key
+         components[key].classname = classname
+         components[key]._load_path = path
+      end
+   end
+   return components
+end
 
 local function make_class_syntax_binding(ckey, cval)
    local class = cval.classname
@@ -57,7 +99,18 @@ local function make_class_syntax_binding(ckey, cval)
    end
 end
 
---d.tprint(exports.components)
+local function load_components(dir)
+   local files = _G.frost_sys.get_file_paths(dir)
+   return make_classes(files)
+end
+
+exports.Component = exports.Component.prototype
+exports.queue = require "queue"
+exports.instances = {["_uuid"] = {}} --Create Component instances table
+exports.components = load_components(component_dir)
+
+
+
 for ck, cv in pairs(exports.components) do --For each component type...
    exports.instances[ck] = {} --Create tables to store component instance uuids by component type
    make_class_syntax_binding(ck, cv)
@@ -67,4 +120,4 @@ end
 
 --Right now frostmoon has to be in Global namespace.
 _G.frostmoon = export()--Basically needed to avoid null pointers in the Component code.
-return _G.frostmoon
+--return _G.frostmoon
