@@ -9,7 +9,7 @@ This component contains the keyboard support code. This gives support for catchi
 keyboard events and invoking functions in response to those events.
 --]]
 ------------------------------------------
-local keys = require "key_constants"
+local keys = require "lib.key_constants"
 local Hotkey = {}
 
 

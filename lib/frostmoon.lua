@@ -12,7 +12,7 @@ the "_uuid" table that stores the unique id info for instances.
 ------------------------------------------
 local component_dir = _G.OS.component_dir --Directory from which to recursively load components
 local exports = {} --Temp storage for exported functionality
-exports.Component = require "component"
+exports.Component = require "lib.component"
 --"Table of Contents" for exports of the module
 
 local function export()
@@ -105,7 +105,7 @@ local function load_components(dir)
 end
 
 exports.Component = exports.Component.prototype
-exports.queue = require "queue"
+exports.queue = require "lib.queue"
 exports.instances = {["_uuid"] = {}} --Create Component instances table
 exports.components = load_components(component_dir)
 

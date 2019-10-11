@@ -21,7 +21,7 @@ end
 
 --UUID Requires here
 local socket = require("socket")
-local uuid = require("uuid")
+local uuid = require("lib.uuid")
 uuid.randomseed(socket.gettime()*10000)
 ------------------------------------------
 

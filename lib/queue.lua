@@ -17,7 +17,7 @@ the search function
 --]]
 ------------------------------------------
 
-local uuid = require "uuid"
+local uuid = require "lib.uuid"
 local Queue = {}
 
 function Queue.new(size)
