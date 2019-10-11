@@ -8,6 +8,7 @@ local scenes = {} --List of scenes to register
 ------------------------------------------
 local hotkey = Hotkey{}
 local dbg_fx = function () _G.debug_modes.draw_debug = not _G.debug_modes.draw_debug; print("Draw Debug On:", _G.debug_modes.draw_debug) end
+local dbg_events = function () _G.debug_modes.debug_events = not _G.debug_modes.debug_events; print("Event Debug On:", _G.debug_modes.debug_events) end
 local examine_fx = function ()
    local hover = _G.vc.hover_over
    if hover ~= nil and #hover > 0 then
@@ -30,6 +31,7 @@ local change_scene = function ()
 end
 
 hotkey:register_key("d", dbg_fx)
+hotkey:register_key("e", dbg_events)
 hotkey:register_key("x", examine_fx)
 hotkey:register_key("c", d.clear)
 hotkey:register_key("t", change_scene)

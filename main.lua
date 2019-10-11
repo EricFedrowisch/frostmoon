@@ -15,6 +15,7 @@ _G.debug_modes.draw_debug = false
 _G.debug_modes.continuous = false --Whether to run during tests every cycle of main loop.
 _G.debug_modes.run_test_countdown = 1 --How many times to run during tests if not continuous
 _G.debug_modes.draw_touches = false --Whether to draw touches on touch screens
+_G.debug_modes.debug_events = false --Print out event messages
 --DEBUG END
 -----------------------------------------
 --Operating system info for file system
