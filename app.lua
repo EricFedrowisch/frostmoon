@@ -30,7 +30,7 @@ local change_scene = function ()
     end
 end
 
-hotkey:register_key("d", dbg_fx)
+hotkey:register_key("d", dbg_fx, "lshift"); hotkey:register_key("d", dbg_fx, "rshift")
 hotkey:register_key("e", dbg_events)
 hotkey:register_key("x", examine_fx)
 hotkey:register_key("c", d.clear)
