@@ -18,6 +18,7 @@ local examine_fx = function ()
       end
    end
 end
+local key_down_fx = function () print("Key pressed down...") end
 
 local change_scene = function ()
    local scene_id = _G.vc.current_scene.scene_id
@@ -30,12 +31,15 @@ local change_scene = function ()
     end
 end
 
-hotkey:register_key("d", dbg_fx, "lshift"); hotkey:register_key("d", dbg_fx, "rshift")
-hotkey:register_key("e", dbg_events)
-hotkey:register_key("x", examine_fx)
-hotkey:register_key("c", d.clear)
-hotkey:register_key("t", change_scene)
-hotkey:register_key("escape", love.event.quit)
+love.keyboard.setKeyRepeat(true)
+print("Repeats?:", love.keyboard.hasKeyRepeat())
+hotkey:register_key({"d","lctrl"}, dbg_fx); hotkey:register_key({"d","rctrl"}, dbg_fx)
+hotkey:register_key({"lshift"}, key_down_fx, true); hotkey:register_key({"rshift"}, key_down_fx, true)
+hotkey:register_key({"a"}, key_down_fx, true)
+hotkey:register_key({"e"}, dbg_events)
+hotkey:register_key({"x"}, examine_fx)
+hotkey:register_key({"t"}, change_scene)
+hotkey:register_key({"escape"}, love.event.quit)
 
 local menu_scene = Scene{
    name = "Start Scene",

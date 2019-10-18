@@ -100,7 +100,12 @@ function ViewController:update(dt)
    while event ~= nil do --While there are still events...
       event.dt = dt --Mark event with delta time passed to update function
       --If message is one you handle...
-      if _G.debug_modes.debug_events then d.tprint(msg) end
+      if _G.debug_modes.debug_events then
+         if _G.debug_msg_uuids[msg._uuid] == nil then
+            _G.debug_msg_uuids[msg._uuid] = true
+            d.tprint(msg)
+         end
+      end
       if self.event_types[event.type] then --Then handle it
          self:receive_msg(event)
       else --If not event you handle then...
