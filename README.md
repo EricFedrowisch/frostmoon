@@ -23,8 +23,8 @@ Something like:
 local Component = {}
 
 Component.defaults = {
-   ["default1"] = "A default",
-   ["default2"] = "Another default"
+   default1 = "A default",
+   default2 = "Another default"
 }
 
 return Component
@@ -57,8 +57,8 @@ defaults, you can ovveride them by specifying an argument with the same key.
 You can even put other components inside and instantiate those at the same time.
 ```
 local test_obj = Object{
-   ["embedded_table"]= {"table entry 1","table entry 2","table entry 3"},
-   ["subcomponent"]= Button{}
+   embedded_table= {"table entry 1","table entry 2","table entry 3"},
+   subcomponent= Button{}
    }
 }
 
@@ -70,18 +70,18 @@ When Frostmoon's new method is called, it must be passed a table of arguments to
 Example of using Frostmoon's Factory Pattern new method:
 ```
 local component = {
-   ["component_type"] = "gui.button",
-   ["x"] = 0,
-   ["y"] = 0,
-   ["random_table"] = {1,2,3}
+   component_type = "gui.button",
+   x = 0,
+   y = 0,
+   random_table = {1,2,3}
 }
 
 local some_table = {1,2,3,"some string"}
 
-local button = Frostmoon.new({
+local button = Frostmoon.new{
    component,
    some_table
-   })
+   }
 ```
 
 Outputs:
