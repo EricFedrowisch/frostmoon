@@ -54,10 +54,12 @@ local scene2 = Scene{
 }
 
 local button1 = Button{
+   image = res.img["button/01_c_04.png"],
    button_function = function(self, msg) print("Pressed Button 1") end
 }
 
 local button2 = Button{
+   image = res.img["button/01_c_02.png"],
    button_function = function(self, msg) print("Pressed Button 2") end,
    x = button1.element.image:getWidth()/2,
    y = button1.element.image:getHeight()/2,
@@ -65,6 +67,7 @@ local button2 = Button{
 }
 
 local button3 = Button{
+   image = res.img["button/01_c_03.png"],
    button_function = function(self, msg) print("Pressed Button 3") end,
    x = button1.element.image:getWidth(),
    y = button1.element.image:getHeight(),
@@ -72,14 +75,7 @@ local button3 = Button{
 }
 
 local button4 = Button{
-   button_function = function(self, msg) print("Pressed Button 4") end,
-   x = button1.element.image:getWidth() * 1.5,
-   y = button1.element.image:getHeight() * 1.5,
-   z = 4,
-   draggable = true,
-}
-
-local button5 = Button{
+   image = res.img["button/01_c_04.png"],
    button_function = function(self, msg) print("Pressed Button 5") end,
    x = button1.element.image:getWidth() * 2.5,
    y = button1.element.image:getHeight() * 2.5,
@@ -88,11 +84,12 @@ local button5 = Button{
 }
 
 
+love.window.setTitle("Frostmoon Demo")
+
 menu_scene:register(button1)
 menu_scene:register(button2)
 menu_scene:register(button3)
-menu_scene:register(button4)
-scene2:register(button5)
+scene2:register(button4)
 
 ------------------------------------------
 scenes[#scenes + 1] = menu_scene --Make menu_scene the 1st scene
