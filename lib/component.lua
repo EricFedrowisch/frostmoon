@@ -11,13 +11,6 @@ functionality to communicate with other components and process events its given.
 --]]
 ------------------------------------------
 
---"Table of Contents" for exports of the module
-local exports = {} --Temp storage for exported functionality
-local function export()
-   return {
-      prototype = exports.prototype,
-          }
-end
 
 --UUID Requires here
 local socket = require("socket")
@@ -57,7 +50,6 @@ function Component.new(args, container)
    if obj.init ~= nil and type(obj.init) == "function" then obj:init(args) end
    return obj
 end
-exports.prototype = Component
 
 ------------------------------------------
 function Component:get_container()
@@ -204,4 +196,4 @@ end
 
 ------------------------------------------
 
-return export()
+return Component

@@ -72,7 +72,7 @@ end
 ------------------------------------------
 _G.d = require "lib.f_debug"
 _G.frost_sys = require "lib.frost_sys"
-require "lib.frostmoon"
+require "lib.frostmoon" --Frostmoon will now be in _G.frostmoon 
 _G.q = _G.frostmoon.queue.new(1000) --Create Event Queue,
 _G.res = require "lib.resources" --Load imgs, sounds, video, etc
 love.filesystem.load(_G.OS.lib .. "callbacks.lua")() --Load and run the callbacks

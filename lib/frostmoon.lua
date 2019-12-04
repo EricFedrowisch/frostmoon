@@ -5,7 +5,7 @@ Copyright Aug. 9th, 2018 Eric Fedrowisch All rights reserved.
 --]]
 ------------------------------------------
 --[[
-This script is the main entry point of FrostMoon. It loads the component and
+This script is the main entry point of Frostmoon. It loads the component and
 queue classes, preparing them for instantiation. The returned table also has
 the "_uuid" table that stores the unique id info for instances.
 --]]
@@ -19,7 +19,7 @@ local function export()
    return {
       components = exports.components,    --Table of component types
       instances  = exports.instances,     --Table of component instances
-      Component  = exports.Component.prototype,     --Base Component prototype
+      Component  = exports.Component,     --Base Component prototype
       new        = exports.Component.new, --Convenience binding of Component.new()
       queue      = exports.queue,         --Frost Queue Class
           }
@@ -58,23 +58,41 @@ local function make_class_key(path)
    return table.concat(t,'.'), t[#t]
 end
 
+local function make_class_def(key, classname, class_table)
+   local component = class_table
+   if class_table == nil or type(class_table) ~= "table" then
+      component = {}
+   end
+   component.component_type = key
+   component.classname = classname
+   component._load_path = path
+   return component
+end
+
 local function make_classes(paths)
    local components = {}
    for _, path in ipairs(paths) do
       local key, classname = make_class_key(path)
-      components[key]=love.filesystem.load(path)()
-      if components[key] == nil or type(components[key]) ~= "table" then
-         print("ERROR: Component file not returning table at ", file)
-         components[key] = nil --Delete malformed component
+      local class_table = love.filesystem.load(path)()
+      if class_table == nil or type(class_table) ~= "table" then
+         error("ERROR: Component file not returning table at " .. path)
       else
-         --Set component private variables here
-         components[key].component_type = key
-         components[key].classname = classname
-         components[key]._load_path = path
+         components[key] = make_class_def(key, classname, class_table)
       end
    end
+   components["Component"] = make_class_def("Component", "Component", exports.Component)
    return components
 end
+
+--[[
+local function add_class_def(key, class_table)
+   if _G[class] ~= nil then
+      error("Class namespace collision (two or more global variables/classes with same name): " .. key)
+   else
+   _G.frostmoon.components[key] = make_class_def(key, key, class_table)
+   end
+end
+]]
 
 local function make_class_syntax_binding(ckey, cval)
    local class = cval.classname
@@ -104,18 +122,18 @@ local function load_components(dir)
    return make_classes(files)
 end
 
-exports.Component = exports.Component.prototype
 exports.queue = require "lib.queue"
 exports.instances = {["_uuid"] = {}} --Create Component instances table
 exports.components = load_components(component_dir)
 
 
-
 for ck, cv in pairs(exports.components) do --For each component type...
    exports.instances[ck] = {} --Create tables to store component instance uuids by component type
    make_class_syntax_binding(ck, cv)
-   local parent = exports.components[cv.__parent] or exports.Component --Allow for single line inheritance
-   setmetatable(cv, {__index = parent})
+   if ck ~= "Component" then
+      local parent = exports.components[cv.__parent] or exports.Component --Allow for single line inheritance
+      setmetatable(cv, {__index = parent})
+   end
 end
 
 --Right now frostmoon has to be in Global namespace.

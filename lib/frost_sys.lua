@@ -5,8 +5,8 @@ Copyright Aug. 9th, 2018 Eric Fedrowisch All rights reserved.
 --]]
 ------------------------------------------
 --[[
-This script parses the component directory recursively making all the files into
-frostmoon component object classes.
+This lib file has functions for parsing the component directory recursively
+so that the files can be loaded as frostmoon component classes.
 --]]
 ------------------------------------------
 
