@@ -126,5 +126,3 @@ end
 return B
 ```
 B type components now have access to both testA and testB methods through inheritance.
-## Load Order for Frostmoon App
-![Load Order](/docs/Frostmoon_Load_Diagram.png "Frostmoon Load Order")
