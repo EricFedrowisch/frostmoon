@@ -32,7 +32,7 @@ local change_scene = function ()
 end
 
 love.keyboard.setKeyRepeat(true)
-print("Repeats?:", love.keyboard.hasKeyRepeat())
+--print("Repeats?:", love.keyboard.hasKeyRepeat())
 hotkey:register_key({"d","lctrl"}, dbg_fx); hotkey:register_key({"d","rctrl"}, dbg_fx)
 hotkey:register_key({"lshift"}, key_down_fx, true); hotkey:register_key({"rshift"}, key_down_fx, true)
 hotkey:register_key({"a"}, key_down_fx, true)
