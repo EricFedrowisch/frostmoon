@@ -1,4 +1,4 @@
---[[
+debug--[[
 FrostMoon, cross platform Composition Based Object Factory and GUI library
 targeting iOS, OS X and Windows 10
 Copyright Aug. 9th, 2018 Eric Fedrowisch All rights reserved.
@@ -7,8 +7,8 @@ Copyright Aug. 9th, 2018 Eric Fedrowisch All rights reserved.
 local scenes = {} --List of scenes to register
 ------------------------------------------
 local hotkey = Hotkey{}
-local dbg_fx = function () _G.debug_modes.draw_debug = not _G.debug_modes.draw_debug; print("Draw Debug On:", _G.debug_modes.draw_debug) end
-local dbg_events = function () _G.debug_modes.debug_events = not _G.debug_modes.debug_events; print("Event Debug On:", _G.debug_modes.debug_events) end
+local dbg_fx = function () _G.debug.draw_debug = not _G.debug.draw_debug; print("Draw Debug On:", _G.debug.draw_debug) end
+local dbg_events = function () _G.debug.debug_events = not _G.debug.debug_events; print("Event Debug On:", _G.debug.debug_events) end
 local examine_fx = function ()
    local hover = _G.vc.hover_over
    if hover ~= nil and #hover > 0 then
@@ -24,10 +24,10 @@ local change_scene = function ()
    local scene_id = _G.vc.current_scene.scene_id
    if scene_id ~= 1 then
       _G.vc:change_scene(1)
-      if _G.debug_modes.more_info then print("Change to scene id 1, named " .. _G.vc.current_scene.name) end
+      if _G.debug.more_info then print("Change to scene id 1, named " .. _G.vc.current_scene.name) end
     else
       _G.vc:change_scene(2)
-      if _G.debug_modes.more_info then print("Change to scene id 2, named " .. _G.vc.current_scene.name) end
+      if _G.debug.more_info then print("Change to scene id 2, named " .. _G.vc.current_scene.name) end
     end
 end
 

@@ -27,7 +27,7 @@ local function get_file_paths(dir, files)
    for i,fh in ipairs(love.filesystem.getDirectoryItems(dir)) do
       local handle = dir .. _G.OS.sep .. fh
       local info = love.filesystem.getInfo(handle)
-      if _G.debug_modes.more_info then print("Component Loading: " .. handle) end
+      if _G.debug.more_info then print("Component Loading: " .. handle) end
       if info.type == "file" then files[#files + 1] = handle end
       if info.type == "directory" then dirs[#dirs+1] = handle end
    end

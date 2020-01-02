@@ -9,14 +9,16 @@ Copyright Aug. 9th, 2018 Eric Fedrowisch All rights reserved.
 -----------------------------------------
 --DEBUG
 --Debug Stuff. Remove from production.
-_G.debug_modes = {}
-_G.debug_modes.more_info = false
-_G.debug_modes.draw_debug = false
-_G.debug_modes.continuous = false --Whether to run during tests every cycle of main loop.
-_G.debug_modes.run_test_countdown = 1 --How many times to run during tests if not continuous
-_G.debug_modes.draw_touches = false --Whether to draw touches on touch screens
-_G.debug_modes.debug_events = false --Print out event messages
+_G.debug = {}
+_G.debug.more_info = false
+_G.debug.draw_debug = false
+_G.debug.continuous = false --Whether to run during tests every cycle of main loop.
+_G.debug.run_test_countdown = 1 --How many times to run during tests if not continuous
+_G.debug.draw_touches = false --Whether to draw touches on touch screens
+_G.debug.debug_events = false --Print out event messages
 _G.debug_msg_uuids = {}
+_G.arg={} --Gotta clear out the args for busted to work for some reason
+_G.busted = require 'busted.runner' --Run _G.busted() in each test script
 --DEBUG END
 -----------------------------------------
 --Operating system info for file system
@@ -59,7 +61,7 @@ _G.OS.require_path = love.filesystem.getRequirePath()
 _G.OS.c_require_path = love.filesystem.getCRequirePath()
 ------------------------------------------
 --System Debug Output
-if _G.debug_modes.more_info then
+if _G.debug.more_info then
    print("OS: " .. _G.OS.os_name)
    print("OS Path Sep: ", _G.OS.sep)
    print("Filesystem fused: " .. tostring(_G.OS.is_fused))
@@ -101,7 +103,7 @@ end
 function exec(path)
    for _,v in ipairs(_G.res.get_files(path)) do
       if v:match("[^.]+$") == "lua" then
-         if _G.debug_modes.more_info then print("Running script:", v) end
+         if _G.debug.more_info then print("Running script:", v) end
          love.filesystem.load(v)()
       end
    end
@@ -121,15 +123,15 @@ function love.draw()
    love.graphics.setColor(1, 1, 1, 1)
    _G.vc:draw()
    --DEBUG
-   if _G.debug_modes.draw_debug == true then _G.vc:draw_debug() end
+   if _G.debug.draw_debug == true then _G.vc:draw_debug() end
    --DEBUG END
 end
 
 function love.update(dt)
    _G.vc:update(dt)
    --DEBUG
-   if _G.debug_modes.continuous or _G.debug_modes.run_test_countdown > 0 then
-      _G.debug_modes.run_test_countdown = _G.debug_modes.run_test_countdown - 1
+   if _G.debug.continuous or _G.debug.run_test_countdown > 0 then
+      _G.debug.run_test_countdown = _G.debug.run_test_countdown - 1
       exec("" .. _G.OS.sep  .. "tests" .. _G.OS.sep .. "during")
    --DEBUG END
    end

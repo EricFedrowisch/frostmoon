@@ -1,8 +1,4 @@
---for i,v in pairs(arg) do print(i,v) end
-arg={}
-local busted = require 'busted.runner'
---for k,v in pairs(_G) do print(k,v) end
-busted()
+_G.busted()
 expose("Inheritance functionality tests #component #inheritance", function()
    local classA = _G.frostmoon.components["Inherit.A"]
    local classB = _G.frostmoon.components["Inherit.B"]
@@ -42,23 +38,7 @@ expose("Inheritance functionality tests #component #inheritance", function()
       local x = a.testB
       assert.is.falsy(x)
    end)
+   it("B's parent should be A", function ()
+      assert.are.equal(b.__parent, "Inherit.A")
+   end)
 end)
-
---[[
-
-
-local msg1 = " not nil and set to correct default"
-assert(a.def1 == "Default 1 for A", "a.def1" .. msg1)
-assert(a.def2 == 7, "a.def2" .. msg1)
-assert(a.def3 == 9, "a.def3" .. msg1)
-assert(b.def1 == "Default 1 for B", "b.def1" .. msg1)
-assert(b.def2 == 5, "b.def2" .. msg1)
-
-local msg2 = " class got correct parent "
-
-assert(a.__parent == "Component", "a" .. msg2 .. "Component")
-
-
-
-if _G.debug_modes.more_info then print("Inheritance tests run.") end
-]]

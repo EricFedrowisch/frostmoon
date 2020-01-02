@@ -100,7 +100,7 @@ function ViewController:update(dt)
    while event ~= nil do --While there are still events...
       event.dt = dt --Mark event with delta time passed to update function
       --If message is one you handle...
-      if _G.debug_modes.debug_events then
+      if _G.debug.debug_events then
          if _G.debug_msg_uuids[msg._uuid] == nil then
             _G.debug_msg_uuids[msg._uuid] = true
             d.tprint(msg)
@@ -155,7 +155,7 @@ end
 function ViewController:resize(msg)
    local old_width, old_height = self.s_width, self.s_height
    self.s_width, self.s_height = love.window.getMode()
-   if _G.debug_modes.more_info then
+   if _G.debug.more_info then
       print("Dimension Changed")
       print("Width Proportion", self.s_width/old_width)
       print("Height Proportion", self.s_height/old_height)
