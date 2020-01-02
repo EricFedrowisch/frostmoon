@@ -51,7 +51,7 @@ local comp_locs = {
    ["Linux"]   = "components", --UNTESTED
    ["Android"] = "components", --UNTESTED
 }
---_G.OS.component_dir = comp_locs[_G.OS.os_name] --Set component classes' file path according to OS
+
 _G.OS.component_dir = comp_locs[_G.OS.os_name] --Set component classes' file path according to OS
 local reqstr = string.gsub(love.filesystem.getRequirePath() .. ";" .. _G.OS.lib .. "?.lua", '/', '\\')
 love.filesystem.setRequirePath(reqstr)

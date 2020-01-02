@@ -3,7 +3,7 @@ filelist.txt
 *.love
 
 #Ignore autoexec scripts
-autoexec/*
+#autoexec/*
 
 #Ignore Github stuff
 .github
