@@ -1,4 +1,4 @@
-debug--[[
+--[[
 FrostMoon, cross platform Composition Based Object Factory and GUI library
 targeting iOS, OS X and Windows 10
 Copyright Aug. 9th, 2018 Eric Fedrowisch All rights reserved.
@@ -84,7 +84,7 @@ local button4 = Button{
 }
 
 
-love.window.setTitle("Frostmoon Demo")
+love.window.setTitle("FrostMoon Demo")
 
 menu_scene:register(button1)
 menu_scene:register(button2)

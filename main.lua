@@ -66,7 +66,7 @@ if _G.debug.more_info then
    print("OS Path Sep: ", _G.OS.sep)
    print("Filesystem fused: " .. tostring(_G.OS.is_fused))
    print("Source Path: ", _G.OS.source_path)
-   print("Frostmoon lib files at: " .. _G.OS.lib)
+   print("FrostMoon lib files at: " .. _G.OS.lib)
    print("CWD: " .. _G.OS.cwd())
    print("Require path: " .. love.filesystem.getRequirePath())
    print("C Require path: " .. love.filesystem.getCRequirePath())
@@ -74,7 +74,7 @@ end
 ------------------------------------------
 _G.d = require "lib.f_debug"
 _G.frost_sys = require "lib.frost_sys"
-require "lib.frostmoon" --Frostmoon will now be in _G.frostmoon
+require "lib.frostmoon" --FrostMoon will now be in _G.frostmoon
 _G.q = _G.frostmoon.queue.new(1000) --Create Event Queue,
 _G.res = require "lib.resources" --Load imgs, sounds, video, etc
 love.filesystem.load(_G.OS.lib .. "callbacks.lua")() --Load and run the callbacks

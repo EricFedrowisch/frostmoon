@@ -1,4 +1,4 @@
---[[ViewController controls input and rendering of Frostmoon objects.]]
+--[[ViewController controls input and rendering of FrostMoon objects.]]
 local ViewController = {}
 
 ViewController.defaults = {

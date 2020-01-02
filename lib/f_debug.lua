@@ -5,7 +5,7 @@ Copyright Aug. 9th, 2018 Eric Fedrowisch All rights reserved.
 --]]
 ------------------------------------------
 --[[
-Library of debug functions. Meant to be independant from Frostmoon.
+Library of debug functions. Meant to be independant from FrostMoon.
 --]]
 ------------------------------------------
 
