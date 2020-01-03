@@ -10,20 +10,17 @@ queue classes, preparing them for instantiation. The returned table also has
 the "_uuid" table that stores the unique id info for instances.
 --]]
 ------------------------------------------
-local component_dir = _G.OS.component_dir --Directory from which to recursively load components
-local exports = {} --Temp storage for exported functionality
-exports.Component = require "lib.component"
---"Table of Contents" for exports of the module
 
-local function export()
-   return {
-      components = exports.components,    --Table of component types
-      instances  = exports.instances,     --Table of component instances
-      Component  = exports.Component,     --Base Component prototype
-      new        = exports.Component.new, --Convenience binding of Component.new()
-      queue      = exports.queue,         --Frost Queue Class
-          }
-end
+_G.frostmoon = {}
+_G.frost_sys = require "lib.frost_sys"
+_G.frostmoon.queue = require "lib.queue"
+_G.frostmoon.q = _G.frostmoon.queue.new(1000) --Create Event Queue
+_G.frostmoon.instances = {["_uuid"] = {}} --Create Component instances table
+local component_dir = _G.OS.component_dir --Directory from which to recursively load components
+_G.frostmoon.components = {}
+love.filesystem.load(_G.OS.lib .. "callbacks.lua")() --Load löve callbacks wrapper
+_G.frostmoon.Component = require "lib.component"
+--"Table of Contents" for exports of the module
 
 ------------------------------------------
 
@@ -80,19 +77,9 @@ local function make_classes(paths)
          components[key] = make_class_def(key, classname, class_table)
       end
    end
-   components["Component"] = make_class_def("Component", "Component", exports.Component)
+   components["Component"] = make_class_def("Component", "Component", _G.frostmoon.Component)
    return components
 end
-
---[[
-local function add_class_def(key, class_table)
-   if _G[class] ~= nil then
-      error("Class namespace collision (two or more global variables/classes with same name): " .. key)
-   else
-   _G.frostmoon.components[key] = make_class_def(key, key, class_table)
-   end
-end
-]]
 
 local function make_class_syntax_binding(ckey, cval)
    local class = cval.classname
@@ -112,7 +99,7 @@ local function make_class_syntax_binding(ckey, cval)
                end
             end
          end
-         return exports.Component.new(args, container)
+         return _G.frostmoon.Component.new(args, container)
       end
    end
 end
@@ -122,20 +109,13 @@ local function load_components(dir)
    return make_classes(files)
 end
 
-exports.queue = require "lib.queue"
-exports.instances = {["_uuid"] = {}} --Create Component instances table
-exports.components = load_components(component_dir)
+_G.frostmoon.components = load_components(component_dir)
 
-
-for ck, cv in pairs(exports.components) do --For each component type...
-   exports.instances[ck] = {} --Create tables to store component instance uuids by component type
+for ck, cv in pairs(_G.frostmoon.components) do --For each component type...
+   _G.frostmoon.instances[ck] = {} --Create tables to store component instance uuids by component type
    make_class_syntax_binding(ck, cv)
    if ck ~= "Component" then
-      local parent = exports.components[cv.__parent] or exports.Component --Allow for single line inheritance
+      local parent = _G.frostmoon.components[cv.__parent] or _G.frostmoon.Component --Allow for single line inheritance
       setmetatable(cv, {__index = parent})
    end
 end
-
---Right now frostmoon has to be in Global namespace.
-_G.frostmoon = export()--Basically needed to avoid null pointers in the Component code.
---return _G.frostmoon

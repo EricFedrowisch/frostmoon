@@ -92,7 +92,7 @@ end
 
 --Get events from queue and handle them or dispatch them to listeners.
 function ViewController:update(dt)
-   local event = q:use() --Get next event from the queue
+   local event = _G.frostmoon.q:use() --Get next event from the queue
    if event == nil then  --If there are no events do heartbeat event
       event = {type = "heartbeat"}
    end
@@ -100,10 +100,12 @@ function ViewController:update(dt)
    while event ~= nil do --While there are still events...
       event.dt = dt --Mark event with delta time passed to update function
       --If message is one you handle...
-      if _G.debug.debug_events then
-         if _G.debug_msg_uuids[msg._uuid] == nil then
-            _G.debug_msg_uuids[msg._uuid] = true
-            d.tprint(msg)
+      if _G.f_debug ~= nil then
+         if _G.f_debug.debug_events then
+            if _G.f_debug_msg_uuids[msg._uuid] == nil then
+               _G.f_debug_msg_uuids[msg._uuid] = true
+               d.tprint(msg)
+            end
          end
       end
       if self.event_types[event.type] then --Then handle it
@@ -111,7 +113,7 @@ function ViewController:update(dt)
       else --If not event you handle then...
          self:tell_scene_msg(event) --Pass it to listeners
       end
-      event = q:use() --Get next event
+      event = _G.frostmoon.q:use() --Get next event
    end
 end
 
@@ -155,11 +157,6 @@ end
 function ViewController:resize(msg)
    local old_width, old_height = self.s_width, self.s_height
    self.s_width, self.s_height = love.window.getMode()
-   if _G.debug.more_info then
-      print("Dimension Changed")
-      print("Width Proportion", self.s_width/old_width)
-      print("Height Proportion", self.s_height/old_height)
-   end
    for id, scene in ipairs(self.scenes) do
       local elements = self:get_draw_ordered_elements(scene.elements)
       res.resize_imgs(elements)

@@ -5,32 +5,69 @@ Copyright Aug. 9th, 2018 Eric Fedrowisch All rights reserved.
 --]]
 ------------------------------------------
 --[[
-Library of debug functions. Meant to be independant from FrostMoon.
+Library of debug functions. Meant to be (mostly) independant from FrostMoon.
+
+Functions provided:
+iprint,  Print a table's ipairs
+kprint,  Print all a table's keys, value pairs
+vprint,  Print just a table's ipair values.
+mprint,  Print metatable of table.
+line,    Print a line to divide up output visually
+tprint,  Print a table's values recursively indented
+ttest,   Return boolean of table-ness and error message if need
+kcount,  Return an int count of table's keys or nil if not table
+mem_use, Return int number of bytes currently used by Lua's memory footprint
+clear,   Clear the terminal output
+timestamp, Return current timestamp string
+get_file_extension, Return ".xxx" file extension string
 --]]
 ------------------------------------------
+--Debug Globals.
+_G.f_debug = {} --Global table for functions and flag variables
+_G.arg={} --Gotta clear out the args for busted to work for some reason
+_G.busted = require 'busted.runner' --Run _G.busted() in each test script
+--Global Flag Variables
+_G.f_debug.details  = false
+-- _G.f_debug.details  = true
+_G.f_debug.draw_debug = false
+_G.f_debug.continuous = false --Whether to run during tests every cycle of main loop.
+_G.f_debug.run_test_countdown = 1 --How many times to run during tests if not continuous
+_G.f_debug.draw_touches = false --Whether to draw touches on touch screens
+_G.f_debug.debug_events = false --Print out event messages
+_G.f_debug_msg_uuids = {}
 
-local exports = {} --Temp storage for exported functionality
-
---Table of Contents for the module
-local function export()
-   return {iprint  = exports.iprint, --Print a table's ipairs
-           kprint  = exports.kprint, --Print all a table's keys, value pairs
-           vprint  = exports.vprint, --Print just a table's ipair values.
-           mprint  = exports.mprint, --Print metatable of table.
-           line    = exports.line,     --Print a line to divide up output visually
-           tprint  = exports.tprint, --Print a table's values recursively indented
-           ttest   = exports.ttest,   --Return boolean of table-ness and error message if need
-           kcount  = exports.kcount, --Return an int count of table's keys or nil if not table
-           mem_use = exports.mem_use, --Return int number of bytes currently used by Lua's memory footprint
-           clear   = exports.clear,  --Clear the terminal output
-           timestamp = exports.timestamp, --Return current timestamp string
-           get_file_extension = exports.get_file_extension, --Return ".xxx" file extension string
-          }
+------------------------------------------
+--System Debug Output
+if _G.f_debug.details then
+   print("OS: " .. _G.OS.os_name)
+   print("OS Path Sep: ", _G.OS.sep)
+   print("Filesystem fused: " .. tostring(_G.OS.is_fused))
+   print("Source Path: ", _G.OS.source_path)
+   print("FrostMoon lib files at: " .. _G.OS.lib)
+   print("CWD: " .. _G.OS.cwd())
+   print("Require path: " .. love.filesystem.getRequirePath())
+   print("C Require path: " .. love.filesystem.getCRequirePath())
 end
 
 -------------------------------------------
+--[[During Debug Function]]--
+function _G.f_debug.during()
+   if _G.f_debug.continuous ~= true then
+      _G.f_debug.run_test_countdown = _G.f_debug.run_test_countdown - 1
+   end
+   if _G.f_debug.run_test_countdown >= 1 then
+      exec("" .. _G.OS.sep  .. "tests" .. _G.OS.sep .. "during") --Run during test scripts
+   end
+end
+
+function _G.f_debug.more_info(msg)
+   if _G.f_debug.details then
+      print(msg)
+   end
+end
+
 --[[Debug Functions Here]]--
-local function table_test(t)
+function _G.f_debug.ttest(t)
    local is_table, error_msg = false, nil
    if t ~= nil and type(t) == 'table' then
       is_table = true
@@ -43,9 +80,8 @@ local function table_test(t)
    end
    return is_table, error_msg
 end
-exports.ttest = table_test
 
-local function vprint(t)
+function _G.f_debug.vprint(t)
    local ttest = {table_test(t)}
    if ttest[1] then
       for i,v in ipairs(t) do print(v) end
@@ -53,9 +89,8 @@ local function vprint(t)
       print(ttest[2])
    end
 end
-exports.vprint = vprint
 
-local function iprint(t)
+function _G.f_debug.iprint(t)
    local ttest = {table_test(t)}
    if ttest[1] then
       for i,v in ipairs(t) do print(i,v) end
@@ -63,9 +98,8 @@ local function iprint(t)
       print(ttest[2])
    end
 end
-exports.iprint = iprint
 
-local function kprint(t)
+function _G.f_debug.kprint(t)
    local ttest = {table_test(t)}
    if ttest[1] then
       for k,v in pairs(t) do print(k,v) end
@@ -73,15 +107,12 @@ local function kprint(t)
       print(ttest[2])
    end
 end
-exports.kprint = kprint
 
-local function line(text)
+function _G.f_debug.line(text)
    local line = "--------------------------------------------\n"
    if text ~= nil then print(line .. tostring(text)) end
    print(line)
 end
-exports.line = line
-
 
 local function _tprint (t, shift, container)
    local container = container or nil
@@ -91,7 +122,7 @@ local function _tprint (t, shift, container)
          local str = string.rep("   ", shift) .. tostring(k) .. " = "
          if type(v) == "table"  and t ~= container and k ~= "_container" and k ~= "self" then
             print(str)
-            exports._tprint(v, shift+1, t)
+            _G.f_debug._tprint(v, shift+1, t)
          else
             print(str .. tostring(v))
          end
@@ -104,35 +135,32 @@ local function _tprint (t, shift, container)
       end
    end
 end
-exports._tprint = _tprint
 
-local function tprint(t, label)
-   exports.line(label)
+function _G.f_debug.tprint(t, label)
+   _G.f_debug.line(label)
    _tprint(t)
    if getmetatable(t) then
-      exports.mprint(t)
+      _G.f_debug.mprint(t)
    else
-      exports.line()
+      _G.f_debug.line()
    end
 end
-exports.tprint = tprint
 
-local function mprint(t)
-   exports.line("Metatable:")
+function _G.f_debug.mprint(t)
+   _G.f_debug.line("Metatable:")
    local ttest = {table_test(getmetatable(t))}
    if ttest[1] then
       for k,v in pairs(getmetatable(t)) do
          print(tostring(k) .. " = " .. tostring(v))
-         if type(v) == "table" then exports._tprint(v, 1, v) end
+         if type(v) == "table" then _G.f_debug._tprint(v, 1, v) end
       end
    else
       print(ttest[2])
    end
-   exports.line()
+   _G.f_debug.line()
 end
-exports.mprint = mprint
 
-local function kcount(t)
+function _G.f_debug.kcount(t)
    local c = nil
    if type(t) == "table" then
       c = 0
@@ -140,14 +168,12 @@ local function kcount(t)
    end
    return c
 end
-exports.kcount = kcount
 
-local function mem_use()
+function _G.f_debug.mem_use()
    return (collectgarbage("count") * 1024) --Mem Usage in Bytes
 end
-exports.mem_use = mem_use
 
-local function clear()
+function _G.f_debug.clear()
    if not os.execute("clear") then
       os.execute("cls")
    elseif not os.execute("cls") then
@@ -156,21 +182,16 @@ local function clear()
       end
    end
 end
-exports.clear = clear
 
-local function get_file_extension(filename)
+function _G.f_debug.get_file_extension(filename)
    if type(filename) ~= "string" then
       return nil
    else
       return filename:match("[^.]+$") --Get file extension
    end
 end
-exports.get_file_extension = get_file_extension
 
-local function timestamp()
+function _G.f_debug.timestamp()
    return os.date('%I:%M:%S%p-%b-%d-%Y')
 end
-exports.timestamp = timestamp
-
 ------------------------------------------
-return export()

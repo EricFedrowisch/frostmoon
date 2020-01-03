@@ -1,1 +1,1 @@
-if _G.debug.more_info then print("Post-conditions test scripts run.") end
+if _G.f_debug ~= nil then _G.f_debug.more_info("Post-conditions test scripts run.") end

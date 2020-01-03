@@ -149,7 +149,7 @@ local function width_height_ratio(element)
 end
 
 local function load_resources(dir)
-   local res = {}
+   _G.res = {}
    res.img = load_imgs()
    res.snd = load_sounds()
    res.msx = load_music()
@@ -162,7 +162,6 @@ local function load_resources(dir)
    res.resize = resize
    res.width_height_ratio = width_height_ratio
    res.get_files = get_files
-   return res
 end
 ------------------------------------------
 

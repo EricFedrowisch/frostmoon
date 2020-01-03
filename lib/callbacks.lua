@@ -7,7 +7,7 @@ Copyright Aug. 9th, 2018 Eric Fedrowisch All rights reserved.
 --[[
 Script generated binding of all callbacks in löve. It takes all the callbacks
 and wraps them in functions that create frostmoon messages out of them. Then
-those event messages are pushed onto the global queue variable "_G.q".
+those event messages are pushed onto the global queue variable "_G.frostmoon.q".
 --]]
 ------------------------------------------
 
@@ -19,7 +19,7 @@ function love.focus(focus)
             ["focus"] = focus
         }
     }
-    _G.q:add(msg)
+    _G.frostmoon.q:add(msg)
 end
 
 --Called when the window is resized
@@ -31,7 +31,7 @@ function love.resize(w, h)
             ["h"] = h
         }
     }
-    _G.q:add(msg)
+    _G.frostmoon.q:add(msg)
 end
 
 --Callback function triggered when window is minimized/hidden or unminimized by the user.
@@ -42,7 +42,7 @@ function love.visible(visible)
             ["visible"] = visible
         }
     }
-    _G.q:add(msg)
+    _G.frostmoon.q:add(msg)
 end
 
 --Callback function triggered when a file is dragged and dropped onto the window.
@@ -53,7 +53,7 @@ function love.filedropped(file)
             ["file"] = file
         }
     }
-    _G.q:add(msg)
+    _G.frostmoon.q:add(msg)
 end
 
 --Callback function triggered when a directory is dragged and dropped onto the window.
@@ -64,7 +64,7 @@ function love.directorydropped(path)
             ["path"] = path
         }
     }
-    _G.q:add(msg)
+    _G.frostmoon.q:add(msg)
 end
 
 --Callback function triggered when window receives or loses mouse focus.
@@ -75,7 +75,7 @@ function love.mousefocus(focus)
             ["focus"] = focus
         }
     }
-    _G.q:add(msg)
+    _G.frostmoon.q:add(msg)
 end
 
 --Callback function triggered when the mouse is moved.
@@ -90,7 +90,7 @@ function love.mousemoved(x, y, dx, dy, istouch)
             ["istouch"] = istouch
         }
     }
-    _G.q:add(msg)
+    _G.frostmoon.q:add(msg)
 end
 
 --Callback function triggered when a mouse button is pressed.
@@ -105,7 +105,7 @@ function love.mousepressed(x, y, button, istouch, presses)
             ["presses"] = presses
         }
     }
-    _G.q:add(msg)
+    _G.frostmoon.q:add(msg)
 end
 
 --Callback function triggered when a mouse button is released.
@@ -120,7 +120,7 @@ function love.mousereleased(x, y, button, istouch, presses)
             ["presses"] = presses
         }
     }
-    _G.q:add(msg)
+    _G.frostmoon.q:add(msg)
 end
 
 --Callback function triggered when the mouse wheel is moved.
@@ -132,7 +132,7 @@ function love.wheelmoved(x, y)
             ["y"] = y
         }
     }
-    _G.q:add(msg)
+    _G.frostmoon.q:add(msg)
 end
 
 --Callback function triggered when a key is pressed.
@@ -145,7 +145,7 @@ function love.keypressed(key, scancode, isrepeat)
             ["isrepeat"] = isrepeat
         }
     }
-    _G.q:add(msg)
+    _G.frostmoon.q:add(msg)
 end
 
 --Callback function triggered when a keyboard key is released.
@@ -157,7 +157,7 @@ function love.keyreleased(key, scancode)
             ["scancode"] = scancode
         }
     }
-    _G.q:add(msg)
+    _G.frostmoon.q:add(msg)
 end
 
 --Called when the device display orientation changed.
@@ -169,7 +169,7 @@ function love.displayrotated(index, orientation)
             ["orientation"] = orientation
         }
     }
-    _G.q:add(msg)
+    _G.frostmoon.q:add(msg)
 end
 
 --Callback function triggered when a touch press moves inside the touch screen.
@@ -185,7 +185,7 @@ function love.touchmoved(id, x, y, dx, dy, pressure)
             ["pressure"] = pressure
         }
     }
-    _G.q:add(msg)
+    _G.frostmoon.q:add(msg)
 end
 
 --Callback function triggered when the touch screen is touched.
@@ -201,7 +201,7 @@ function love.touchpressed(id, x, y, dx, dy, pressure)
             ["pressure"] = pressure
         }
     }
-    _G.q:add(msg)
+    _G.frostmoon.q:add(msg)
 end
 
 --Callback function triggered when the touch screen stops being touched.
@@ -217,7 +217,7 @@ function love.touchreleased(id, x, y, dx, dy, pressure)
             ["pressure"] = pressure
         }
     }
-    _G.q:add(msg)
+    _G.frostmoon.q:add(msg)
 end
 
 --Callback function triggered when the system is running out of memory on mobile devices.
@@ -228,7 +228,7 @@ function love.lowmemory()
 
         }
     }
-    _G.q:add(msg)
+    _G.frostmoon.q:add(msg)
 end
 
 --Called when a Joystick's virtual gamepad axis is moved.
@@ -241,7 +241,7 @@ function love.gamepadaxis(joystick, axis, value)
             ["value"] = value
         }
     }
-    _G.q:add(msg)
+    _G.frostmoon.q:add(msg)
 end
 
 --Called when a Joystick's virtual gamepad button is pressed.
@@ -253,7 +253,7 @@ function love.gamepadpressed(joystick, button)
             ["button"] = button
         }
     }
-    _G.q:add(msg)
+    _G.frostmoon.q:add(msg)
 end
 
 --Called when a Joystick's virtual gamepad button is released.
@@ -265,7 +265,7 @@ function love.gamepadreleased(joystick, button)
             ["button"] = button
         }
     }
-    _G.q:add(msg)
+    _G.frostmoon.q:add(msg)
 end
 
 --Called when a Joystick is connected.
@@ -276,7 +276,7 @@ function love.joystickadded(joystick)
             ["joystick"] = joystick
         }
     }
-    _G.q:add(msg)
+    _G.frostmoon.q:add(msg)
 end
 
 --Called when a Joystick is disconnected.
@@ -287,7 +287,7 @@ function love.joystickremoved(joystick)
             ["joystick"] = joystick
         }
     }
-    _G.q:add(msg)
+    _G.frostmoon.q:add(msg)
 end
 
 --Called when a joystick axis moves.
@@ -300,7 +300,7 @@ function love.joystickaxis(joystick, axis, value)
             ["value"] = value
         }
     }
-    _G.q:add(msg)
+    _G.frostmoon.q:add(msg)
 end
 
 --Called when a joystick hat direction changes.
@@ -313,7 +313,7 @@ function love.joystickhat(joystick, hat, direction)
             ["direction"] = direction
         }
     }
-    _G.q:add(msg)
+    _G.frostmoon.q:add(msg)
 end
 
 --Called when a joystick button is pressed.
@@ -325,7 +325,7 @@ function love.joystickpressed(joystick, button)
             ["button"] = button
         }
     }
-    _G.q:add(msg)
+    _G.frostmoon.q:add(msg)
 end
 
 --Called when a joystick button is released.
@@ -337,7 +337,7 @@ function love.joystickreleased(joystick, button)
             ["button"] = button
         }
     }
-    _G.q:add(msg)
+    _G.frostmoon.q:add(msg)
 end
 
 --Callback function triggered when a Thread encounters an error.
@@ -349,7 +349,7 @@ function love.threaderror(thread, errorstr)
             ["errorstr"] = errorstr
         }
     }
-    _G.q:add(msg)
+    _G.frostmoon.q:add(msg)
 end
 
 --Called when the candidate text for an IME (Input Method Editor) has changed.
@@ -362,7 +362,7 @@ function love.textedited(text, start, length)
             ["length"] = length
         }
     }
-    _G.q:add(msg)
+    _G.frostmoon.q:add(msg)
 end
 
 --Called when text has been entered by the user.
@@ -373,5 +373,5 @@ function love.textinput(text)
             ["text"] = text
         }
     }
-    _G.q:add(msg)
+    _G.frostmoon.q:add(msg)
 end
