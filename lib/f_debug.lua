@@ -26,10 +26,9 @@ get_file_extension, Return ".xxx" file extension string
 _G.f_debug = {} --Global table for functions and flag variables
 _G.arg={} --Gotta clear out the args for busted to work for some reason
 _G.continue_busted = true
-_G.busted = require 'busted.runner' --Run _G.busted() in each test script
 --Global Flag Variables
-_G.f_debug.details  = false
--- _G.f_debug.details  = true
+-- _G.f_debug.details  = false
+_G.f_debug.details  = true
 _G.f_debug.draw_debug = false
 _G.f_debug.continuous = false --Whether to run during tests every cycle of main loop.
 _G.f_debug.run_test_countdown = 1 --How many times to run during tests if not continuous
@@ -66,6 +65,36 @@ function _G.f_debug.more_info(msg)
       print(msg)
    end
 end
+
+function _G.f_debug.reset_busted()
+   local clear = {
+      'busted.environment',
+      'busted.runner',
+      'busted.context',
+      'busted.execute',
+      'busted.languages.en',
+      'busted.modules.standalone_loader',
+      'busted.utils',
+      'busted.block',
+      'busted.outputHandlers.base',
+      'busted.outputHandlers.utfTerminal',
+      'busted.modules.cli',
+      'busted.core',
+      'busted.modules.luacov',
+      'busted',
+      'busted.modules.output_handler_loader',
+      'busted.modules.helper_loader',
+      'busted.modules.filter_loader',
+      'busted.modules.configuration_loader',
+      'busted.status',
+      'busted.options',
+      'busted.compatibility'
+   }
+   for i,v in ipairs(clear) do
+      package.loaded[v] = nil
+   end
+end
+
 
 --[[Debug Functions Here]]--
 function _G.f_debug.ttest(t)

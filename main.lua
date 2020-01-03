@@ -68,4 +68,5 @@ end
 function love.quit()
    exec("" .. _G.OS.sep  .. "tests" .. _G.OS.sep .. "post") --Run post test scripts
    print("Until we meet again, stay frosty!")
+   -- for k,v in pairs(package.loaded) do print(k,v) end
 end
