@@ -37,7 +37,7 @@ end
 function exec(path)
    for _,v in ipairs(_G.res.get_files(path)) do
       if v:match("[^.]+$") == "lua" then
-         if _G.f_debug ~= nil then _G.f_debug.more_info("Running script:", v) end
+         if _G.f_debug ~= nil then _G.f_debug.more_info("Running script: " .. v) end
          love.filesystem.load(v)()
       end
    end

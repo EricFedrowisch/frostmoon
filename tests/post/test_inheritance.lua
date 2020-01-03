@@ -1,4 +1,5 @@
---[[_G.busted()
+--[[
+_G.busted()
 expose("Inheritance functionality tests #component #inheritance", function()
    local classA = _G.frostmoon.components["Inherit.A"]
    local classB = _G.frostmoon.components["Inherit.B"]
@@ -42,4 +43,5 @@ expose("Inheritance functionality tests #component #inheritance", function()
       assert.are.equal(b.__parent, "Inherit.A")
    end)
 end)
+
 ]]

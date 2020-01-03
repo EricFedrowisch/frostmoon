@@ -25,6 +25,7 @@ get_file_extension, Return ".xxx" file extension string
 --Debug Globals.
 _G.f_debug = {} --Global table for functions and flag variables
 _G.arg={} --Gotta clear out the args for busted to work for some reason
+_G.continue_busted = true
 _G.busted = require 'busted.runner' --Run _G.busted() in each test script
 --Global Flag Variables
 _G.f_debug.details  = false
@@ -38,7 +39,7 @@ _G.f_debug_msg_uuids = {}
 
 ------------------------------------------
 --System Debug Output
-if _G.f_debug.details then
+if _G.f_debug.details ~= false then
    print("OS: " .. _G.OS.os_name)
    print("OS Path Sep: ", _G.OS.sep)
    print("Filesystem fused: " .. tostring(_G.OS.is_fused))
@@ -61,7 +62,7 @@ function _G.f_debug.during()
 end
 
 function _G.f_debug.more_info(msg)
-   if _G.f_debug.details then
+   if _G.f_debug.details ~= false then
       print(msg)
    end
 end
@@ -122,7 +123,7 @@ local function _tprint (t, shift, container)
          local str = string.rep("   ", shift) .. tostring(k) .. " = "
          if type(v) == "table"  and t ~= container and k ~= "_container" and k ~= "self" then
             print(str)
-            _G.f_debug._tprint(v, shift+1, t)
+            _tprint(v, shift+1, t)
          else
             print(str .. tostring(v))
          end
@@ -152,7 +153,7 @@ function _G.f_debug.mprint(t)
    if ttest[1] then
       for k,v in pairs(getmetatable(t)) do
          print(tostring(k) .. " = " .. tostring(v))
-         if type(v) == "table" then _G.f_debug._tprint(v, 1, v) end
+         if type(v) == "table" then _tprint(v, 1, v) end
       end
    else
       print(ttest[2])
