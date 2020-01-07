@@ -29,6 +29,7 @@ _G.continue_busted = true
 --Global Flag Variables
 -- _G.f_debug.details  = false
 _G.f_debug.details  = true
+_G.f_debug.env_details = false
 _G.f_debug.draw_debug = false
 _G.f_debug.continuous = false --Whether to run during tests every cycle of main loop.
 _G.f_debug.run_test_countdown = 1 --How many times to run during tests if not continuous
@@ -38,7 +39,7 @@ _G.f_debug_msg_uuids = {}
 
 ------------------------------------------
 --System Debug Output
-if _G.f_debug.details ~= false then
+if _G.f_debug.env_details ~= false then
    print("OS: " .. _G.OS.os_name)
    print("OS Path Sep: ", _G.OS.sep)
    print("Filesystem fused: " .. tostring(_G.OS.is_fused))
@@ -178,7 +179,7 @@ end
 
 function _G.f_debug.mprint(t)
    _G.f_debug.line("Metatable:")
-   local ttest = {table_test(getmetatable(t))}
+   local ttest = {_G.f_debug.ttest(getmetatable(t))}
    if ttest[1] then
       for k,v in pairs(getmetatable(t)) do
          print(tostring(k) .. " = " .. tostring(v))

@@ -16,13 +16,13 @@ local FSM = {}
 function FSM:register_state(name, enter, exit, during)
    if type(name) ~= "string" then error("State name not string") end
    local state_args = {
-      component_type = "data.FSM.state",
+      component_type = "Data.FSM.State",
       name = name,
       enter = enter,  --Function to run when entering this state
       exit = exit,   --Function to run when exiting this state
       during = during, --Function to run while in this state during heartbeat events.
    }
-   local state = _G.f.new(state_args, self)
+   local state = _G.frostmoon.new(state_args, self)
    self.states[name]=state
    self.transitions[name] = {}
 end
@@ -62,8 +62,8 @@ function FSM:get_input(input, args)
 end
 
 function FSM:transition(exit, start, args)
-   self.states[exit]:transition()
-   self.states[start]:transition()
+   self.states[exit]:transition(args)
+   self.states[start]:transition(args)
 end
 
 return FSM

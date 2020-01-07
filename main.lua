@@ -37,8 +37,9 @@ end
 function exec(path)
    for _,v in ipairs(_G.res.get_files(path)) do
       if v:match("[^.]+$") == "lua" then
-         if _G.f_debug ~= nil then _G.f_debug.more_info("Running script: " .. v) end
          love.filesystem.load(v)()
+         if _G.f_debug ~= nil then _G.f_debug.more_info("When running script: " .. v .. "\n") end
+         if _G.f_debug ~= nil then _G.f_debug.reset_busted() end
       end
    end
 end
@@ -68,5 +69,4 @@ end
 function love.quit()
    exec("" .. _G.OS.sep  .. "tests" .. _G.OS.sep .. "post") --Run post test scripts
    print("Until we meet again, stay frosty!")
-   -- for k,v in pairs(package.loaded) do print(k,v) end
 end

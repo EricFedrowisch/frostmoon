@@ -23,7 +23,8 @@ end
 function State.transition(self, args) --Called when transitioning in and out of state
    if not self.in_state then --If not in state then enter state
       if self.enter ~= nil then self.enter(args) end
-      self._container.current = self.name --Tell fsm you are done with transition code and are now current state
+      local container = self:get_container()
+      container.current = self.name --Tell fsm you are done with transition code and are now current state
    else                      --Else if in state then exit state
       if self.exit ~= nil then self.exit(args) end
    end
@@ -32,7 +33,7 @@ end
 
 --Make sure state is initialized properly and meets the minimum assumed operating parameters
 function State:error_checks()
-   if self._container == nil then error("State object without FSM") end
+   if self:get_container() == nil then error("State object without FSM") end
    if self.name == nil then error("State object without name") end
    if self.enter ~= nil then
       if type(self.enter) ~= "function" then error("State entry set to non-function") end

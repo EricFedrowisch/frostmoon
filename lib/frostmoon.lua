@@ -119,3 +119,5 @@ for ck, cv in pairs(_G.frostmoon.components) do --For each component type...
       setmetatable(cv, {__index = parent})
    end
 end
+
+_G.frostmoon.new = _G.frostmoon.Component.new
