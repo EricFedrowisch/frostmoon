@@ -17,33 +17,39 @@ Element.defaults = {
 }
 
 function Element:draw()
-   local x,y = self:get_pos()
-   love.graphics.draw(self.image, x, y, self.r)
+   love.graphics.draw(self.image, self.rect.x, self.rect.y, self.r)
 end
 
-function Element:resize()
-   self.image = _G.res.resize(self.image_initial, self.psp_x, self.psp_y, self.maintain_aspect_ratio)
+function Element:resize(image)
+   if image ~= nil then --If image supplied, resize that and assign it to element
+      self.image = _G.res.resize(self.image, self.psp_x, self.psp_y, self.maintain_aspect_ratio)
+   else --Else if no image supplied resize and use initial image
+      self.image = _G.res.resize(self.image_initial, self.psp_x, self.psp_y, self.maintain_aspect_ratio)
+   end
+   self.rect:update_size(self.image:getWidth(), self.image:getHeight())
 end
 
-function Element:get_pos()
+function Element:get_absolute_position()
     return self.rect.x, self.rect.y
 end
 
 function Element:get_z()
-   return (self.rect.z)
+   return self.rect.z
 end
 
-function Element:update_pos(x, y, z)
+function Element:update_absolute_position(x, y, z)
    self.rect.x = x
    self.rect.y = y
    self.rect.z = z
 end
 
+function Element:get_rect()
+   return self.rect
+end
 
 function Element:init(args)
    local image = self.image or res.img["No-Image.png"]
    self.image_initial = image
-   self:resize()
    self.rect = Rect{
       __container = self,
       width = self.image:getWidth(),
@@ -52,6 +58,7 @@ function Element:init(args)
       y = self.y,
       z = self.z,
    }
+   self:resize()
 end
 
 return Element

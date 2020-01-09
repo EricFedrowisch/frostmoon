@@ -3,9 +3,11 @@ Rect object for storing/testing collisions.
 ]]
 local Rect = {}
 Rect.defaults = {
-   x = 0,
-   y = 0,
+   x = 0, --Absolute x value
+   y = 0, --Absolute y value
    z = 1,
+   px = 0, --Proportionate x value (proportion from the left side of screen)
+   py = 0, --Proportionate y value (proportion from the top of the screen)
    width = 100,
    height = 100
 }
@@ -15,17 +17,19 @@ function Rect:inside(x, y)
           (y >= self.y and y <= (self.y + self.height))
 end
 
-function Rect:update_size()
-   local container = self:get_container()
-   self.width, self.height = container.width, container.height
+function Rect:update_size(width, height)
+   self.width, self.height = width, height
 end
 
---Make a change to postion. Changes are either relative or absolute.
---Absolute by default.
-function Rect:update_position(dx, dy, relative)
-   local x, y = dx, dy
-   if relative ~= nil then x, y = self.x + dx, self.y + dy end
-   self.x, self.y = x or self.x, y or self.y
+--Change to absolute postion x, y, z(optionally).
+function Rect:update_position(x, y, z)
+   self.x, self.y = x, y
+   self.z= z or self.z
+end
+
+--Make a change to absolute postion based on a distance.
+function Rect:move_position(dx, dy)
+   self.x, self.y = self.x + dx, self.y + dy
 end
 
 Rect.event_types = {
