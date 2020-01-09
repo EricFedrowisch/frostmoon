@@ -12,9 +12,33 @@ Element.defaults = {
    psp_y = 1/8, --Positive space proportion on y axis
    maintain_aspect_ratio = true, --Maintain image aspect ratio during resize
    visible = true,
-   draw = function(self) love.graphics.draw(self.image, self.x, self.y, self.r) end,
-   resize = function(self) self.image = _G.res.resize(self.image_initial, self.psp_x, self.psp_y, self.maintain_aspect_ratio) end,
+   draw = Element.draw,
+   resize = Element.resize
 }
+
+function Element:draw()
+   local x,y = self:get_pos()
+   love.graphics.draw(self.image, x, y, self.r)
+end
+
+function Element:resize()
+   self.image = _G.res.resize(self.image_initial, self.psp_x, self.psp_y, self.maintain_aspect_ratio)
+end
+
+function Element:get_pos()
+    return self.rect.x, self.rect.y
+end
+
+function Element:get_z()
+   return (self.rect.z)
+end
+
+function Element:update_pos(x, y, z)
+   self.rect.x = x
+   self.rect.y = y
+   self.rect.z = z
+end
+
 
 function Element:init(args)
    local image = self.image or res.img["No-Image.png"]
@@ -28,7 +52,6 @@ function Element:init(args)
       y = self.y,
       z = self.z,
    }
-   --self.rect._container = self --HAX HERE.
 end
 
 return Element

@@ -162,7 +162,6 @@ function ViewController:resize(msg)
       res.resize_imgs(elements)
       self:tell_scene_msg(msg, id)
    end
-
 end
 
 
