@@ -15,6 +15,9 @@ local FSM = {}
 
 function FSM:register_state(name, enter, exit, during)
    if type(name) ~= "string" then error("State name not string") end
+   if type(enter) ~= "function" and enter ~= nil then error("Enter not function") end
+   if type(exit) ~= "function" and exit ~= nil then error("Exit not function") end
+   if type(during) ~= "function" and during ~= nil then error("During not function") end
    local state_args = {
       component_type = "Data.FSM.State",
       name = name,
