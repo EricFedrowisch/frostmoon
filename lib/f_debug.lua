@@ -51,7 +51,30 @@ if _G.f_debug.env_details ~= false then
 end
 
 -------------------------------------------
---[[During Debug Function]]--
+
+function exec_tests(path)
+   for _,v in ipairs(_G.res.get_files(path)) do
+      if v:match("[^.]+$") == "lua" then
+         _G.f_debug.more_info("When running script: " .. v)
+         love.filesystem.load(v)()
+         _G.f_debug.reset_busted()
+         print()
+      end
+   end
+end
+
+--Pre-Tests Function
+function _G.f_debug.pre_tests()
+   exec_tests("" .. _G.OS.sep  .. "tests" .. _G.OS.sep .. "pre") --Run pre test scripts
+end
+
+--PostTests Function
+function _G.f_debug.post_tests()
+   exec_tests("" .. _G.OS.sep  .. "tests" .. _G.OS.sep .. "post") --Run post test scripts
+end
+
+
+--During Debug Function
 function _G.f_debug.during()
    if _G.f_debug.continuous ~= true then
       _G.f_debug.run_test_countdown = _G.f_debug.run_test_countdown - 1
@@ -60,6 +83,7 @@ function _G.f_debug.during()
       exec("" .. _G.OS.sep  .. "tests" .. _G.OS.sep .. "during") --Run during test scripts
    end
 end
+
 
 function _G.f_debug.more_info(msg)
    if _G.f_debug.details ~= false then

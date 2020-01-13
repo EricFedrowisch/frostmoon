@@ -16,12 +16,10 @@ require "lib.f_debug" --Comment out if you want to disable all debug functionali
 ------------------------------------------
 --love.load	This function is called exactly once at the beginning of the game.
 function love.load()
-   --if package.config:sub(1,1) == "/" then os.execute("clear") end --Clear terminal output of Unix-like OS
-   exec("" .. _G.OS.sep  .. "tests" .. _G.OS.sep .. "pre") --Run pre test scripts
    _G.vc = ViewController{} --Create ViewController
    _G.vc.s_width, _G.vc.s_height = love.window.getMode()
    love.window.setMode(_G.vc.s_width, _G.vc.s_height, {["resizable"] = true})
-   exec("" .. _G.OS.sep  .. "autoexec") --Run autoexec scripts
+   if _G.f_debug ~= nil then _G.f_debug.pre_tests() end --DEBUG
    load_scenes()
 end
 
@@ -38,8 +36,6 @@ function exec(path)
    for _,v in ipairs(_G.res.get_files(path)) do
       if v:match("[^.]+$") == "lua" then
          love.filesystem.load(v)()
-         if _G.f_debug ~= nil then _G.f_debug.more_info("When running script: " .. v .. "\n") end
-         if _G.f_debug ~= nil then _G.f_debug.reset_busted() end
       end
    end
 end
@@ -67,6 +63,6 @@ end
 
 --love.quit	Callback function triggered when the game is closed.
 function love.quit()
-   exec("" .. _G.OS.sep  .. "tests" .. _G.OS.sep .. "post") --Run post test scripts
+   if _G.f_debug ~= nil then _G.f_debug.post_tests() end --DEBUG
    print("Until we meet again, stay frosty!")
 end
