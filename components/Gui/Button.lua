@@ -30,16 +30,8 @@ function Button:init(args)
       psp_y = self.psp_x, --Positive space proportion on y axis
    }
 
-   --Use element's image for rect's height and width
-   self.rect = Rect{
-      __container = self,
-      width = self.element.image:getWidth(),
-      height = self.element.image:getHeight(),
-      x = self.x,
-      y = self.y,
-      z = self.z,
-      draggable = self.draggable,
-   }
+   --Use element's rect
+   self.rect = self.element.rect
 end
 
 function Button:resize()
@@ -51,7 +43,6 @@ function Button:resize()
    end
    --Update width and height variables
    self.width, self.height = self.element.image:getWidth(), self.element.image:getHeight()
-   self.rect:update_size()
 end
 
 --Button pressed but not yet released

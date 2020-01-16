@@ -104,7 +104,7 @@ function ViewController:update(dt)
          if _G.f_debug.debug_events then
             if _G.f_debug_msg_uuids[msg._uuid] == nil then
                _G.f_debug_msg_uuids[msg._uuid] = true
-               d.tprint(msg)
+               _G.f_debug.tprint(msg)
             end
          end
       end

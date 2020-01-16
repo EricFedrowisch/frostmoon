@@ -13,8 +13,8 @@ local examine_fx = function ()
    local hover = _G.vc.hover_over
    if hover ~= nil and #hover > 0 then
       for k, i in pairs(hover) do
-         d.tprint(i)
-         d.line()
+         f_debug.tprint(i)
+         f_debug.line()
       end
    end
 end
@@ -76,11 +76,12 @@ local button3 = Button{
 
 local button4 = Button{
    image = res.img["button/01_c_04.png"],
-   button_function = function(self, msg) print("Pressed Button 5") end,
-   x = button1.element.image:getWidth() * 2.5,
-   y = button1.element.image:getHeight() * 2.5,
-   z = 1,
-   draggable = true,
+   button_function = function(self, msg)
+      print("Screen size: ", love.window.getMode())
+      print(self.rect.x,self.rect.y); self.rect:center_on(0.5,0.5); print(self.rect.x,self.rect.y);
+   end,
+   x = 0,
+   y = 0,
 }
 
 

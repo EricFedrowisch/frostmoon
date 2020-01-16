@@ -16,6 +16,10 @@ Element.defaults = {
    resize = Element.resize
 }
 
+function Element:update_draw(image, x, y , r)
+   self.draw = function() love.graphics.draw(image, x, y , r) end
+end
+
 function Element:draw()
    love.graphics.draw(self.image, self.rect.x, self.rect.y, self.r)
 end
@@ -60,5 +64,9 @@ function Element:init(args)
    }
    self:resize()
 end
+
+Element.event_types = {
+   update_position = function(self, msg) self:update_draw(self.image, self.rect.x, self.rect.y, self.r) end,
+}
 
 return Element

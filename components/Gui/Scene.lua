@@ -10,6 +10,8 @@ Scene.defaults = {
 }
 
 function Scene:init(args)
+   self.listeners = self.listeners or {}
+   self.elements = self.elements or {}
    if args.background_img ~= nil then self:make_bg(args.background_img) end
    if self.hotkey ~= nil then self:register(self.hotkey) end
 end
@@ -18,9 +20,8 @@ end
 --Registers all non-element class objects as listeners.
 --Registers all element class objects as elements.
 function Scene:register(obj)
-   self.listeners = self.listeners or {}
-   self.elements = self.elements or {}
-   self:register_z_index(obj.z) --Make sure lists have correct z
+   local z = obj.z or 1
+   self:register_z_index(z) --Make sure lists have correct z
    if obj.component_type ~= "Gui.Element" then --If not element..
       self:register_listener(obj) --Register as listener
    end
@@ -28,12 +29,9 @@ function Scene:register(obj)
       self:register_element(obj) --Register element
    end
    for k,v in pairs(obj) do --Go through all values of obj...
-      if type(v) == "table" then   --if table then check...
-         if k ~= "_container" then
-            if v.component_type ~= nil then --If component...
-               self:register(v)   --Register the component
-            end
-         end
+      --if table then check...
+      if type(v) == "table" and v.component_type ~= nil and k ~= "_container" then   
+         self:register(v)   --Register the component
       end
    end
 end
@@ -41,7 +39,8 @@ end
 --Given z value, register that z as an index in all the ViewController tables
 function Scene:register_z_index(z)
    if z == nil then z = 1 end --Some Objs may not have a Z (like Hotkey)
-   if self.listeners[z] == nil then self.listeners[z] = {} end --If entry for z axis coordinate doesn't exist yet, make it
+    --If entry for z axis coordinate doesn't exist yet, make it
+   if self.listeners[z] == nil then self.listeners[z] = {} end
    if self.elements[z] == nil then self.elements[z] = {} end
 end
 
