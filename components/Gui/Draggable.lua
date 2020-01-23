@@ -2,10 +2,37 @@
 Draggable component for enabling a rect to be moved by user input.
 ]]
 local Draggable = {}
+
 Draggable.defaults = {
    last_move_pos = {0,0},
    dt_pressed = 0,
+   x = 0,
+   y = 0,
+   z = 1,
+   -- px = 0, --Proportionate x value (proportion from the left side of screen)
+   -- py = 0, --Proportionate y value (proportion from the top of the screen)
+   psp_x = 1/8, --Positive space proportion on x axis
+   psp_y = 1/8, --Positive space proportion on y axis
 }
+
+function Draggable:init(args)
+   local screen_width, screen_height = love.window.getMode()
+   if self.px ~= nil then self.x = self.px * screen_width end --If px supplied use it to find x
+   if self.py ~= nil then self.y = self.py * screen_height end --If py supplied use it to find y
+   self.element = Element{
+      __container = self,
+      image = self.image or res.img["No-Image.png"], --Initialize image or use default,
+      x =  self.x,
+      y = self.y,
+      z = self.z,
+      psp_x = self.psp_x, --Positive space proportion on x axis
+      psp_y = self.psp_x, --Positive space proportion on y axis
+   }
+
+   --Use element's rect
+   self.rect = self.element.rect
+
+end
 
 function Draggable:last_move_position()
    local dx, dy
@@ -48,18 +75,16 @@ function Draggable:drag(msg)
       local mx, my = self:last_move_position()
       if mx ~= nil and my ~= nil then
          --Calculate the change between the last point and the mouse cursor
-         local dx = self.x - (self.last_move_pos.mx - mx)
-         local dy = self.y - (self.last_move_pos.my - my)
-         self:update_position(dx, dy)
+         local dx = self.rect.x - (self.last_move_pos.mx - mx)
+         local dy = self.rect.y - (self.last_move_pos.my - my)
+         self.rect:update_position(dx, dy)
          self.last_move_pos.mx, self.last_move_pos.my = mx, my
       end
    end
 end
 
 function Draggable:on_press(msg)
-   if self.draggable then
-      self.last_move_pos.mx, self.last_move_pos.my = self:last_move_position()
-   end
+   self.last_move_pos.mx, self.last_move_pos.my = self:last_move_position()
    self.pressed = true
 end
 
@@ -70,12 +95,12 @@ function Draggable:on_release(msg)
 end
 
 Draggable.event_types = {
-   hover_end    = function(self, msg) self:on_release(msg) end,
-   hover_cont   = function(self, msg) if self.draggable then self:drag(msg) end end,
+   hover_cont   = function(self, msg) if self.pressed then self:drag(msg) end end,
    mousepressed = function(self, msg) self:on_press(msg) end,
    touchpressed = function(self, msg) self:on_press(msg) end,
    mousereleased = function(self, msg) self:on_release(msg) end,
    touchreleased = function(self, msg) self:on_release(msg) end,
+   mousemoved = function(self, msg) if self.dragging then self.rect:center_on_xy(msg.args.x, msg.args.y) end end,
 }
 
 return Draggable

@@ -59,6 +59,11 @@ function Rect:center_on(px,py)
    self:move_position(-self.width/2, -self.height/2)
 end
 
+function Rect:center_on_xy(x,y)
+   self:update_position(x, y)
+   self:move_position(-self.width/2, -self.height/2)
+end
+
 --Make a change to absolute postion based on a distance.
 function Rect:move_position(dx, dy)
    self:update_position(self.x + dx, self.y + dy)

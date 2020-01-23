@@ -74,7 +74,6 @@ local button3 = Button{
    z = 3,
 }
 
---[[
 local button4 = Button{
    image = res.img["button/01_c_04.png"],
    button_function = function(self, msg)
@@ -84,22 +83,24 @@ local button4 = Button{
    x = 0,
    y = 0,
 }
-]]
 
+local drag1 = Draggable{
+   px = 1/2,
+   py = 1/2,
+   z = 1
+}
 
 love.window.setTitle("FrostMoon Demo")
 
 menu_scene:register(button1)
 menu_scene:register(button2)
 menu_scene:register(button3)
---scene2:register(button4)
+menu_scene:register(drag1)
+scene2:register(button4)
 
 ------------------------------------------
 scenes[#scenes + 1] = menu_scene --Make menu_scene the 1st scene
 scenes[#scenes + 1] = scene2
 
-print(button1.fsm)
-print(button2.fsm)
-print(button3.fsm)
 --MUST return scene list here as last action.
 return scenes
