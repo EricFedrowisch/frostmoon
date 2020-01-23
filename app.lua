@@ -55,22 +55,24 @@ local scene2 = Scene{
 
 local button1 = Button{
    image = res.img["button/01_c_04.png"],
-   button_function = function(self) print("Pressed Button 1") end
+   px = 1/8,
+   py = 1/8,
+   button_function = function(self) print("Pressed Button 1") end,
 }
 
 local button2 = Button{
    image = res.img["button/01_c_02.png"],
    button_function = function(self) print("Pressed Button 2") end,
-   x = button1.element.image:getWidth()/2,
-   y = button1.element.image:getHeight()/2,
+   px = 1/4,
+   py = 1/4,
    z = 2,
 }
 
 local button3 = Button{
    image = res.img["button/01_c_03.png"],
    button_function = function(self) print("Pressed Button 3") end,
-   x = button1.element.image:getWidth(),
-   y = button1.element.image:getHeight(),
+   px = 3/8,
+   py = 3/8,
    z = 3,
 }
 
@@ -80,14 +82,23 @@ local button4 = Button{
       print("Screen size: ", love.window.getMode())
       print(self.rect.x,self.rect.y); self.rect:center_on(0.5,0.5); print(self.rect.x,self.rect.y);
    end,
-   x = 0,
-   y = 0,
+   px = 1/8,
+   py = 1/8,
+   z = 2,
 }
 
 local drag1 = Draggable{
+   image = res.img["button/button.png"],
    px = 1/2,
    py = 1/2,
    z = 1
+}
+
+local text1 = Textbox{
+   px = 1/2,
+   py = 1/2,
+   psp_x = 1/2,
+   psp_y = 1/2
 }
 
 love.window.setTitle("FrostMoon Demo")
@@ -97,6 +108,7 @@ menu_scene:register(button2)
 menu_scene:register(button3)
 menu_scene:register(drag1)
 scene2:register(button4)
+scene2:register(text1)
 
 ------------------------------------------
 scenes[#scenes + 1] = menu_scene --Make menu_scene the 1st scene

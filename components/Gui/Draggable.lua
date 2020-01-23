@@ -13,6 +13,7 @@ Draggable.defaults = {
    -- py = 0, --Proportionate y value (proportion from the top of the screen)
    psp_x = 1/8, --Positive space proportion on x axis
    psp_y = 1/8, --Positive space proportion on y axis
+   align = 'center', --Valid px,py alignments include: 'absolute' and 'center'
 }
 
 function Draggable:init(args)
@@ -31,7 +32,7 @@ function Draggable:init(args)
 
    --Use element's rect
    self.rect = self.element.rect
-
+   if self.align == 'center' then self.rect:center_on_xy(self.x, self.y) end
 end
 
 function Draggable:last_move_position()

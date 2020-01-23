@@ -8,6 +8,7 @@ Button.defaults = {
    x = 0,
    y = 0,
    z = 1,
+   align = 'center', --Valid px,py alignments include: 'absolute' and 'center'
    --toggleable = false,
    --draggable  = false,
    --interact_sound = nil,
@@ -19,6 +20,10 @@ function Button:init(args)
    self.image_initial, self.interact_image_initial = image, image_on_interact --Set initial images to the original sized image
    self.image = _G.res.resize(image, self.psp_x, self.psp_y, self.maintain_aspect_ratio) --Resize image
    self.interact_image = _G.res.resize(image_on_interact, self.psp_x, self.psp_y, self.maintain_aspect_ratio)  --Resize interact image
+   --Use px,py if supplied
+   local screen_width, screen_height = love.window.getMode()
+   if self.px ~= nil then self.x = self.px * screen_width end --If px supplied use it to find x
+   if self.py ~= nil then self.y = self.py * screen_height end --If py supplied use it to find y
 
    self.element = Element{
       __container = self,
@@ -32,6 +37,7 @@ function Button:init(args)
 
    --Use element's rect
    self.rect = self.element.rect
+   if self.align == 'center' then self.rect:center_on_xy(self.x, self.y) end
 end
 
 function Button:resize()
