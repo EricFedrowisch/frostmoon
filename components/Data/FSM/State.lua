@@ -11,7 +11,7 @@ State.defaults = {
    vars = {},    --Table of state variables
 }
 
-function State:init(args)--(fsm, name, enter, exit, during)
+function State:init(args)--(fsm, name, enter, exit, during, vars)
    self.name = args.name
    self.enter = args.enter or nil  --Function to run when entering this state
    self.exit = args.exit or nil   --Function to run when exiting this state
@@ -21,12 +21,13 @@ function State:init(args)--(fsm, name, enter, exit, during)
 end
 
 function State.transition(self, args) --Called when transitioning in and out of state
+   local fsm = self:get_container() --Get fsm that contains this state
+   local container = fsm:get_container() --Get the container of that fsm
    if not self.in_state then --If not in state then enter state
-      if self.enter ~= nil then self.enter(args) end
-      local container = self:get_container()
-      container.current = self.name --Tell fsm you are done with transition code and are now current state
+      if self.enter ~= nil then container[self.enter](container, args) end --Call enter function of container as if by container:enter(args)
+      fsm.current = self.name --Tell fsm you are done with transition code and are now current state
    else                      --Else if in state then exit state
-      if self.exit ~= nil then self.exit(args) end
+      if self.exit ~= nil then container[self.exit](container, args) end --Call exit function of container as if by container:exit(args)
    end
    self.in_state = not self.in_state --Toggle in_state boolean to reflect transition
 end
@@ -35,15 +36,15 @@ end
 function State:error_checks()
    if self:get_container() == nil then error("State object without FSM") end
    if self.name == nil then error("State object without name") end
-   if self.enter ~= nil then
-      if type(self.enter) ~= "function" then error("State entry set to non-function") end
-   end
-   if self.exit ~= nil then
-      if type(self.exit) ~= "function" then error("State exit set to non-function") end
-   end
-   if self.during ~= nil then if type(self.during) ~= "function" then
-      error("State during set to non-function") end
-   end
+   -- if self.enter ~= nil then
+   --    if type(self.enter) ~= "function" then error("State entry set to non-function") end
+   -- end
+   -- if self.exit ~= nil then
+   --    if type(self.exit) ~= "function" then error("State exit set to non-function") end
+   -- end
+   -- if self.during ~= nil then if type(self.during) ~= "function" then
+   --    error("State during set to non-function") end
+   -- end
 end
 
 return State

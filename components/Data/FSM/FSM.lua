@@ -13,28 +13,33 @@ local FSM = {}
    tick = "tick", --String input that triggers "during" method of current state
 }
 
+function FSM:get_state()
+   return self.current
+end
+
 function FSM:register_state(name, enter, exit, during)
    if type(name) ~= "string" then error("State name not string") end
-   if type(enter) ~= "function" and enter ~= nil then error("Enter not function") end
-   if type(exit) ~= "function" and exit ~= nil then error("Exit not function") end
-   if type(during) ~= "function" and during ~= nil then error("During not function") end
-   local state_args = {
+   -- if type(enter)  ~= "string" and enter ~= nil then error("Enter not function") end
+   -- if type(exit) ~= "function" and exit ~= nil then error("Exit not function") end
+   -- if type(during) ~= "function" and during ~= nil then error("During not function") end
+
+   local state = State{
+      __container = self,
       component_type = "Data.FSM.State",
       name = name,
       enter = enter,  --Function to run when entering this state
       exit = exit,   --Function to run when exiting this state
       during = during, --Function to run while in this state during heartbeat events.
    }
-   local state = _G.frostmoon.new(state_args, self)
+   --local state = _G.frostmoon.new(state_args, self)
    self.states[name]=state
    self.transitions[name] = {}
 end
 
-function FSM:register_transition(input, start_state, end_state)
-   if type(input) ~= "string" then error("Transition input name not string") end
+function FSM:register_transition(start_state, end_state)
    if not self.states[start_state] then error("No such start state " .. start_state) end
    if not self.states[end_state] then error("No such end state " .. end_state) end
-   self.transitions[start_state][input]=end_state
+   self.transitions[start_state][end_state]=end_state
 end
 
 function FSM:enable(initial_state, args)
@@ -65,6 +70,7 @@ function FSM:get_input(input, args)
 end
 
 function FSM:transition(exit, start, args)
+   -- print("Transition", exit, start)
    self.states[exit]:transition(args)
    self.states[start]:transition(args)
 end

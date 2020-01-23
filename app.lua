@@ -55,12 +55,12 @@ local scene2 = Scene{
 
 local button1 = Button{
    image = res.img["button/01_c_04.png"],
-   button_function = function(self, msg) print("Pressed Button 1") end
+   button_function = function(self) print("Pressed Button 1") end
 }
 
 local button2 = Button{
    image = res.img["button/01_c_02.png"],
-   button_function = function(self, msg) print("Pressed Button 2") end,
+   button_function = function(self) print("Pressed Button 2") end,
    x = button1.element.image:getWidth()/2,
    y = button1.element.image:getHeight()/2,
    z = 2,
@@ -68,12 +68,13 @@ local button2 = Button{
 
 local button3 = Button{
    image = res.img["button/01_c_03.png"],
-   button_function = function(self, msg) print("Pressed Button 3") end,
+   button_function = function(self) print("Pressed Button 3") end,
    x = button1.element.image:getWidth(),
    y = button1.element.image:getHeight(),
    z = 3,
 }
 
+--[[
 local button4 = Button{
    image = res.img["button/01_c_04.png"],
    button_function = function(self, msg)
@@ -83,6 +84,7 @@ local button4 = Button{
    x = 0,
    y = 0,
 }
+]]
 
 
 love.window.setTitle("FrostMoon Demo")
@@ -90,11 +92,14 @@ love.window.setTitle("FrostMoon Demo")
 menu_scene:register(button1)
 menu_scene:register(button2)
 menu_scene:register(button3)
-scene2:register(button4)
+--scene2:register(button4)
 
 ------------------------------------------
 scenes[#scenes + 1] = menu_scene --Make menu_scene the 1st scene
 scenes[#scenes + 1] = scene2
 
+print(button1.fsm)
+print(button2.fsm)
+print(button3.fsm)
 --MUST return scene list here as last action.
 return scenes

@@ -11,7 +11,20 @@ Button.defaults = {
    --toggleable = false,
    --draggable  = false,
    --interact_sound = nil,
+   --tooltip = 'Default tooltip',
 }
+
+-- function Button:enter_released() self.button_function() end
+-- function Button:exit_released() self.fsm:get_input('return_to_idle') end
+-- function Button:enter_hover_over() if self.tooltip ~= nil then self.tooltip_count = 0 end end
+-- function Button:exit_hover_over() if self.tooltip ~= nil then self.tooltip_count = 0 end end
+-- function Button:while_hover_over()
+--    if self.tooltip ~= nil then
+--       self.tooltip_count = self.tooltip_count + 1
+--       if self.tooltip_count >= 30 then self.draw_tooltip = true end
+--    end
+-- end
+-- function Button:exit_pressed() self.fsm:get_input('return_to_idle') end
 
 function Button:init(args)
    local image = self.image or res.img["No-Image.png"] --Initialize image or use default
@@ -32,64 +45,40 @@ function Button:init(args)
 
    --Use element's rect
    self.rect = self.element.rect
+   --Use a FSM to store the state of the button
+   self.fsm = FSM{__container = self}
+
+   -- enter_pressed, exit_pressed, while_pressed
+   --FSM:register_state(name, enter, exit, during)
+   self.fsm:register_state('Idle')
+   self.fsm:register_state('Released', 'button_function')
+   self.fsm:register_state('Hovered_on')
+   self.fsm:register_state('Pressed')
+
+   --FSM:register_transition(input, start_state, end_state)
+   --self.fsm:register_transition('Idle' , 'Hovered_on') --Hover over
+   --self.fsm:register_transition('Hovered_on' , 'Hovered_on') --Hover over
+   self.fsm:register_transition('Hovered_on', 'Pressed') --Button pressed
+   self.fsm:register_transition('Idle', 'Pressed')
+   self.fsm:register_transition('Idle', 'Released')
+   self.fsm:register_transition('Pressed', 'Released') --Button press released
+   self.fsm:register_transition('Released', 'Idle') --Return to idle from released
+   --self.fsm:register_transition('Hovered_on', 'Idle') --End hover
+   --self.fsm:register_transition('Pressed', 'Idle') --End hover
+   --Enable fsm
+   self.fsm:enable("Idle")
 end
 
-function Button:resize()
-   self.element.image = _G.res.resize(self.element.image_initial, self.psp_x, self.psp_y, self.maintain_aspect_ratio)
-   if self.interact_image ~= nil then
-      self.interact_image = _G.res.resize(self.interact_image_initial, self.psp_x, self.psp_y, self.maintain_aspect_ratio)
-   else
-      self.interact_image = self.element.image --If no interact image, use the main image
-   end
-   --Update width and height variables
-   self.width, self.height = self.element.image:getWidth(), self.element.image:getHeight()
-end
 
---Button pressed but not yet released
-function Button:hover_press(msg)
-   self.pressed = true
-   self:change_image()
-   self:pass_rect_msg(msg)
-end
-
---Button was pressed but not released. Now its not pressed/hovered over anymore.
-function Button:press_over(msg)
-   self.pressed = false
-   self:change_image()
-   self:pass_rect_msg(msg)
-end
-
-function Button:release(msg)
-   self.pressed = false
-   if self.rect.dragging ~= true then
-      self:change_image()
-      if self.interact_sound ~= nil then self.interact_sound:play() end
-      if self.button_function ~= nil then self:button_function() end
-   end
-   self:pass_rect_msg(msg)
-end
-
-function Button:change_image()
-   if self.pressed then
-      self.element.image = self.interact_image
-   else
-      self.element.image = _G.res.resize(self.element.image_initial, self.psp_x, self.psp_y, self.maintain_aspect_ratio)
-   end
-end
-
-function Button:pass_rect_msg(msg)
-   self.rect:receive_msg(msg)
-   msg.handled = 1
-end
 
 Button.event_types = {
-   mousepressed = function(self, msg) self:hover_press(msg) end,
-   touchpressed = function(self, msg) self:hover_press(msg) end,
-   mousereleased = function(self, msg) self:release(msg) end,
-   touchreleased = function(self, msg) self:release(msg) end,
-   hover_end = function(self, msg) self:press_over(msg) end,
-   hover_cont = function(self, msg) self:pass_rect_msg(msg) end,
-   resize = function(self, msg) self:resize() end,
+   mousepressed = function(self, msg) self.fsm:get_input('Pressed') end,
+   touchpressed = function(self, msg) self.fsm:get_input('Pressed') end,
+   mousereleased = function(self, msg) self.fsm:get_input('Released') end,
+   touchreleased = function(self, msg) self.fsm:get_input('Released') end,
+   --hover_end = function(self, msg) self.fsm:get_input('Idle') end,
+   --hover_cont = function(self, msg) self.fsm:get_input('Hovered_on') end,
+   --resize = function(self, msg) self.fsm:get_input('msg', msg.args) end
 }
 
 return Button

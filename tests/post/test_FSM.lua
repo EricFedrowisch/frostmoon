@@ -43,13 +43,13 @@ expose("Finite State Machine tests #component #FSM", function()
    a_fsm:register_state("d", enter_d, exit_d, while_d)
 
    --State A can go to B only
-   a_fsm:register_transition("a_to_b", "a", "b")
+   a_fsm:register_transition("a", "b")
    --State B can go to C or D
-   a_fsm:register_transition("b_to_c", "b", "c")
-   a_fsm:register_transition("b_to_d", "b", "d")
+   a_fsm:register_transition("b", "c")
+   a_fsm:register_transition("b", "d")
    --State C can go to A or B
-   a_fsm:register_transition("c_to_a", "c", "a")
-   a_fsm:register_transition("c_to_b", "c", "b")
+   a_fsm:register_transition("c", "a")
+   a_fsm:register_transition("c", "b")
    --State D no exit from state
 
    --To test all paths: A -> B -> C ->A -> B -> C-> B -> D then D goes nowhere
@@ -90,7 +90,7 @@ expose("Finite State Machine tests #component #FSM", function()
    end)
 
    it("Test FSM transitioned to b", function()
-      a_fsm:get_input("a_to_b")
+      a_fsm:get_input("b")
       assert.are.equal(a_fsm.current, "b")
       assert.is.truthy(exit_a)
       assert.is.truthy(entered_b)
@@ -109,7 +109,7 @@ expose("Finite State Machine tests #component #FSM", function()
    --To test all paths: A -> B -> C -> A -> B -> C -> B -> D then D goes nowhere
    --Progress so far:   A -> B
    it("Test FSM transition to c", function()
-      a_fsm:get_input("b_to_c")
+      a_fsm:get_input("c")
       assert.are.equal(a_fsm.current, "c")
       assert.is.truthy(exit_b)
       assert.is.truthy(entered_c)
@@ -128,32 +128,32 @@ expose("Finite State Machine tests #component #FSM", function()
    --To test all paths: A -> B -> C -> A -> B -> C -> B -> D then D goes nowhere
    --Progress so far:   A -> B -> C
    it("Test FSM transition back to a", function()
-      a_fsm:get_input("c_to_a")
+      a_fsm:get_input("a")
       assert.are.equal(a_fsm.current, "a")
       assert.is.truthy(exit_c)
    end)
    --To test all paths: A -> B -> C -> A -> B -> C -> B -> D then D goes nowhere
    --Progress so far:   A -> B -> C -> A
    it("Test FSM transition back to b", function()
-      a_fsm:get_input("a_to_b")
+      a_fsm:get_input("b")
       assert.are.equal(a_fsm.current, "b")
    end)
    --To test all paths: A -> B -> C -> A -> B -> C -> B -> D then D goes nowhere
    --Progress so far:   A -> B -> C -> A -> B
    it("Test FSM transition back to c", function()
-      a_fsm:get_input("b_to_c")
+      a_fsm:get_input("c")
       assert.are.equal(a_fsm.current, "c")
    end)
    --To test all paths: A -> B -> C -> A -> B -> C -> B -> D then D goes nowhere
    --Progress so far:   A -> B -> C -> A -> B -> C
    it("Test FSM transition back to b", function()
-      a_fsm:get_input("c_to_b")
+      a_fsm:get_input("b")
       assert.are.equal(a_fsm.current, "b")
    end)
    --To test all paths: A -> B -> C -> A -> B -> C -> B -> D then D goes nowhere
    --Progress so far:   A -> B -> C -> A -> B -> C -> B
    it("Test FSM transition to d", function()
-      a_fsm:get_input("b_to_d")
+      a_fsm:get_input("d")
       assert.are.equal(a_fsm.current, "d")
       assert.is.truthy(entered_d)
    end)
