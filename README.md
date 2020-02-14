@@ -99,12 +99,12 @@ end
 return Button --Always return class table as last thing
 ```
 ### The 'init' Component Method
-Component classes can have an optional method named init. If defined, init is called as the end of component initialization. Init is automatically passed the same arguments used to create the component. This may be necessary for certain function calls that would not otherwise have good references to other classes or variables before all components have been loaded, or Löve has finished initializing ie.
+Component classes can have an optional method named init. If defined, init is called as the end of component initialization. Init is automatically passed the same arguments used to create the component. This may be necessary for certain function calls that would not otherwise have good references to other classes or variables before FrostMoon has finished initializing.
 ### Inheritance in FrostMoon Components
 FrostMoon allows for classes to have single inheritance. By default a class instance will inherit all variables and methods from the classes above it except those for which it supplies its own values. In addition, all classes inherit from the Component class. To set the parent for a class, use the "__parent" key in a class definition.
 For example, assume we have two classes: A and B in the component/Inherit folder. B can inherit from A like so:
 
-##File component/Inherit/A.lua
+#### File component/Inherit/A.lua
 ```
 local A = {}
 
@@ -114,7 +114,7 @@ end
 
 return A
 ```
-##File component/Inherit/B.lua
+#### File component/Inherit/B.lua
 ```
 local B = {}
 B.__parent = "Inherit.A"
